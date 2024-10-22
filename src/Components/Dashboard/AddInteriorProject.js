@@ -29,6 +29,12 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     console.log(`File selected for ${e.target.name}:`, e.target.files[0]);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent the default form submission
+    console.log('Form data submitted:', formData);
+    // You can also send this data to your API here
+  };
+
   const renderFormInput = (label, name, placeholder) => (
     <div className="col-span-1">
       <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
@@ -76,7 +82,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         Add Interior Project
       </button>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Basic Information */}
         <div className="grid grid-cols-2 gap-4">
           {renderFormInput('Title', 'title', 'Project Title')}

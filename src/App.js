@@ -3,6 +3,7 @@ import Home from "./Components/Home";
 import NotFound from "./Components/NotFound";
 import LoginForm from "./Components/Login/Login";
 import SignupForm from "./Components/Login/Signup";
+import OtpVerification from "./Components/Login/OtpVerification";
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       <Route path="*" element={<NotFound />} />
         <Route path='/login' element={<LoginForm />} />
         <Route path='/signup' element={<SignupForm />} />
+        <Route path="/otp-verification" element={<OtpVerification />} />
       </Routes>
     </div>
   );

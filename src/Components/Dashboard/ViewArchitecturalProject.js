@@ -144,7 +144,7 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => (
         onClick={() => handleDelete(project._id)}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
       >
-        <FaTrash className="mr-2" /> Delete
+        <FaTrash className="mr-2" />
       </button>
     </div>
   </div>

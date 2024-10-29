@@ -84,7 +84,7 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`http://localhost:8000/api/auth/users/${userId}`, {
+        const response = await fetch(`http://65.0.131.253:8000/api/auth/users/${userId}`, {
           method: 'DELETE', headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`

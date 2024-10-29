@@ -1,33 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import Font Awesome icons
+import { useNavigate } from 'react-router-dom';
 
 const ViewUsers = () => {
+  const navigate = useNavigate()
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5; // Show 5 users per page
-
+  const token = window.localStorage.getItem('authorization');
   // Fetch user data from API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://43.205.14.45:3001/users');
+        const token = window.localStorage.getItem('authorization');
+        if (!token) {
+          throw new Error('No authorization token found');
+        }
+        
+        const response = await fetch('http://65.0.131.253:8000/api/auth/users', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+  
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
+  
         const data = await response.json();
-        setUsers(data); // Assuming the API returns an array of users
+        console.log("Fetched Users:", data);
+        setUsers(data);
       } catch (err) {
+        console.error("Error fetching users:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchUsers();
   }, []);
+  
 
   // Handle search
   const handleSearch = (event) => {
@@ -62,6 +80,10 @@ const ViewUsers = () => {
     console.log('Edit user with ID:', userId);
   };
 
+  const logoutHandler = () =>{
+    window.localStorage.setItem('authorization','')
+    navigate('/login')
+  }
   // Handle Delete User
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -102,7 +124,8 @@ const ViewUsers = () => {
             onChange={handleSearch}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span><button className='bg-blue-500 px-2 py-1 border-radius text-white inline-block' onClick={logoutHandler}>Logout</button>
+          
         </div>
       </div>
 

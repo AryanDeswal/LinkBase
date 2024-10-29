@@ -39,7 +39,7 @@ const SignupForm = () => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch('http://localhost:8000/api/auth/signup', {
+        const response = await fetch('http://65.0.131.253:8000/api/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -173,6 +173,9 @@ const SignupForm = () => {
             {isSubmitting ? 'Submitting...' : 'Register'}
           </button>
         </form>
+        <a href='/login' className='text-center text-blue-400 flex flex-col items-center pt-2 '>
+            Already have an account
+        </a>
       </div>
     </div>
   );

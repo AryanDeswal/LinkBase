@@ -14,7 +14,7 @@ const ShowArchitecture = () => {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/architecture/data/${projectId}`);
+        const response = await fetch(`http://65.0.131.253:8000/api/architecture/data/${projectId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch project data');
         }

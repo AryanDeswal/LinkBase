@@ -81,7 +81,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/interior/interiors', {
+      const response = await fetch('http://65.0.131.253:8000/api/interior/interiors', {
         method: 'POST',
         body: formDataToSend,
       });

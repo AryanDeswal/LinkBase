@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React,{useEffect} from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Home from "./Components/Home";
 // import ProtectedRoute from './Components/ProtectedRoute';
@@ -11,6 +11,14 @@ import ShowArchitecture from './Components/Dashboard/ShowArchitecture';
 import NotFound from './Components/NotFound';
 
 const App = () => {
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(window.localStorage.getItem("authorization")){
+      navigate('/home')
+    }
+    return navigate('/login')
+  },[])
   return (
     <AuthProvider>
       <Routes>

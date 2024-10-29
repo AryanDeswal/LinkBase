@@ -80,7 +80,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         formBody.append(key, formData[key]);
       });
 
-      const response = await fetch('http://localhost:8000/api/architecture/upload', {
+      const response = await fetch('http://65.0.131.253:8000/api/architecture/upload', {
         method: 'POST',
         body: formBody
       });

@@ -1,7 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setIsLoggedIn }) => {
+  const token = window.localStorage.getItem('authorization')
+  
+  useEffect(()=>{
+    if(token){
+      navigate("/home")
+    }
+    else{
+      navigate('/login')
+    }
+  },[])
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -26,12 +36,14 @@ const LoginForm = ({ setIsLoggedIn }) => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch('http://localhost:8000/api/auth/login', {
+        const response = await fetch('http://65.0.131.253:8000/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
         if (!response.ok) throw new Error('Login failed');
+        const data = await response.json()
+        window.localStorage.setItem("authorization",data.token)
         alert('Login successful!');
         navigate('/home'); // Change this to your desired route after login
       } catch (error) {

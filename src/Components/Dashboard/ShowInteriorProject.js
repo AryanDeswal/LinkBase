@@ -148,7 +148,7 @@ const ShowInteriorProject = () => {
                 <DetailItem label="Project Head" value={editing ? <input type="text" name="projectHead" value={editingProject.projectHead} onChange={handleChange} className="border p-2 rounded" /> : projectData.projectHead} />
                 <DetailItem label="RCC Designer" value={editing ? <input type="text" name="rccDesignerName" value={editingProject.rccDesignerName} onChange={handleChange} className="border p-2 rounded" /> : projectData.rccDesignerName} />
                 <DetailItem label="PAN" value={editing ? <input type="text" name="Pan" value={editingProject.Pan} onChange={handleChange} className="border p-2 rounded" /> : projectData.Pan} />
-                <DetailItem label="Date of Submission" value={editing ? <input type="date" name="date" value={editingProject.date} onChange={handleChange} className="border p-2 rounded" /> : projectData.date} />
+                
               </div>
             </div>
 

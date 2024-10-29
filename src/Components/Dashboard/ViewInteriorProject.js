@@ -13,24 +13,38 @@ const ViewInteriorProject = () => {
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/interior';
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error('Failed to fetch projects');
-        }
-        const data = await response.json();
-        setProjectData(Array.isArray(data.data) ? data.data : []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjects();
   }, [API_URL]);
+
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error('Failed to fetch projects');
+      const data = await response.json();
+      setProjectData(Array.isArray(data.data) ? data.data : []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteProject = async (projectId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this project?');
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/interiors/${projectId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete project');
+      setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
+    } catch (err) {
+      console.error('Error deleting project:', err);
+      setError('Failed to delete project. Please try again.');
+    }
+  };
 
   const renderLoading = () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -44,7 +58,6 @@ const ViewInteriorProject = () => {
     </div>
   );
 
-  // Filter projects by search term
   const filteredProjects = projectData.filter((project) =>
     project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -57,12 +70,11 @@ const ViewInteriorProject = () => {
 
   const handleShowMore = (projectId) => {
     if (projectId) {
-      navigate(`/show/${projectId}`); // Ensure projectId is defined here
+      navigate(`/show/${projectId}`);
     } else {
-      console.error('Project ID is undefined.'); // Log error if ID is missing
+      console.error('Project ID is undefined.');
     }
   };
-  
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -83,26 +95,27 @@ const ViewInteriorProject = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {currentProjects.map((project) => (
-          <ProjectCard 
-            key={project._id} 
-            project={project} 
-            handleShowMore={handleShowMore} 
+          <ProjectCard
+            key={project._id}
+            project={project}
+            handleShowMore={handleShowMore}
+            deleteProject={deleteProject}
           />
         ))}
       </div>
 
       {totalPages > 1 && (
-        <Pagination 
-          currentPage={currentPage} 
-          setCurrentPage={setCurrentPage} 
-          totalPages={totalPages} 
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
         />
       )}
     </div>
   );
 };
 
-const ProjectCard = ({ project, handleShowMore }) => (
+const ProjectCard = ({ project, handleShowMore, deleteProject }) => (
   <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
     <div className="p-6 flex-grow">
       <h3 className="text-lg font-bold mb-4 text-center">Title: {project.title}</h3>
@@ -114,12 +127,18 @@ const ProjectCard = ({ project, handleShowMore }) => (
       </div>
     </div>
 
-    <div className="p-4 border-t flex justify-center">
-      <button 
+    <div className="p-4 border-t flex justify-between">
+      <button
         onClick={() => handleShowMore(project._id)}
-        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
         Show More
+      </button>
+      <button
+        onClick={() => deleteProject(project._id)}
+        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+      >
+        Delete
       </button>
     </div>
   </div>
@@ -127,16 +146,16 @@ const ProjectCard = ({ project, handleShowMore }) => (
 
 const Pagination = ({ currentPage, setCurrentPage, totalPages }) => (
   <div className="flex justify-between items-center mt-6">
-    <button 
-      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
       className={`px-4 py-2 bg-blue-500 text-white rounded ${currentPage === 1 && 'opacity-50 cursor-not-allowed'}`}
       disabled={currentPage === 1}
     >
       Previous
     </button>
     <span>{`Page ${currentPage} of ${totalPages}`}</span>
-    <button 
-      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+    <button
+      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
       className={`px-4 py-2 bg-blue-500 text-white rounded ${currentPage === totalPages && 'opacity-50 cursor-not-allowed'}`}
       disabled={currentPage === totalPages}
     >

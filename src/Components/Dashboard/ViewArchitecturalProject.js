@@ -32,6 +32,21 @@ const ViewArchitecturalProject = () => {
     fetchProjects();
   }, [API_URL]);
 
+  const handleDelete = async (projectId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/architecture/upload/${projectId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
+      } else {
+        console.error('Failed to delete project');
+      }
+    } catch (err) {
+      console.error('Error deleting project:', err);
+    }
+  };
+
   const renderLoading = () => (
     <div className="flex justify-center items-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -57,11 +72,12 @@ const ViewArchitecturalProject = () => {
 
   const handleShowMore = (projectId) => {
     if (projectId) {
-      navigate(`/shows/${projectId}`); // Ensure projectId is defined
+      navigate(`/shows/${projectId}`);
     } else {
-      console.error('Project ID is undefined.'); // Log error if ID is missing
+      console.error('Project ID is undefined.');
     }
   };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center">Architectural Projects</h2>
@@ -86,6 +102,7 @@ const ViewArchitecturalProject = () => {
               key={project._id} 
               project={project} 
               handleShowMore={handleShowMore} 
+              handleDelete={handleDelete} 
             />
           ))
         ) : (
@@ -104,7 +121,7 @@ const ViewArchitecturalProject = () => {
   );
 };
 
-const ProjectCard = ({ project, handleShowMore }) => (
+const ProjectCard = ({ project, handleShowMore, handleDelete }) => (
   <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
     <div className="p-6 flex-grow">
       <h3 className="text-lg font-bold mb-4 text-center">Title: {project.title}</h3>
@@ -116,12 +133,18 @@ const ProjectCard = ({ project, handleShowMore }) => (
       </div>
     </div>
 
-    <div className="p-4 border-t flex justify-center">
+    <div className="p-4 border-t flex justify-around">
       <button 
         onClick={() => handleShowMore(project._id)}
-        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
         Show More
+      </button>
+      <button 
+        onClick={() => handleDelete(project._id)}
+        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
+      >
+        <FaTrash className="mr-2" /> Delete
       </button>
     </div>
   </div>

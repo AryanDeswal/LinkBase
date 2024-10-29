@@ -1,62 +1,67 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [address, setAddress] = useState('');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  // Validate form fields
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^[0-9]{10}$/;
 
-    if (!name) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailPattern.test(email)) {
-      newErrors.email = 'Invalid email address';
-    }
-
-    if (!dob) {
-      newErrors.dob = 'Date of Birth is required';
-    }
-
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = 'Confirm Password is required';
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    if (!address) {
-      newErrors.address = 'Address is required';
-    }
+    if (!name) newErrors.name = 'Name is required';
+    if (!email) newErrors.email = 'Email is required';
+    else if (!emailPattern.test(email)) newErrors.email = 'Invalid email address';
+    if (!dob) newErrors.dob = 'Date of Birth is required';
+    if (!phone) newErrors.phone = 'Phone number is required';
+    else if (!phonePattern.test(phone)) newErrors.phone = 'Invalid phone number';
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
+    if (!confirmPassword) newErrors.confirmPassword = 'Confirm Password is required';
+    else if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (!address) newErrors.address = 'Address is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      // Handle form submission (e.g., send data to an API)
-      console.log('Form submitted:', { name, email, dob, password, address });
-      alert("Form is submitted");
-      setIsSubmitting(false);
+      try {
+        const response = await fetch('http://localhost:8000/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            dob,
+            phone,
+            password,
+            confirmPassword, // Include confirmPassword in the request body
+            address,
+          }),
+        });
+        if (!response.ok) throw new Error('Signup failed');
+        const data = await response.json();
+        alert('Signup successful! Please verify your OTP.');
+        navigate('/otp-verification', { state: { email } });
+      } catch (error) {
+        console.error('Error during signup:', error);
+        setErrors({ api: 'Signup failed. Please try again.' });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -69,85 +74,94 @@ const SignupForm = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md bg-opacity-90"> {/* Adjusted width */}
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md bg-opacity-90">
         <h1 className="text-3xl font-bold mb-6 text-center">Registration</h1>
         <form onSubmit={handleSubmit}>
-          {/* Name Field */}
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
-              id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your name"
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
 
-          {/* Email Field */}
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
-              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your email"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
 
-          {/* DOB Field */}
           <div className="mb-4">
-            <label htmlFor="dob" className="block text-sm font-medium mb-1">Date of Birth</label>
+            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
             <input
               type="date"
-              id="dob"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.dob ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
           </div>
 
-          {/* Password Field */}
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your phone number"
+            />
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your password"
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 
-          {/* Confirm Password Field */}
           <div className="mb-4">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">Confirm Password</label>
+            <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <input
               type="password"
-              id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Confirm your password"
             />
             {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
           </div>
 
-          {/* Address Field */}
           <div className="mb-4">
-            <label htmlFor="address" className="block text-sm font-medium mb-1">Address</label>
-            <textarea
-              id="address"
+            <label className="block text-sm font-medium text-gray-700">Address</label>
+            <input
+              type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className={`w-full p-2 border rounded-md ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your address"
             />
             {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
           </div>
+
+          {/* Add error message for API errors */}
+          {errors.api && <p className="text-red-500 text-sm mt-1">{errors.api}</p>}
 
           <button
             type="submit"

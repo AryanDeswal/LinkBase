@@ -1,47 +1,49 @@
 import { useState } from 'react';
-import {  useNavigate } from 'react-router-dom'; // Make sure you have react-router-dom installed
+import { useNavigate } from 'react-router-dom';
 
-const LoginForm = () => {
+const LoginForm = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(true);
-  const navigate=useNavigate();
-  
-  // Validate email and password
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailPattern.test(email)) {
-      newErrors.email = 'Invalid email address';
-    }
-
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
-    }
+    if (!email) newErrors.email = 'Email is required';
+    else if (!emailPattern.test(email)) newErrors.email = 'Invalid email address';
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      // Handle form submission (e.g., send data to an API)
-      console.log('Form submitted:', { email, password });
-      alert("Form is submitted");
-      setIsSubmitting(false);
+      try {
+        const response = await fetch('http://localhost:8000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        if (!response.ok) throw new Error('Login failed');
+        alert('Login successful!');
+        navigate('/home'); // Change this to your desired route after login
+      } catch (error) {
+        setErrors({ api: 'Login failed. Please try again.' });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
   const handleSignupClick = () => {
-    navigate('/signup'); // Navigate to the signup page
+    navigate('/signup');
   };
 
   return (
@@ -54,7 +56,7 @@ const LoginForm = () => {
       }}
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm bg-opacity-90">
-        <h1 className="text-3xl font-bold mb-6 text-center ">Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
@@ -82,19 +84,16 @@ const LoginForm = () => {
 
           <button
             type="submit"
-            className={`w-full py-2 rounded-md text-white ${
-              isSubmitting ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'
-            }`}
+            className={`w-full py-2 rounded-md text-white ${isSubmitting ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'}`}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Login'}
           </button>
         </form>
 
-        {/* Add the "Don't have an account? Sign up" button */}
         <div className="mt-4 text-center">
           <p className="text-sm">
-            Dont have an account?{' '}
+            Don't have an account?{' '}
             <button
               onClick={handleSignupClick}
               className="text-blue-500 hover:underline focus:outline-none"

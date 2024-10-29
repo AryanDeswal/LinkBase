@@ -1,29 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;
 
-  const handleVerifyOtp = (e) => {
+  useEffect(() => {
+    if (!email) {
+      alert('Email not found. Redirecting to the previous page.');
+      navigate(-1);
+    }
+  }, [email, navigate]);
+
+  const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    
-    // Validate OTP
     if (!otp) {
       setError('OTP is required');
       return;
     }
-    
-    // Send OTP to backend for verification
-    // Assuming `verifyOtp` is an API call
-    console.log(`Verifying OTP for email: ${email}`);
 
-    // Simulate successful OTP verification
-    alert('OTP verified successfully!');
-    navigate('/login'); // Redirect to login page
+    setLoading(true); // Set loading state to true
+
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, verificationCode: otp }), // Send email and OTP
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle errors from the server
+        setError(data.message || 'Verification failed');
+        setLoading(false); // Reset loading state
+        return;
+      }
+
+      alert(data.message); // Show success message
+      navigate('/login'); // Redirect to login page
+    } catch (err) {
+      console.error('Error during OTP verification:', err);
+      setError('An error occurred. Please try again.'); // Set error state
+    } finally {
+      setLoading(false); // Reset loading state
+    }
   };
 
   return (
@@ -44,9 +71,10 @@ const OtpVerification = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600"
+            className={`w-full py-2 rounded-md text-white ${loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
+            disabled={loading} // Disable button while loading
           >
-            Verify OTP
+            {loading ? 'Verifying...' : 'Verify OTP'}
           </button>
         </form>
       </div>

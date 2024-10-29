@@ -22,9 +22,10 @@ const Dashboard = () => {
       case 'viewData':
         return <ViewUsers />; // Render the ViewData component
       case 'viewReport':
-        return <ViewArchitecturalProject />; // Render the ViewReport component
+        return <ViewArchitecturalProject />; 
       case 'seeUsers':
-        return <ViewInteriorProject />; // Render the SeeUsers component
+        return <ViewInteriorProject />; 
+     
       default:
         return <div>Select an option from the sidebar.</div>;
     }
@@ -90,6 +91,7 @@ const Dashboard = () => {
               View Architectural Report
             </button>
           </li>
+         
           <li>
             <button
               className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
@@ -100,12 +102,13 @@ const Dashboard = () => {
               View Interior Report
             </button>
           </li>
+          
         </ul>
       </div>
 
       {/* Content Area */}
       <div className="w-full md:w-3/4 bg-white p-6">
-        <h1 className="text-2xl font-bold mb-4">Content Area</h1>
+       
         <div className="p-4 bg-gray-100 rounded shadow">{renderContent()}</div>
       </div>
     </div>

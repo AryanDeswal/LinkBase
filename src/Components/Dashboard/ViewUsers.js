@@ -13,7 +13,7 @@ const ViewUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:3001/users');
+        const response = await fetch('http://43.205.14.45:3001/users');
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -66,7 +66,7 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`http://localhost:3001/users/${userId}`, {
+        const response = await fetch(`/users/${userId}`, {
           method: 'DELETE',
         });
         if (!response.ok) {

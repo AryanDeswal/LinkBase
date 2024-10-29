@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddInteriorProject = ({ isActive, onClick }) => {
   const [formData, setFormData] = useState({
@@ -10,10 +12,48 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     maheraNo: '',
     projectHead: '',
     rccDesignerName: '',
-    pan: '',
-    aadhar: '',
-    pin: '',
-    email: ''
+    Pan: '',
+    Aadhar: '',
+    Pin: '',
+    email: '',
+    Floor_Plan_1: '',
+    Floor_Plan_2: '',
+    Floor_Plan_3: '',
+    Floor_Plan_4: '',
+    Section_1: '',
+    Section_2: '',
+    Section_3: '',
+    Section_4: '',
+    All_Section: '',
+    Elevation_1: '',
+    Elevation_2: '',
+    Elevation_3: '',
+    Elevation_4: '',
+    All_Elevation: '',
+    ThreeD_Model_1: '',
+    ThreeD_Model_2: '',
+    ThreeD_Model_3: '',
+    Detail_Working_Layout_1: '',
+    Electrical_Layout_1: '',
+    Electrical_Layout_2: '',
+    Electrical_Layout_3: '',
+    Celling_Layout_1: '',
+    Celling_Layout_2: '',
+    Flooring_Details_1: '',
+    Flooring_Details_2: '',
+    PlumbingDetails_1: '',
+    PlumbingDetails_2: '',
+    Furniture_Details_1: '',
+    Furniture_Details_2: '',
+    Furniture_Details_3: '',
+    Furniture_Details_4: '',
+    Furniture_Details_5: '',
+    Laminator_Venner_1: '',
+    Laminator_Venner_2: '',
+    Handles_Hardware_1: '',
+    Handles_Hardware_2: '',
+    Curtains_1: '',
+    Curtains_2: ''
   });
 
   const handleInputChange = (e) => {
@@ -25,14 +65,39 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   };
 
   const handleFileChange = (e) => {
-    // Handle file uploads here
     console.log(`File selected for ${e.target.name}:`, e.target.files[0]);
+    setFormData(prevState => ({
+      ...prevState,
+      [e.target.name]: e.target.files[0]
+    }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission
-    console.log('Form data submitted:', formData);
-    // You can also send this data to your API here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    try {
+      const response = await fetch('http://localhost:8000/api/interior/interiors', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Form data submitted:', data);
+      toast.success('Interior project added successfully!'); // Show success message
+      // Reset form or handle successful submission as needed
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Error submitting form: ' + error.message); // Show error message
+    }
   };
 
   const renderFormInput = (label, name, placeholder) => (
@@ -73,6 +138,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
   return (
     <div className="w-full p-4 bg-white rounded-lg shadow">
+      <ToastContainer /> {/* Add ToastContainer here */}
       <button
         className={`w-full text-left p-2 text-center mb-4 rounded ${
           isActive ? 'bg-blue-600 text-white' : 'bg-gray-100'
@@ -93,87 +159,80 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           {renderFormInput('Mahera No', 'maheraNo', 'Mahera No')}
           {renderFormInput('Project Head', 'projectHead', 'Project Head')}
           {renderFormInput('RCC Designer Name', 'rccDesignerName', 'RCC Designer Name')}
-          {renderFormInput('PAN', 'pan', 'PAN')}
-          {renderFormInput('Aadhar', 'aadhar', 'Aadhar')}
-          {renderFormInput('Pin', 'pin', 'Pin')}
+          {renderFormInput('PAN', 'Pan', 'PAN')}
+          {renderFormInput('Aadhar', 'Aadhar', 'Aadhar')}
+          {renderFormInput('Pin', 'Pin', 'Pin')}
           {renderFormInput('Email', 'email', 'Email')}
         </div>
 
         {/* Floor Plans */}
         {renderSection('Presentation Drawing', [
-          { label: 'Floor Plan 1', name: 'floorPlan1' },
-          { label: 'Floor Plan 2', name: 'floorPlan2' },
-          { label: 'Floor Plan 3', name: 'floorPlan3' },
-          { label: 'Floor Plan 4', name: 'floorPlan4' }
+          { label: 'Floor Plan 1', name: 'Floor_Plan_1' },
+          { label: 'Floor Plan 2', name: 'Floor_Plan_2' },
+          { label: 'Floor Plan 3', name: 'Floor_Plan_3' },
+          { label: 'Floor Plan 4', name: 'Floor_Plan_4' }
         ])}
 
         {/* Sections */}
         {renderSection('Section', [
-          { label: 'Section 1', name: 'section1' },
-          { label: 'Section 2', name: 'section2' },
-          { label: 'Section 3', name: 'section3' },
-          { label: 'Section 4', name: 'section4' },
-          { label: 'All Section', name: 'allSection' }
+          { label: 'Section 1', name: 'Section_1' },
+          { label: 'Section 2', name: 'Section_2' },
+          { label: 'Section 3', name: 'Section_3' },
+          { label: 'Section 4', name: 'Section_4' },
+          { label: 'All Section', name: 'All_Section' }
         ])}
 
         {/* Elevations */}
         {renderSection('Elevations', [
-          { label: 'Elevation 1', name: 'elevation1' },
-          { label: 'Elevation 2', name: 'elevation2' },
-          { label: 'Elevation 3', name: 'elevation3' },
-          { label: 'Elevation 4', name: 'elevation4' },
-          { label: 'All Elevation', name: 'allElevation' }
+          { label: 'Elevation 1', name: 'Elevation_1' },
+          { label: 'Elevation 2', name: 'Elevation_2' },
+          { label: 'Elevation 3', name: 'Elevation_3' },
+          { label: 'Elevation 4', name: 'Elevation_4' },
+          { label: 'All Elevation', name: 'All_Elevation' }
         ])}
 
         {/* 3D Models */}
         {renderSection('3D Model', [
-          { label: 'ThreeD Model1', name: 'threeDModel1' },
-          { label: 'ThreeD Model2', name: 'threeDModel2' },
-          { label: 'ThreeD Model3', name: 'threeDModel3' }
+          { label: 'ThreeD Model 1', name: 'ThreeD_Model_1' },
+          { label: 'ThreeD Model 2', name: 'ThreeD_Model_2' },
+          { label: 'ThreeD Model 3', name: 'ThreeD_Model_3' }
         ])}
 
         {/* Working Drawings */}
         {renderSection('Detail Working Drawings', [
-          { label: 'Electric Layout 1', name: 'electricLayout1' },
-          { label: 'Electric Layout 2', name: 'electricLayout2' },
-          { label: 'Electric Layout 3', name: 'electricLayout3' },
-          { label: 'Ceiling Layout 1', name: 'ceilingLayout1' },
-          { label: 'Ceiling Layout 2', name: 'ceilingLayout2' },
-          { label: 'Ceiling Layout 3', name: 'ceilingLayout3' },
-          { label: 'Ceiling Layout 4', name: 'ceilingLayout4' },
-          { label: 'Plumbing Detail 1', name: 'plumbingDetail1' },
-          { label: 'Plumbing Detail 2', name: 'plumbingDetail2' },
-          { label: 'Flooring Details 1', name: 'flooringDetails1' },
-          { label: 'Flooring Details 2', name: 'flooringDetails2' },
-          { label: 'Flooring Details 3', name: 'flooringDetails3' },
-          { label: 'Flooring Details 4', name: 'flooringDetails4' },
-          { label: 'Flooring Details 5', name: 'flooringDetails5' }
+          { label: 'Electrical Layout 1', name: 'Electrical_Layout_1' },
+          { label: 'Electrical Layout 2', name: 'Electrical_Layout_2' },
+          { label: 'Electrical Layout 3', name: 'Electrical_Layout_3' },
+          { label: 'Celling Layout 1', name: 'Celling_Layout_1' },
+          { label: 'Celling Layout 2', name: 'Celling_Layout_2' },
+          { label: 'Flooring Details 1', name: 'Flooring_Details_1' },
+          { label: 'Flooring Details 2', name: 'Flooring_Details_2' },
+          { label: 'Plumbing Details 1', name: 'PlumbingDetails_1' },
+          { label: 'Plumbing Details 2', name: 'PlumbingDetails_2' }
         ])}
 
-        {/* Selection Details */}
-        {renderSection('Selection Details', [
-          { label: 'Laminator Venner 1', name: 'laminatorVenner1' },
-          { label: 'Laminator Venner 2', name: 'laminatorVenner2' },
-          { label: 'Handles Hardware 1', name: 'handlesHardware1' },
-          { label: 'Handles Hardware 2', name: 'handlesHardware2' },
-          { label: 'Curtain 1', name: 'curtain1' },
-          { label: 'Curtain 2', name: 'curtain2' },
-          { label: 'Flooring Detail 2', name: 'flooringDetail2' },
-          { label: 'Flooring Details 2', name: 'flooringDetails2' },
-          { label: 'Flooring Details 3', name: 'flooringDetails3' },
-          { label: 'Plumbing Details 1', name: 'plumbingDetails1' },
-          { label: 'Plumbing Details 2', name: 'plumbingDetails2' },
-          { label: 'Plumbing Details 3', name: 'plumbingDetails3' }
+        {/* Furniture Details */}
+        {renderSection('Furniture Details', [
+          { label: 'Furniture Detail 1', name: 'Furniture_Details_1' },
+          { label: 'Furniture Detail 2', name: 'Furniture_Details_2' },
+          { label: 'Furniture Detail 3', name: 'Furniture_Details_3' },
+          { label: 'Furniture Detail 4', name: 'Furniture_Details_4' },
+          { label: 'Furniture Detail 5', name: 'Furniture_Details_5' }
         ])}
 
-        <div className="flex justify-end pt-6">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Submit Project
-          </button>
-        </div>
+        {/* Laminator, Handles and Curtains */}
+        {renderSection('Laminator, Handles and Curtains', [
+          { label: 'Laminator/Venner 1', name: 'Laminator_Venner_1' },
+          { label: 'Laminator/Venner 2', name: 'Laminator_Venner_2' },
+          { label: 'Handles/Hardware 1', name: 'Handles_Hardware_1' },
+          { label: 'Handles/Hardware 2', name: 'Handles_Hardware_2' },
+          { label: 'Curtains 1', name: 'Curtains_1' },
+          { label: 'Curtains 2', name: 'Curtains_2' }
+        ])}
+
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
+          Submit
+        </button>
       </form>
     </div>
   );

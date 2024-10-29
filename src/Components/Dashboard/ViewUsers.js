@@ -74,11 +74,7 @@ const ViewUsers = () => {
     setCurrentPage(newPage);
   };
 
-  // Handle Edit User
-  const handleEdit = (userId) => {
-    // Redirect or open modal to edit the user by ID
-    console.log('Edit user with ID:', userId);
-  };
+ 
 
   const logoutHandler = () =>{
     window.localStorage.setItem('authorization','')
@@ -88,7 +84,7 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`/users/${userId}`, {
+        const response = await fetch(`http://65.0.131.253:8000/api/auth/users/${userId}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
@@ -160,9 +156,6 @@ const ViewUsers = () => {
                 {/* Edit and Delete Icons */}
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end space-x-4">
-                    <button onClick={() => handleEdit(user._id)} className="text-blue-500 hover:text-blue-700">
-                      <FaEdit size={20} />
-                    </button>
                     <button onClick={() => handleDelete(user._id)} className="text-red-500 hover:text-red-700">
                       <FaTrashAlt size={20} />
                     </button>

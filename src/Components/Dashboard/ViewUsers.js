@@ -20,7 +20,7 @@ const ViewUsers = () => {
           throw new Error('No authorization token found');
         }
         
-        const response = await fetch('http://65.0.131.253:8000/api/auth/users', {
+        const response = await fetch('https://projectassociate-1.onrender.com/api/auth/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`http://65.0.131.253:8000/api/auth/users/${userId}`, {
+        const response = await fetch(`https://projectassociate-1.onrender.com/api/auth/users/${userId}`, {
           method: 'DELETE', headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`

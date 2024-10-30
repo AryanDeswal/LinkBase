@@ -43,6 +43,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
         });
         if (!response.ok) throw new Error('Login failed');
         const data = await response.json()
+        console.log(data)
         window.localStorage.setItem("authorization",data.token)
         alert('Login successful!');
         navigate('/home'); // Change this to your desired route after login

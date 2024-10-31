@@ -12,7 +12,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     maheraNo: '',
     projectHead: '',
     rccDesignerName: '',
-    Pan: '',
+    PAN: '',
     Aadhar: '',
     Pin: '',
     email: '',
@@ -58,9 +58,32 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
   const [loading, setLoading] = useState(false);
   const [filePreviews, setFilePreviews] = useState({});
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let newErrors = { ...errors };
+
+    if (name === 'email') {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(value)) {
+        newErrors.email = 'Invalid email format';
+      } else {
+        delete newErrors.email;
+      }
+    }
+
+    if (name === 'PAN' && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(value)) {
+      newErrors.PAN = 'PAN must be 10 characters (5 letters, 4 digits, 1 letter).';
+    } else if (name === 'Aadhar' && !/^\d{12}$/.test(value)) {
+      newErrors.Aadhar = 'Aadhar must be exactly 12 digits.';
+    } else if (name === 'Pin' && !/^\d{6}$/.test(value)) {
+      newErrors.Pin = 'Pin must be exactly 6 digits.';
+    } else {
+      delete newErrors[name];
+    }
+    
+    setErrors(newErrors);
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -70,13 +93,12 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     const file = files[0];
-    
-    // Preview the file
+
     const reader = new FileReader();
     reader.onload = () => {
       setFilePreviews(prevState => ({
         ...prevState,
-        [name]: reader.result // Store the preview URL
+        [name]: reader.result
       }));
     };
     reader.readAsDataURL(file);
@@ -89,7 +111,13 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true while submitting
+    setLoading(true);
+
+    if (Object.keys(errors).length > 0) {
+      toast.error('Please fix the errors before submitting.');
+      setLoading(false);
+      return;
+    }
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -108,13 +136,12 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
       const data = await response.json();
       console.log('Form data submitted:', data);
-      toast.success('Interior project added successfully!'); // Show success message
-      // Reset form or handle successful submission as needed
+      toast.success('Interior project added successfully!');
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('Error submitting form: ' + error.message); // Show error message
+      toast.error('Error submitting form: ' + error.message);
     } finally {
-      setLoading(false); // Set loading to false after submission
+      setLoading(false);
     }
   };
 
@@ -129,6 +156,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
         placeholder={placeholder}
       />
+      {errors[name] && <p className="text-red-600 text-sm">{errors[name]}</p>}
     </div>
   );
 
@@ -158,7 +186,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
   return (
     <div className="w-full p-4 bg-white rounded-lg shadow">
-      <ToastContainer /> {/* Add ToastContainer here */}
+      <ToastContainer />
       <button
         className={`w-full text-left p-2 text-center mb-4 rounded ${
           isActive ? 'bg-blue-600 text-white' : 'bg-gray-100'
@@ -169,7 +197,6 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       </button>
 
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Basic Information */}
         <div className="grid grid-cols-2 gap-4">
           {renderFormInput('Title', 'title', 'Project Title')}
           {renderFormInput('Client Name', 'clientName', 'Client Name')}
@@ -179,13 +206,12 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           {renderFormInput('Mahera No', 'maheraNo', 'Mahera No')}
           {renderFormInput('Project Head', 'projectHead', 'Project Head')}
           {renderFormInput('RCC Designer Name', 'rccDesignerName', 'RCC Designer Name')}
-          {renderFormInput('PAN', 'Pan', 'PAN')}
-          {renderFormInput('Aadhar', 'Aadhar', 'Aadhar')}
-          {renderFormInput('Pin', 'Pin', 'Pin')}
-          {renderFormInput('Email', 'email', 'Email')}
+          {renderFormInput('PAN', 'PAN', 'PAN')}
+          {renderFormInput('Aadhar', 'Aadhar', 'Enter 12-digit Aadhar')}
+          {renderFormInput('Pin', 'Pin', 'Enter 6-digit Pin')}
+          {renderFormInput('Email', 'email', 'Enter your email')}
         </div>
 
-        {/* Floor Plans */}
         {renderSection('Presentation Drawing', [
           { label: 'Floor Plan 1', name: 'Floor_Plan_1' },
           { label: 'Floor Plan 2', name: 'Floor_Plan_2' },
@@ -193,70 +219,14 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           { label: 'Floor Plan 4', name: 'Floor_Plan_4' }
         ])}
 
-        {/* Sections */}
-        {renderSection('Section', [
-          { label: 'Section 1', name: 'Section_1' },
-          { label: 'Section 2', name: 'Section_2' },
-          { label: 'Section 3', name: 'Section_3' },
-          { label: 'Section 4', name: 'Section_4' },
-          { label: 'All Section', name: 'All_Section' }
-        ])}
-
-        {/* Elevations */}
-        {renderSection('Elevations', [
-          { label: 'Elevation 1', name: 'Elevation_1' },
-          { label: 'Elevation 2', name: 'Elevation_2' },
-          { label: 'Elevation 3', name: 'Elevation_3' },
-          { label: 'Elevation 4', name: 'Elevation_4' },
-          { label: 'All Elevation', name: 'All_Elevation' }
-        ])}
-
-        {/* 3D Models */}
-        {renderSection('3D Model', [
-          { label: 'ThreeD Model 1', name: 'ThreeD_Model_1' },
-          { label: 'ThreeD Model 2', name: 'ThreeD_Model_2' },
-          { label: 'ThreeD Model 3', name: 'ThreeD_Model_3' }
-        ])}
-
-        {/* Working Drawings */}
-        {renderSection('Detail Working Drawings', [
-          { label: 'Electrical Layout 1', name: 'Electrical_Layout_1' },
-          { label: 'Electrical Layout 2', name: 'Electrical_Layout_2' },
-          { label: 'Electrical Layout 3', name: 'Electrical_Layout_3' },
-          { label: 'Celling Layout 1', name: 'Celling_Layout_1' },
-          { label: 'Celling Layout 2', name: 'Celling_Layout_2' }
-        ])}
-
-        {/* Flooring & Plumbing */}
-        {renderSection('Flooring and Plumbing', [
-          { label: 'Flooring Details 1', name: 'Flooring_Details_1' },
-          { label: 'Flooring Details 2', name: 'Flooring_Details_2' },
-          { label: 'Plumbing Details 1', name: 'PlumbingDetails_1' },
-          { label: 'Plumbing Details 2', name: 'PlumbingDetails_2' }
-        ])}
-
-        {/* Furniture & Lamination */}
-        {renderSection('Furniture and Lamination', [
-          { label: 'Furniture Details 1', name: 'Furniture_Details_1' },
-          { label: 'Furniture Details 2', name: 'Furniture_Details_2' },
-          { label: 'Furniture Details 3', name: 'Furniture_Details_3' },
-          { label: 'Furniture Details 4', name: 'Furniture_Details_4' },
-          { label: 'Furniture Details 5', name: 'Furniture_Details_5' },
-          { label: 'Laminator Venner 1', name: 'Laminator_Venner_1' },
-          { label: 'Laminator Venner 2', name: 'Laminator_Venner_2' },
-          { label: 'Handles Hardware 1', name: 'Handles_Hardware_1' },
-          { label: 'Handles Hardware 2', name: 'Handles_Hardware_2' },
-          { label: 'Curtains 1', name: 'Curtains_1' },
-          { label: 'Curtains 2', name: 'Curtains_2' }
-        ])}
-
-        {/* Submit Button */}
         <button
           type="submit"
+          className={`w-full p-2 bg-blue-600 text-white rounded ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
           disabled={loading}
-          className={`w-full p-2 text-white rounded ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} transition duration-200`}
         >
-          {loading ? 'Submitting...' : 'Add Project'}
+          {loading ? 'Submitting...' : 'Submit'}
         </button>
       </form>
     </div>

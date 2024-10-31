@@ -56,6 +56,9 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     Curtains_2: ''
   });
 
+  const [loading, setLoading] = useState(false);
+  const [filePreviews, setFilePreviews] = useState({});
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -65,15 +68,28 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   };
 
   const handleFileChange = (e) => {
-    console.log(`File selected for ${e.target.name}:`, e.target.files[0]);
+    const { name, files } = e.target;
+    const file = files[0];
+    
+    // Preview the file
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFilePreviews(prevState => ({
+        ...prevState,
+        [name]: reader.result // Store the preview URL
+      }));
+    };
+    reader.readAsDataURL(file);
+
     setFormData(prevState => ({
       ...prevState,
-      [e.target.name]: e.target.files[0]
+      [name]: file
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true while submitting
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -97,6 +113,8 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error('Error submitting form: ' + error.message); // Show error message
+    } finally {
+      setLoading(false); // Set loading to false after submission
     }
   };
 
@@ -121,9 +139,11 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         type="file"
         name={name}
         onChange={handleFileChange}
-        accept="image/*"
         className="w-full p-2 border border-gray-300 rounded"
       />
+      {filePreviews[name] && (
+        <img src={filePreviews[name]} alt={`${name} preview`} className="mt-2 w-full h-auto border" />
+      )}
     </div>
   );
 
@@ -204,34 +224,39 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           { label: 'Electrical Layout 2', name: 'Electrical_Layout_2' },
           { label: 'Electrical Layout 3', name: 'Electrical_Layout_3' },
           { label: 'Celling Layout 1', name: 'Celling_Layout_1' },
-          { label: 'Celling Layout 2', name: 'Celling_Layout_2' },
+          { label: 'Celling Layout 2', name: 'Celling_Layout_2' }
+        ])}
+
+        {/* Flooring & Plumbing */}
+        {renderSection('Flooring and Plumbing', [
           { label: 'Flooring Details 1', name: 'Flooring_Details_1' },
           { label: 'Flooring Details 2', name: 'Flooring_Details_2' },
           { label: 'Plumbing Details 1', name: 'PlumbingDetails_1' },
           { label: 'Plumbing Details 2', name: 'PlumbingDetails_2' }
         ])}
 
-        {/* Furniture Details */}
-        {renderSection('Furniture Details', [
-          { label: 'Furniture Detail 1', name: 'Furniture_Details_1' },
-          { label: 'Furniture Detail 2', name: 'Furniture_Details_2' },
-          { label: 'Furniture Detail 3', name: 'Furniture_Details_3' },
-          { label: 'Furniture Detail 4', name: 'Furniture_Details_4' },
-          { label: 'Furniture Detail 5', name: 'Furniture_Details_5' }
-        ])}
-
-        {/* Laminator, Handles and Curtains */}
-        {renderSection('Laminator, Handles and Curtains', [
-          { label: 'Laminator/Venner 1', name: 'Laminator_Venner_1' },
-          { label: 'Laminator/Venner 2', name: 'Laminator_Venner_2' },
-          { label: 'Handles/Hardware 1', name: 'Handles_Hardware_1' },
-          { label: 'Handles/Hardware 2', name: 'Handles_Hardware_2' },
+        {/* Furniture & Lamination */}
+        {renderSection('Furniture and Lamination', [
+          { label: 'Furniture Details 1', name: 'Furniture_Details_1' },
+          { label: 'Furniture Details 2', name: 'Furniture_Details_2' },
+          { label: 'Furniture Details 3', name: 'Furniture_Details_3' },
+          { label: 'Furniture Details 4', name: 'Furniture_Details_4' },
+          { label: 'Furniture Details 5', name: 'Furniture_Details_5' },
+          { label: 'Laminator Venner 1', name: 'Laminator_Venner_1' },
+          { label: 'Laminator Venner 2', name: 'Laminator_Venner_2' },
+          { label: 'Handles Hardware 1', name: 'Handles_Hardware_1' },
+          { label: 'Handles Hardware 2', name: 'Handles_Hardware_2' },
           { label: 'Curtains 1', name: 'Curtains_1' },
           { label: 'Curtains 2', name: 'Curtains_2' }
         ])}
 
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
-          Submit
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full p-2 text-white rounded ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} transition duration-200`}
+        >
+          {loading ? 'Submitting...' : 'Add Project'}
         </button>
       </form>
     </div>

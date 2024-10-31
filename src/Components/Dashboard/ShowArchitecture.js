@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ShowArchitecture = () => {
   const { projectId } = useParams();
   const [projectData, setProjectData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false); // State for editing
-  const [editingProject, setEditingProject] = useState({}); // State for editing project
-  const [imageFiles, setImageFiles] = useState({}); // State for image files
+  const [editing, setEditing] = useState(false);
+  const [editingProject, setEditingProject] = useState({});
+  const [imageFiles, setImageFiles] = useState({});
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -20,7 +20,7 @@ const ShowArchitecture = () => {
         }
         const data = await response.json();
         setProjectData(data.data);
-        setEditingProject(data.data); // Initialize editing project data
+        setEditingProject(data.data);
       } catch (error) {
         console.error('Error fetching project data:', error);
       } finally {
@@ -46,12 +46,10 @@ const ShowArchitecture = () => {
   const handleUpdate = async () => {
     const formData = new FormData();
     
-    // Append all fields to FormData
     Object.keys(editingProject).forEach((key) => {
       formData.append(key, editingProject[key]);
     });
   
-    // Append image files to FormData
     Object.keys(imageFiles).forEach((key) => {
       if (imageFiles[key]) {
         formData.append(key, imageFiles[key]);
@@ -67,27 +65,40 @@ const ShowArchitecture = () => {
         throw new Error('Failed to update project data');
       }
       const data = await response.json();
-  
-      // Update project data in the state with the new data, including new image URLs
       setProjectData((prev) => ({
         ...prev,
-        ...data.data, // Merge existing project data with updated data from API
+        ...data.data,
       }));
-  
-      // Also update the editingProject to reflect the changes
       setEditingProject((prev) => ({
         ...prev,
-        ...data.data, // Update editing project state
+        ...data.data,
       }));
   
-      toast.success('Project updated successfully!'); // Show success notification
-      setEditing(false); // Exit edit mode after updating
+      toast.success('Project updated successfully!');
+      setEditing(false);
     } catch (error) {
       console.error('Error updating project data:', error);
-      toast.error('Failed to update project. Please try again.'); // Show error notification
+      toast.error('Failed to update project. Please try again.');
     }
   };
-  
+
+  const handleViewDetails = (url) => {
+    window.open(url, '_blank');
+  };
+
+  // Function to handle sharing
+  const handleShare = (url, name) => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Check out this ${name}`,
+        url,
+      })
+      .then(() => console.log('Successfully shared'))
+      .catch((error) => console.error('Error sharing', error));
+    } else {
+      toast.error('Share feature not supported on this browser.');
+    }
+  };
 
   const imagesWithNames = [
     { name: 'Presentation Drawing 1', key: 'Presentation_Drawing_1', url: editingProject.Presentation_Drawing_1 },
@@ -118,12 +129,11 @@ const ShowArchitecture = () => {
     { name: 'Sanction Drawing', key: 'SanctionDrawing', url: editingProject.SanctionDrawing },
     { name: 'Revise Sanction Drawing', key: 'Revise_Sanction', url: editingProject.Revise_Sanction },
     { name: 'Completion Letter', key: 'Completion_Letter', url: editingProject.Completion_Letter },
-];
-
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ToastContainer /> {/* Include ToastContainer to render notifications */}
+      <ToastContainer />
       <div className="container mx-auto px-4 py-8">
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -145,77 +155,65 @@ const ShowArchitecture = () => {
               </p>
             </div>
 
-            {/* Project Details Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Project Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <DetailItem label="Client" value={editing ? <input type="text" name="clientName" value={editingProject.clientName} onChange={handleChange} className="border p-2 rounded" /> : projectData.clientName} />
-                <DetailItem label="Project Type" value={editing ? <input type="text" name="projectType" value={editingProject.projectType} onChange={handleChange} className="border p-2 rounded" /> : projectData.projectType} />
-                <DetailItem label="Location" value={editing ? <input type="text" name="siteAddress" value={editingProject.siteAddress} onChange={handleChange} className="border p-2 rounded" /> : projectData.siteAddress} />
-                <DetailItem label="GST No" value={editing ? <input type="text" name="gstNo" value={editingProject.gstNo} onChange={handleChange} className="border p-2 rounded" /> : projectData.gstNo} />
-                <DetailItem label="Project Head" value={editing ? <input type="text" name="projectHead" value={editingProject.projectHead} onChange={handleChange} className="border p-2 rounded" /> : projectData.projectHead} />
-                <DetailItem label="RCC Designer" value={editing ? <input type="text" name="rccDesignerName" value={editingProject.rccDesignerName} onChange={handleChange} className="border p-2 rounded" /> : projectData.rccDesignerName} />
-                <DetailItem label="PAN" value={editing ? <input type="text" name="Pan" value={editingProject.Pan} onChange={handleChange} className="border p-2 rounded" /> : projectData.Pan} />
-                <DetailItem label="Date of Submission" value={editing ? <input type="date" name="date" value={editingProject.date} onChange={handleChange} className="border p-2 rounded" /> : projectData.date} />
-              </div>
-            </div>
-
             {/* Image Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Images</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {imagesWithNames.map((image, index) => (
-                  <div key={index} className="bg-gray-100 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{image.name}</h3>
-                    {image.url ? (
-                      <img src={image.url} alt={image.name} className="w-full h-48 object-cover" />
-                    ) : (
-                      <p className="text-gray-500">No image available</p>
-                    )}
-                    {editing && (
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, image.key)}
-                        className="mt-2"
-                      />
-                    )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {imagesWithNames.map(({ name, key, url }) => (
+                  <div key={key} className="border rounded overflow-hidden shadow-lg">
+                    <img src={url} alt={name} className="w-full h-48 object-cover" />
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold">{name}</h3>
+                      <button
+                        onClick={() => handleViewDetails(url)}
+                        className="mt-2 text-blue-500 hover:underline"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleShare(url, name)}
+                        className="ml-4 mt-2 bg-blue-600 text-white px-3 py-1 rounded"
+                      >
+                        Share
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Edit and Update Button */}
-            <div className="flex justify-end space-x-4">
-              {editing ? (
+            {/* Update and Edit Buttons */}
+            <div className="flex justify-center mt-8 space-x-4">
+              {!editing && (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="bg-blue-600 text-white px-6 py-2 rounded"
+                >
+                  Edit
+                </button>
+              )}
+              {editing && (
                 <>
-                  <button onClick={handleUpdate} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                  <button
+                    onClick={handleUpdate}
+                    className="bg-green-600 text-white px-6 py-2 rounded"
+                  >
                     Update
                   </button>
-                  <button onClick={() => setEditing(false)} className="px-4 py-2 bg-gray-300 text-black rounded-lg">
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="bg-red-600 text-white px-6 py-2 rounded"
+                  >
                     Cancel
                   </button>
                 </>
-              ) : (
-                <button onClick={() => setEditing(true)} className="px-4 py-2 bg-yellow-500 text-white rounded-lg">
-                  Edit
-                </button>
               )}
             </div>
           </div>
         ) : (
-          <p className="text-gray-500">Project not found.</p>
+          <p>No project data found.</p>
         )}
       </div>
-    </div>
-  );
-};
-
-const DetailItem = ({ label, value }) => {
-  return (
-    <div>
-      <h3 className="text-sm font-medium text-gray-700">{label}</h3>
-      <p className="text-gray-900">{value}</p>
     </div>
   );
 };

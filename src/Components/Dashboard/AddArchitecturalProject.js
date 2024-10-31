@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify'; // Import toast and ToastContainer
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AddArchitecturalProject = ({ isActive, onClick }) => {
@@ -46,43 +46,62 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     Completion_Letter: null
   });
 
-  const [imagePreviews, setImagePreviews] = useState({});
+  const [filePreviews, setFilePreviews] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData(prevState => ({
+      ...prevState,
       [name]: value
     }));
   };
 
   const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files[0]
+    const file = e.target.files[0];
+    const { name } = e.target;
+
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: file
     }));
 
-    if (files[0]) {
-      const fileURL = URL.createObjectURL(files[0]);
-      setImagePreviews((prevPreviews) => ({
-        ...prevPreviews,
-        [name]: fileURL
-      }));
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        // For images, create an object URL for preview
+        setFilePreviews(prevPreviews => ({
+          ...prevPreviews,
+          [name]: URL.createObjectURL(file)
+        }));
+      } else if (file.type === 'application/pdf') {
+        // For PDFs, show a placeholder icon or text
+        setFilePreviews(prevPreviews => ({
+          ...prevPreviews,
+          [name]: 'PDF Preview Available'
+        }));
+      } else {
+        // For other file types, you can add placeholder text or icons
+        setFilePreviews(prevPreviews => ({
+          ...prevPreviews,
+          [name]: 'File uploaded'
+        }));
+      }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const formBody = new FormData();
-      Object.keys(formData).forEach(key => {
-        formBody.append(key, formData[key]);
-      });
+    setIsSubmitting(true); // Disable the button when submitting
 
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    try {
       const response = await fetch('https://projectassociate-1.onrender.com/api/architecture/upload', {
         method: 'POST',
-        body: formBody
+        body: formDataToSend
       });
 
       if (!response.ok) {
@@ -90,191 +109,134 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       }
 
       const data = await response.json();
-      console.log('Success:', data);
-      toast.success('Architectural project added successfully!'); // Display success message
-
-      // Reset the form
-      setFormData({
-        title: '',
-        clientName: '',
-        projectType: '',
-        siteAddress: '',
-        gstNo: '',
-        mahareraNo: '',
-        projectHead: '',
-        rccDesignerName: '',
-        pan: '',
-        aadhar: '',
-        pin: '',
-        email: '',
-        Presentation_Drawing_1: null,
-        Presentation_Drawing_2: null,
-        Presentation_Drawing_3: null,
-        File_Model_3D_1: null,
-        File_Model_3D_2: null,
-        File_Model_3D_3: null,
-        Submission_Drawing: null,
-        All_Floor_Plan: null,
-        All_Section: null,
-        All_Elevation: null,
-        toilet: null,
-        All_Electric_Drawing: null,
-        tile_Layout: null,
-        All_Grills_And_Railing: null,
-        Column_Footing: null,
-        Pleanth_Beam: null,
-        Stair_Case_Drawing: null,
-        Slab_1: null,
-        Slab_2: null,
-        Slab_3: null,
-        Slab_4: null,
-        Slab_5: null,
-        Property_Card: null,
-        Property_Map: null,
-        Completion_Drawing: null,
-        SanctionDrawing: null,
-        Revise_Sanction: null,
-        Completion_Letter: null
-      });
-      setImagePreviews({});
+      toast.success('Architectcur project added successfully!');
+      // Optionally reset the form here if needed
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to add project. Please try again.'); // Display error message
+      toast.error('Error submitting form: ' + error.message);
+    } finally {
+      setIsSubmitting(false); // Re-enable the button after submission
     }
   };
 
-  const FormField = ({ label, name, type = 'text', accept, placeholder }) => (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
+  const renderFormInput = (label, name, placeholder) => (
+    <div className="col-span-1">
+      <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
       <input
-        type={type}
+        type="text"
         name={name}
-        accept={accept}
-        value={type === 'file' ? undefined : formData[name]}
+        value={formData[name]}
+        onChange={handleInputChange}
+        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
         placeholder={placeholder}
-        onChange={type === 'file' ? handleFileChange : handleInputChange}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
-      {imagePreviews[name] && (
-        <img src={imagePreviews[name]} alt={label} className="mt-2 h-32 object-cover rounded-md" />
+    </div>
+  );
+
+  const renderFileInput = (label, name) => (
+    <div className="col-span-1">
+      <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
+      <input
+        type="file"
+        name={name}
+        onChange={handleFileChange}
+        accept="*/*" // Accept any file type
+        className="w-full p-2 border border-gray-300 rounded"
+      />
+      {filePreviews[name] && (
+        <div className="mt-2">
+          {filePreviews[name].startsWith('blob') ? (
+            <img src={filePreviews[name]} alt={label} className="max-w-full h-auto" />
+          ) : (
+            <span className="text-sm text-gray-500">{filePreviews[name]}</span>
+          )}
+        </div>
       )}
     </div>
   );
 
-  const FileUploadSection = ({ title, fields }) => (
-    <div className="mt-6">
-      <h2 className="text-xl font-bold text-center py-6 uppercase text-gray-800">
-        {title}
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fields.map((field, index) => (
-          <FormField
-            key={index}
-            label={field.label}
-            name={field.name}
-            type="file"
-            accept="image/*"
-          />
-        ))}
+  const renderSection = (title, fields) => (
+    <>
+      <h2 className="text-center pt-5 pb-4 font-bold uppercase">{title}</h2>
+      <div className="grid grid-cols-3 gap-4">
+        {fields.map((field, index) => renderFileInput(field.label, field.name))}
       </div>
-    </div>
+    </>
   );
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-7xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="p-4">
-        <button
-          type="button"
-          className={`w-full py-3 px-4 rounded-md transition-colors ${
-            isActive 
-              ? 'bg-blue-600 text-white hover:bg-blue-700' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-          onClick={onClick}
-        >
-          Add Architectural Project
-        </button>
-      </div>
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'Title', name: 'title' },
-            { label: 'Client Name', name: 'clientName' },
-            { label: 'Project Type', name: 'projectType' },
-            { label: 'Site Address', name: 'siteAddress' },
-            { label: 'GST No', name: 'gstNo' },
-            { label: 'Maharera No', name: 'mahareraNo' },
-            { label: 'Project Head', name: 'projectHead' },
-            { label: 'RCC Designer Name', name: 'rccDesignerName' },
-            { label: 'PAN', name: 'pan' },
-            { label: 'Aadhar', name: 'aadhar' },
-            { label: 'Pin', name: 'pin' },
-            { label: 'Email', name: 'email' }
-          ].map((field, index) => (
-            <FormField 
-              key={index} 
-              label={field.label} 
-              name={field.name}
-              placeholder={`Enter ${field.label}`} 
-            />
-          ))}
+    <div className="w-full p-4 bg-white rounded-lg shadow">
+      <ToastContainer />
+      <button
+        className={`w-full text-left p-2 text-center mb-4 rounded ${
+          isActive ? 'bg-blue-600 text-white' : 'bg-gray-100'
+        }`}
+        onClick={onClick}
+      >
+        Add Architectural Project
+      </button>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Basic Information */}
+        <div className="grid grid-cols-2 gap-4">
+          {renderFormInput('Title', 'title', 'Project Title')}
+          {renderFormInput('Client Name', 'clientName', 'Client Name')}
+          {renderFormInput('Project Type', 'projectType', 'Project Type')}
+          {renderFormInput('Site Address', 'siteAddress', 'Site Address')}
+          {renderFormInput('GST No', 'gstNo', 'GST No')}
+          {renderFormInput('Mahera No', 'maheraNo', 'Mahera No')}
+          {renderFormInput('Project Head', 'projectHead', 'Project Head')}
+          {renderFormInput('RCC Designer Name', 'rccDesignerName', 'RCC Designer Name')}
+          {renderFormInput('PAN', 'Pan', 'PAN')}
+          {renderFormInput('Aadhar', 'Aadhar', 'Aadhar')}
+          {renderFormInput('Pin', 'Pin', 'Pin')}
+          {renderFormInput('Email', 'email', 'Email')}
         </div>
-        <FileUploadSection
-          title="Presentation"
-          fields={[
-            { label: 'Presentation Drawing 1', name: 'Presentation_Drawing_1' },
-            { label: 'Presentation Drawing 2', name: 'Presentation_Drawing_2' },
-            { label: 'Presentation Drawing 3', name: 'Presentation_Drawing_3' }
-          ]}
-        />
-        <FileUploadSection
-          title="3D Model"
-          fields={[
-            { label: 'File Model 3D 1', name: 'File_Model_3D_1' },
-            { label: 'File Model 3D 2', name: 'File_Model_3D_2' },
-            { label: 'File Model 3D 3', name: 'File_Model_3D_3' }
-          ]}
-        />
-        <FileUploadSection
-          title="Working Drawing"
-          fields={[
-            { label: 'Submission Drawing', name: 'Submission_Drawing' },
-            { label: 'All Floor Plan', name: 'All_Floor_Plan' },
-            { label: 'All Section', name: 'All_Section' },
-            { label: 'All Elevation', name: 'All_Elevation' },
-            { label: 'Toilet', name: 'toilet' },
-            { label: 'All Electric Drawing', name: 'All_Electric_Drawing' },
-            { label: 'Tile Layout', name: 'tile_Layout' },
-            { label: 'All Grills And Railing', name: 'All_Grills_And_Railing' },
-            { label: 'Column Footing', name: 'Column_Footing' },
-            { label: 'Pleanth Beam', name: 'Pleanth_Beam' },
-            { label: 'Stair Case Drawing', name: 'Stair_Case_Drawing' },
-            { label: 'Slab 1', name: 'Slab_1' },
-            { label: 'Slab 2', name: 'Slab_2' },
-            { label: 'Slab 3', name: 'Slab_3' },
-            { label: 'Slab 4', name: 'Slab_4' },
-            { label: 'Slab 5', name: 'Slab_5' },
-            { label: 'Property Card', name: 'Property_Card' },
-            { label: 'Property Map', name: 'Property_Map' },
-            { label: 'Completion Drawing', name: 'Completion_Drawing' },
-            { label: 'Sanction Drawing', name: 'SanctionDrawing' },
-            { label: 'Revise Sanction', name: 'Revise_Sanction' },
-            { label: 'Completion Letter', name: 'Completion_Letter' }
-          ]}
-        />
-      </div>
-      <div className="p-4">
+
+        {renderSection('Presentation Drawing', [
+          { label: 'Presentation Drawing 1', name: 'Presentation_Drawing_1' },
+          { label: 'Presentation Drawing 2', name: 'Presentation_Drawing_2' },
+          { label: 'Presentation Drawing 3', name: 'Presentation_Drawing_3' }
+        ])}
+
+        {/* Sections */}
+        {renderSection('3D Model', [
+          { label: 'File Model  3D 1', name: 'File_Model_3D_1' },
+          { label: 'File Model  3D 2', name: 'File_Model_3D_2' },
+          { label: 'File Model  3D 3', name: 'File_Model_3D_3' }
+        ])}
+
+        {/* Elevations */}
+        {renderSection('Working Drawing', [
+          { label: 'Submission Drawing', name: 'Submission_Drawing' },
+          { label: 'All Floor Plan', name: 'All_Floor_Plan' },
+          { label: 'All Section', name: 'All_Section' },
+          { label: 'All Elevation', name: 'All_Elevation' },
+          { label: 'Toilet', name: 'toilet' },
+          { label: 'All Electric Drawing', name: 'All_Electric_Drawing' },
+          { label: 'Tile Layout', name: 'tile_Layout' },
+          { label: 'All Grills and Railing', name: 'All_Grills_And_Railing' },
+          { label: 'Column Footing', name: 'Column_Footing' },
+          { label: 'Pleanth Beam', name: 'Pleanth_Beam' },
+          { label: 'Stair Case Drawing', name: 'Stair_Case_Drawing' },
+        ])}
+
+        {/* Slabs */}
+        {renderSection('Slabs', [
+          { label: 'Slab 1', name: 'Slab_1' },
+          { label: 'Slab 2', name: 'Slab_2' },
+          { label: 'Slab 3', name: 'Slab_3' },
+          { label: 'Slab 4', name: 'Slab_4' },
+          { label: 'Slab 5', name: 'Slab_5' }
+        ])}
+        
         <button
           type="submit"
-          className="w-full py-3 px-4 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          disabled={isSubmitting} // Disable the button when submitting
+          className={`w-full py-2 mt-4 text-white rounded hover:bg-blue-700 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600'}`}
         >
-          Submit
+          {isSubmitting ? 'Submitting...' : 'Submit Project'}
         </button>
-      </div>
-      <ToastContainer /> {/* Add ToastContainer here */}
-    </form>
+      </form>
+    </div>
   );
 };
 

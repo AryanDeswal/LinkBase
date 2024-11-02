@@ -124,7 +124,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     }
 
     try {
-      const response = await fetch('https://projectassociate-1.onrender.com/api/architecture/upload', {
+      const response = await fetch('https://www.backend.mga2002.in/api/architecture/upload', {
         method: 'POST',
         body: formDataToSend,
       });

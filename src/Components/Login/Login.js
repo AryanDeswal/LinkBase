@@ -36,7 +36,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch('https://projectassociate-1.onrender.com/api/auth/login', {
+        const response = await fetch('https://www.backend.mga2002.in/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),

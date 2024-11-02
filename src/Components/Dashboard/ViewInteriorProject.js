@@ -10,7 +10,7 @@ const ViewInteriorProject = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'https://projectassociate-1.onrender.com/api/interior';
+  const API_URL = process.env.REACT_APP_API_URL || 'https://www.backend.mga2002.in/api/interior';
 
   useEffect(() => {
     fetchProjects();

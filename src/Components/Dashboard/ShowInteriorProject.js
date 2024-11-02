@@ -14,7 +14,7 @@ const ShowInteriorProject = () => {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        const response = await fetch(`https://projectassociate-1.onrender.com/api/interior/interior/${projectId}`);
+        const response = await fetch(`https://www.backend.mga2002.in/api/interior/interior/${projectId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch project data');
         }
@@ -59,7 +59,7 @@ const ShowInteriorProject = () => {
     });
   
     try {
-      const response = await fetch(`https://projectassociate-1.onrender.com/api/interior/update/interiors/${editingProject._id}`, {
+      const response = await fetch(`https://www.backend.mga2002.in/api/interior/update/interiors/${editingProject._id}`, {
         method: 'PUT',
         body: formData,
       });

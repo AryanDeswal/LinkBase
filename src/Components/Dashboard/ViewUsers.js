@@ -20,7 +20,7 @@ const ViewUsers = () => {
           throw new Error('No authorization token found');
         }
         
-        const response = await fetch('https://projectassociate-1.onrender.com/api/auth/users', {
+        const response = await fetch('https://www.backend.mga2002.in/api/auth/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

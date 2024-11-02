@@ -132,7 +132,7 @@ const ShowInteriorProject = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ToastContainer /> {/* Include ToastContainer to render notifications */}
+      <ToastContainer />
       <div className="container mx-auto px-4 py-8">
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -140,7 +140,6 @@ const ShowInteriorProject = () => {
           </div>
         ) : projectData ? (
           <div className="space-y-8">
-            {/* Header Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
                 Title: {editing ? <input type="text" name="title" value={editingProject.title} onChange={handleChange} className="border p-2 rounded" /> : projectData.title}
@@ -154,59 +153,70 @@ const ShowInteriorProject = () => {
               </p>
             </div>
 
-            {/* Project Details Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Project Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <DetailItem label="Client" value={editing ? <input type="text" name="clientName" value={editingProject.clientName} onChange={handleChange} className="border p-2 rounded" /> : projectData.clientName} />
-                <DetailItem label="Project Type" value={editing ? <input type="text" name="projectType" value={editingProject.projectType} onChange={handleChange} className="border p-2 rounded" /> : projectData.projectType} />
-                <DetailItem label="Location" value={editing ? <input type="text" name="siteAddress" value={editingProject.siteAddress} onChange={handleChange} className="border p-2 rounded" /> : projectData.siteAddress} />
-                <DetailItem label="Date" value={editing ? <input type="date" name="date" value={editingProject.date} onChange={handleChange} className="border p-2 rounded" /> : projectData.date} />
-                <DetailItem label="Consulting Type" value={editing ? <input type="text" name="consultingType" value={editingProject.consultingType} onChange={handleChange} className="border p-2 rounded" /> : projectData.consultingType} />
-                <DetailItem label="Construction" value={editing ? <input type="text" name="constructionName" value={editingProject.constructionName} onChange={handleChange} className="border p-2 rounded" /> : projectData.constructionName} />
-              </div>
-            </div>
-
-            {/* Image Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Images</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {imagesWithNames.map(({ name, key, url }) => (
-                  <div key={key} className="flex flex-col items-center">
-                    <img src={url} alt={name} className="w-full h-40 object-cover rounded-lg mb-2" />
-                    <p className="text-gray-700 font-medium mb-2">{name}</p>
-                    <div className="flex space-x-2">
+                  <div key={key} className="border rounded overflow-hidden shadow-lg">
+                    <img src={url} alt={name} className="w-full h-48 object-cover" />
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold">{name}</h3>
                       <button
                         onClick={() => handleViewDetails(url)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-lg"
+                        className="mt-2 text-blue-500 hover:underline"
                       >
-                        See Files
+                        View Details
                       </button>
                       <button
                         onClick={() => handleShare(url, name)}
-                        className="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded-lg"
+                        className="ml-4 mt-2 bg-blue-600 text-white px-3 py-1 rounded"
                       >
                         Share
                       </button>
+                      {editing && (
+                        <div className="mt-4">
+                          <input type="file" onChange={(e) => handleFileChange(e, key)} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+
+            <div className="flex justify-center mt-8 space-x-4">
+              {!editing && (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="bg-blue-600 text-white px-6 py-2 rounded"
+                >
+                  Edit
+                </button>
+              )}
+              {editing && (
+                <>
+                  <button
+                    onClick={handleUpdate}
+                    className="bg-green-600 text-white px-6 py-2 rounded"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="bg-red-600 text-white px-6 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         ) : (
-          <p className="text-center text-red-500">Failed to load project data. Please try again.</p>
+          <p>No project data found.</p>
         )}
       </div>
     </div>
   );
 };
-
-const DetailItem = ({ label, value }) => (
-  <div className="space-y-1">
-    <p className="text-gray-500 font-medium">{label}</p>
-    <p className="text-gray-700">{value}</p>
-  </div>
-);
 
 export default ShowInteriorProject;

@@ -86,7 +86,6 @@ const ShowArchitecture = () => {
     window.open(url, '_blank');
   };
 
-  // Function to handle sharing
   const handleShare = (url, name) => {
     if (navigator.share) {
       navigator.share({
@@ -141,7 +140,6 @@ const ShowArchitecture = () => {
           </div>
         ) : projectData ? (
           <div className="space-y-8">
-            {/* Header Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
                 Title: {editing ? <input type="text" name="title" value={editingProject.title} onChange={handleChange} className="border p-2 rounded" /> : projectData.title}
@@ -155,7 +153,6 @@ const ShowArchitecture = () => {
               </p>
             </div>
 
-            {/* Image Section */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Images</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -176,13 +173,17 @@ const ShowArchitecture = () => {
                       >
                         Share
                       </button>
+                      {editing && (
+                        <div className="mt-4">
+                          <input type="file" onChange={(e) => handleFileChange(e, key)} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Update and Edit Buttons */}
             <div className="flex justify-center mt-8 space-x-4">
               {!editing && (
                 <button

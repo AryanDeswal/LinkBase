@@ -72,7 +72,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
         <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">Enter Email</label>
             <input
               type="email"
               id="email"

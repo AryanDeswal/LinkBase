@@ -63,7 +63,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
     <div
       className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-400 to-indigo-600 p-4"
       style={{
-        backgroundImage: `url('https://media.istockphoto.com/id/511061090/photo/business-office-building-in-london-england.jpg?s=612x612&w=0&k=20&c=nYAn4JKoCqO1hMTjZiND1PAIWoABuy1BwH1MhaEoG6w=')`,
+        backgroundImage: `url('back.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}

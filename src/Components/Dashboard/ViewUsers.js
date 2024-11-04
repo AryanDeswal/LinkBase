@@ -94,7 +94,9 @@ const ViewUsers = () => {
         if (!response.ok) {
           throw new Error('Failed to delete user');
         }
+        navigate(0)
         setUsers(users.filter((user) => user._id !== userId)); // Remove user from state
+        
       } catch (err) {
         setError(err.message);
       }

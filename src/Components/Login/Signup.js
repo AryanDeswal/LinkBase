@@ -56,7 +56,6 @@ const SignupForm = () => {
         const data = await response.json();
         if(data.message == "Email already registered"){
           alert("Email already registered")
-          window.location.reload()
         }
         else{
           alert('Signup successful! Please verify your OTP.');

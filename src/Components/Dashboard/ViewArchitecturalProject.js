@@ -15,6 +15,7 @@ const ViewArchitecturalProject = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
+      setError(null); // Reset error state before fetching
       try {
         const response = await fetch(API_URL);
         if (!response.ok) {
@@ -37,13 +38,12 @@ const ViewArchitecturalProject = () => {
       const response = await fetch(`https://www.backend.mga2002.in/api/architecture/upload/${projectId}`, {
         method: 'DELETE',
       });
-      if (response.ok) {
-        setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
-      } else {
-        console.error('Failed to delete project');
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
       }
+      setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
     } catch (err) {
-      console.error('Error deleting project:', err);
+      setError(err.message); // Set error message on delete failure
     }
   };
 
@@ -58,19 +58,15 @@ const ViewArchitecturalProject = () => {
       Error: {error}
     </div>
   );
-  const filteredProjects = projectData.filter((project) =>
-    project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalProjects = projectData.length;
-  const totalPages = Math.ceil(totalProjects / projectsPerPage);
-  const indexOfLastProject = currentPage * projectsPerPage;
-  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
 
   const filteredProjects = projectData.filter((project) =>
     project.clientName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalProjects = filteredProjects.length; // Use filtered projects for pagination
+  const totalPages = Math.ceil(totalProjects / projectsPerPage);
+  const indexOfLastProject = currentPage * projectsPerPage;
+  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
   const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
 
   const handleShowMore = (projectId) => {
@@ -124,8 +120,6 @@ const ViewArchitecturalProject = () => {
   );
 };
 
-
-
 const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
   // Function to display default text if data is missing
   const displayData = (data) => (data ? data : "-");
@@ -144,22 +138,23 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
         <p><span className="font-medium">Email:</span> {displayData(project.email)}</p>
         <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p>
         <div className="p-4 border-t flex justify-around">
-       <button 
-         onClick={() => handleShowMore(project._id)}
-         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-       >
-         Show More
-       </button>
-       <button 
-         onClick={() => handleDelete(project._id)}
-         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
-       >
-         <FaTrash className="mr-2" />
-       </button>
-       </div>     
-      </div>
+          <button 
+            onClick={() => handleShowMore(project._id)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Show More
+          </button>
+          <button 
+            onClick={() => handleDelete(project._id)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
+          >
+            <FaTrash className="mr-2" />
+          </button>
+        </div>
       </div>
-)}
+    </div>
+  );
+}
 
 const Pagination = ({ currentPage, setCurrentPage, totalPages }) => {
   const handlePrevPage = () => {

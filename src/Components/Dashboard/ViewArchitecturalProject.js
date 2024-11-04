@@ -58,6 +58,9 @@ const ViewArchitecturalProject = () => {
       Error: {error}
     </div>
   );
+  const filteredProjects = projectData.filter((project) =>
+    project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const totalProjects = projectData.length;
   const totalPages = Math.ceil(totalProjects / projectsPerPage);

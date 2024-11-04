@@ -73,11 +73,8 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       }
     }
 
-    if (name === 'PAN' && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(value)) {
-      newErrors.PAN = 'PAN must be 10 characters (5 letters, 4 digits, 1 letter).';
-    } else if (name === 'Aadhar' && !/^\d{12}$/.test(value)) {
-      newErrors.Aadhar = 'Aadhar must be exactly 12 digits.';
-    } else if (name === 'Pin' && !/^\d{6}$/.test(value)) {
+   
+    if (name === 'Pin' && !/^\d{6}$/.test(value)) {
       newErrors.Pin = 'Pin must be exactly 6 digits.';
     } else {
       delete newErrors[name];

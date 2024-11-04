@@ -66,11 +66,8 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     }
 
     // Basic validation checks
-    if (name === 'pan' && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(value)) {
-      newErrors.pan = 'PAN must be 10 characters with 5 letters, 4 digits, and 1 letter.';
-    } else if (name === 'aadhar' && !/^\d{12}$/.test(value)) {
-      newErrors.aadhar = 'Aadhar must be exactly 12 digits.';
-    } else if (name === 'pin' && !/^\d{6}$/.test(value)) {
+    
+    if (name === 'pin' && !/^\d{6}$/.test(value)) {
       newErrors.pin = 'Pin must be exactly 6 digits.';
     } else {
       delete newErrors[name]; // Clear error if valid

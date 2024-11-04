@@ -52,7 +52,7 @@ const SignupForm = () => {
             address,
           }),
         });
-        if (!response.ok) throw new Error('Signup failed');
+        // if (!response.ok) throw new Error('Signup failed');
         const data = await response.json();
         if(data.message == "Email already registered"){
           alert("Email already registered")
@@ -61,6 +61,7 @@ const SignupForm = () => {
         navigate('/otp-verification', { state: { email } });
       } catch (error) {
         console.error('Error during signup:', error);
+        alert("Signup Error")
         setErrors({ api: 'Signup failed. Please try again.' });
       } finally {
         setIsSubmitting(false);

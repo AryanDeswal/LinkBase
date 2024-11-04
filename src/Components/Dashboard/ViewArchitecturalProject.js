@@ -121,34 +121,42 @@ const ViewArchitecturalProject = () => {
   );
 };
 
-const ProjectCard = ({ project, handleShowMore, handleDelete }) => (
-  <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
-    <div className="p-6 flex-grow">
-      <h3 className="text-lg font-bold mb-4 text-center">Title: {project.title}</h3>
-      <div className="space-y-2 text-gray-600 text-center">
-        <p><span className="font-medium">Client:</span> {project.clientName || 'N/A'}</p>
-        <p><span className="font-medium">Type:</span> {project.projectType}</p>
-        <p><span className="font-medium">Address:</span> {project.siteAddress}</p>
-        <p><span className="font-medium">GST No:</span> {project.gstNo}</p>
-      </div>
-    </div>
 
-    <div className="p-4 border-t flex justify-around">
-      <button 
-        onClick={() => handleShowMore(project._id)}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-      >
-        Show More
-      </button>
-      <button 
-        onClick={() => handleDelete(project._id)}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
-      >
-        <FaTrash className="mr-2" />
-      </button>
-    </div>
-  </div>
-);
+
+const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
+  // Function to display default text if data is missing
+  const displayData = (data) => (data ? data : "-");
+
+  return (
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
+      <div className="space-y-2 text-gray-600 text-center">
+        <p><span className="font-medium">Client:</span> {displayData(project.clientName)}</p>
+        <p><span className="font-medium">Type:</span> {displayData(project.projectType)}</p>
+        <p><span className="font-medium">Project Head:</span> {displayData(project.projectHead)}</p>
+        <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p>
+        <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p>
+        <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p>
+        <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p>
+        <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p>
+        <p><span className="font-medium">Email:</span> {displayData(project.email)}</p>
+        <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p>
+        <div className="p-4 border-t flex justify-around">
+       <button 
+         onClick={() => handleShowMore(project._id)}
+         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+       >
+         Show More
+       </button>
+       <button 
+         onClick={() => handleDelete(project._id)}
+         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
+       >
+         <FaTrash className="mr-2" />
+       </button>
+       </div>     
+      </div>
+      </div>
+)}
 
 const Pagination = ({ currentPage, setCurrentPage, totalPages }) => {
   const handlePrevPage = () => {

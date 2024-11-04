@@ -89,6 +89,10 @@ const ShowInteriorProject = () => {
   };
 
   const handleViewDetails = (url) => {
+    if(!url){
+      return alert("File not exist")
+    }
+    
     window.open(url, '_blank');
   };
 
@@ -152,13 +156,37 @@ const ShowInteriorProject = () => {
                 )}
               </p>
             </div>
+            
+            <div className="mt-4 space-y-4 grid grid-cols-2">
+                {['clientName', 'projectType', 'siteAddress', 'gstNo', 'mahareraNo', 'projectHead', 'rccDesignerName', 'email'].map((field) => (
+                  <div key={field}>
+                    <label className="block font-semibold">{field}:</label>
+                    {editing ? (
+                      <input
+                        type="text"
+                        name={field}
+                        value={editingProject[field]}
+                        onChange={handleChange}
+                        className="border p-2 rounded w-full"
+                      />
+                    ) : (
+                      <p>{projectData[field]}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg shadow-sm p-6 ">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Images</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {imagesWithNames.map(({ name, key, url }) => (
                   <div key={key} className="border rounded overflow-hidden shadow-lg">
-                    <img src={url} alt={name} className="w-full h-48 object-cover" />
+                    {url.endsWith('.pdf') ? (
+                      <iframe src={url} title={name} className="w-full h-48" frameBorder="0"></iframe>
+                    ) : (
+                      <img src={url} alt={name} className="w-full h-48 object-cover" />
+                    )}
                     <div className="p-4">
                       <h3 className="text-lg font-semibold">{name}</h3>
                       <button

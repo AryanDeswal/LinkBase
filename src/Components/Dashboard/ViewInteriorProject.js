@@ -22,6 +22,7 @@ const ViewInteriorProject = () => {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error('Failed to fetch projects');
       const data = await response.json();
+      console.log(data)
       setProjectData(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
       setError(err.message);
@@ -115,15 +116,22 @@ const ViewInteriorProject = () => {
   );
 };
 
+const displayData = (data) => (data ? data : "-");
 const ProjectCard = ({ project, handleShowMore, deleteProject }) => (
   <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
     <div className="p-6 flex-grow">
       <h3 className="text-lg font-bold mb-4 text-center">Title: {project.title}</h3>
       <div className="space-y-2 text-gray-600 text-center">
-        <p><span className="font-medium">Client:</span> {project.clientName}</p>
-        <p><span className="font-medium">Type:</span> {project.projectType}</p>
-        <p><span className="font-medium">Address:</span> {project.siteAddress}</p>
-        <p><span className="font-medium">GST No:</span> {project.gstNo}</p>
+      <p><span className="font-medium">Client:</span> {displayData(project.clientName)}</p>
+        <p><span className="font-medium">Type:</span> {displayData(project.projectType)}</p>
+        <p><span className="font-medium">Project Head:</span> {displayData(project.projectHead)}</p>
+        <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p>
+        <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p>
+        <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p>
+        <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p>
+        <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p>
+        <p><span className="font-medium">Email:</span> {displayData(project.email)}</p>
+        <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p>
       </div>
     </div>
 

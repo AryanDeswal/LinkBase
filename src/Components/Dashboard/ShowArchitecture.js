@@ -14,7 +14,7 @@ const ShowArchitecture = () => {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        const response = await fetch(`https://www.backend.mga2002.in/api/architecture/data/${projectId}`);
+        const response = await fetch(`https://projectassociate-prxp.onrender.com/api/architecture/data/${projectId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch project data');
         }
@@ -59,7 +59,7 @@ const ShowArchitecture = () => {
     });
   
     try {
-      const response = await fetch(`https://www.backend.mga2002.in/api/architecture/update/${editingProject._id}`, {
+      const response = await fetch(`https://projectassociate-prxp.onrender.com/api/architecture/update/${editingProject._id}`, {
         method: 'PUT',
         body: formData,
       });

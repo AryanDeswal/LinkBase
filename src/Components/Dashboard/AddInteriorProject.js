@@ -122,7 +122,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     }
 
     try {
-      const response = await fetch('https://www.backend.mga2002.in/api/interior/interiors', {
+      const response = await fetch('https://projectassociate-prxp.onrender.com/api/interior/interiors', {
         method: 'POST',
         body: formDataToSend,
       });

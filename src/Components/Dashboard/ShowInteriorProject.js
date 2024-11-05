@@ -59,7 +59,7 @@ const ShowInteriorProject = () => {
     });
   
     try {
-      const response = await fetch(`https://www.backend.mga2002.in/api/interior/update/interiors/${editingProject._id}`, {
+      const response = await fetch(`http://localhost:8000/api/interior/update/interiors/${editingProject._id}`, {
         method: 'PUT',
         body: formData,
       });

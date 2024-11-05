@@ -23,7 +23,7 @@ const SignupForm = () => {
     else if (!emailPattern.test(email)) newErrors.email = 'Invalid email address';
     if (!dob) newErrors.dob = 'Date of Birth is required';
     if (!phone) newErrors.phone = 'Phone number is required';
-    else if (!phonePattern.test(phone)) newErrors.phone = 'Invalid phone number';
+    else if (!phonePattern.test(phone)) newErrors.phone = 'Phone number must be exactly 10 digits';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
     if (!confirmPassword) newErrors.confirmPassword = 'Confirm Password is required';
@@ -33,6 +33,8 @@ const SignupForm = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,6 +128,7 @@ const SignupForm = () => {
               onChange={(e) => setPhone(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your phone number"
+              maxLength="10"
             />
             {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           </div>

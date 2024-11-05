@@ -1,123 +1,131 @@
 import React, { useEffect, useState } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import Font Awesome icons
+import { FaTrashAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const ViewUsers = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 5; // Show 5 users per page
+  const usersPerPage = 5;
   const token = window.localStorage.getItem('authorization');
-  // Fetch user data from API
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = window.localStorage.getItem('authorization');
-        if (!token) {
-          throw new Error('No authorization token found');
-        }
-        
-        const response = await fetch('https://www.backend.mga2002.in/api/auth/users', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-  
-        const data = await response.json();
-        console.log("Fetched Users:", data);
-        setUsers(data);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchUsers();
-  }, []);
-  
 
-  // Handle search
+  const fetchUsers = async () => {
+    try {
+      if (!token) {
+        throw new Error('No authorization token found');
+      }
+      
+      const response = await fetch('https://www.backend.mga2002.in/api/auth/users', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      const data = await response.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      setError(err.message);
+      if (err.message === 'No authorization token found') {
+        navigate('/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [token, navigate]);
+
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    setCurrentPage(1); // Reset to the first page on search
+    setCurrentPage(1);
   };
 
-  // Filter users based on search term
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm) ||
       user.email.toLowerCase().includes(searchTerm)
   );
 
-  // Get the current users for the current page
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-  // Calculate total pages
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  // Handle page change
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
- 
+  const logoutHandler = () => {
+    window.localStorage.removeItem('authorization');
+    navigate('/login');
+  };
 
-  const logoutHandler = () =>{
-    window.localStorage.setItem('authorization','')
-    navigate('/login')
-  }
-  // Handle Delete User
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`https://projectassociate-1.onrender.com/api/auth/users/${userId}`, {
-          method: 'DELETE', headers: {
+        setLoading(true);
+        const response = await fetch(`https://www.backend.mga2002.in/api/auth/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
-
         });
+
         if (!response.ok) {
-          throw new Error('Failed to delete user');
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete user');
         }
-        navigate(0)
-        setUsers(users.filter((user) => user._id !== userId)); // Remove user from state
+
+        // Update the users state immediately after successful deletion
+        setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
         
+        // Adjust current page if necessary
+        if (currentUsers.length === 1 && currentPage > 1) {
+          setCurrentPage(prev => prev - 1);
+        }
       } catch (err) {
+        console.error("Error deleting user:", err);
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-red-500">Error: {error}</div>
+      </div>
+    );
   }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">View Users</h2>
-
-        {/* Search User */}
         <div className="relative flex-1 md:flex-initial">
           <input
             type="text"
@@ -126,12 +134,16 @@ const ViewUsers = () => {
             onChange={handleSearch}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span><button className='bg-blue-500 px-2 py-1 border-radius text-white inline-block' onClick={logoutHandler}>Logout</button>
-          
+          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+          <button 
+            className="bg-blue-500 px-4 py-2 rounded-lg text-white ml-4 hover:bg-blue-600 transition-colors"
+            onClick={logoutHandler}
+          >
+            Logout
+          </button>
         </div>
       </div>
 
-      {/* Users Table */}
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="w-full table-auto">
           <thead className="bg-gray-50">
@@ -159,10 +171,13 @@ const ViewUsers = () => {
                     <div className="flex items-center text-sm text-gray-500 mt-1">📍 {user.address}</div>
                   </div>
                 </td>
-                {/* Edit and Delete Icons */}
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end space-x-4">
-                    <button onClick={() => handleDelete(user._id)} className="text-red-500 hover:text-red-700">
+                    <button 
+                      onClick={() => handleDelete(user._id)} 
+                      className="text-red-500 hover:text-red-700 transition-colors"
+                      disabled={loading}
+                    >
                       <FaTrashAlt size={20} />
                     </button>
                   </div>
@@ -173,7 +188,6 @@ const ViewUsers = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="mt-4 flex justify-center space-x-2">
         {Array.from({ length: totalPages }, (_, index) => (
           <button

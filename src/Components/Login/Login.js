@@ -21,15 +21,23 @@ const LoginForm = ({ setIsLoggedIn }) => {
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+  
     if (!email) newErrors.email = 'Email is required';
     else if (!emailPattern.test(email)) newErrors.email = 'Invalid email address';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
-
+  
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  
+    // Show alert with all errors
+    if (Object.keys(newErrors).length > 0) {
+      alert(Object.values(newErrors).join('\n'));
+      return false;
+    }
+  
+    return true;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

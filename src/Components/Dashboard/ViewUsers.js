@@ -76,7 +76,6 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        setLoading(true);
         const response = await fetch(`https://www.backend.mga2002.in/api/auth/users/${userId}`, {
           method: 'DELETE',
           headers: {
@@ -84,13 +83,13 @@ const ViewUsers = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-
+  
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to delete user');
         }
-
-        // Update the users state immediately after successful deletion
+  
+        // Update the users state immediately after successful deletion without affecting other state
         setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
         
         // Adjust current page if necessary
@@ -100,11 +99,10 @@ const ViewUsers = () => {
       } catch (err) {
         console.error("Error deleting user:", err);
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     }
   };
+  
 
   if (loading) {
     return (

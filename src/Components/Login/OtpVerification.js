@@ -18,8 +18,13 @@ const OtpVerification = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+
+    // Validate OTP length and numeric value
     if (!otp) {
       setError('OTP is required');
+      return;
+    } else if (!/^\d{6}$/.test(otp)) {
+      setError('OTP must be a 6-digit number');
       return;
     }
 
@@ -38,6 +43,7 @@ const OtpVerification = () => {
 
       if (!response.ok) {
         // Handle errors from the server
+        alert(data.message || 'Incorrect OTP, please try again.'); // Show alert for incorrect OTP
         setError(data.message || 'Verification failed');
         setLoading(false); // Reset loading state
         return;

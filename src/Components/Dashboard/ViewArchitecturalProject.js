@@ -33,19 +33,19 @@ const ViewArchitecturalProject = () => {
     fetchProjects();
   }, [API_URL]);
 
-  const handleDelete = async (projectId) => {
-    try {
-      const response = await fetch(`https://projectassociate-prxp.onrender.com/api/architecture/upload/${projectId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete project');
-      }
-      setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
-    } catch (err) {
-      setError(err.message); // Set error message on delete failure
-    }
-  };
+  // const handleDelete = async (projectId) => {
+  //   try {
+  //     const response = await fetch(`https://projectassociate-prxp.onrender.com/api/architecture/upload/${projectId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to delete project');
+  //     }
+  //     setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
+  //   } catch (err) {
+  //     setError(err.message); // Set error message on delete failure
+  //   }
+  // };
 
   const renderLoading = () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -101,7 +101,7 @@ const ViewArchitecturalProject = () => {
               key={project._id} 
               project={project} 
               handleShowMore={handleShowMore} 
-              handleDelete={handleDelete} 
+              // handleDelete={handleDelete} 
             />
           ))
         ) : (
@@ -130,25 +130,19 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
         <p><span className="font-medium">Client:</span> {displayData(project.clientName)}</p>
         <p><span className="font-medium">Type:</span> {displayData(project.projectType)}</p>
         <p><span className="font-medium">Project Head:</span> {displayData(project.projectHead)}</p>
-        <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p>
-        <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p>
-        <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p>
-        <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p>
-        <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p>
-        <p><span className="font-medium">Email:</span> {displayData(project.email)}</p>
-        <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p>
+        {/* <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p> */}
+        {/* <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p> */}
+        {/* <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p> */}
+        {/* <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p> */}
+        {/* <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p> */}
+        {/* <p><span className="font-medium">Email:</span> {displayData(project.email)}</p> */}
+        {/* <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p> */}
         <div className="p-4 border-t flex justify-around">
           <button 
             onClick={() => handleShowMore(project._id)}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
             Show More
-          </button>
-          <button 
-            onClick={() => handleDelete(project._id)}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
-          >
-            <FaTrash className="mr-2" />
           </button>
         </div>
       </div>

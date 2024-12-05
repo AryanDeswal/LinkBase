@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 const LoginForm = ({ setIsLoggedIn }) => {
   const token = window.localStorage.getItem('authorization')
   
-  useEffect(()=>{
-    if(token){
-      navigate("/home")
-    }
-    else{
-      navigate('/login')
-    }
-  },[])
+  // useEffect(()=>{
+  //   if(token){
+  //     navigate("/home")
+  //   }
+  //   else{
+  //     navigate('/login')
+  //   }
+  // },[])
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -65,6 +65,9 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
   const handleSignupClick = () => {
     navigate('/signup');
+  };
+  const handleSignupClickAdmin = () => {
+    navigate('/adminlogin');
   };
 
   return (
@@ -120,6 +123,15 @@ const LoginForm = ({ setIsLoggedIn }) => {
               className="text-blue-500 hover:underline focus:outline-none"
             >
               Sign up
+            </button>
+          </p>
+          <p className="text-sm">
+            Log In Admin{' '}
+            <button
+              onClick={handleSignupClickAdmin}
+              className="text-blue-500 hover:underline focus:outline-none"
+            >
+              Login Admin
             </button>
           </p>
         </div>

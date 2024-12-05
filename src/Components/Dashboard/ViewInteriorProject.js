@@ -31,21 +31,21 @@ const ViewInteriorProject = () => {
     }
   };
 
-  const deleteProject = async (projectId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this project?');
-    if (!confirmDelete) return;
+  // const deleteProject = async (projectId) => {
+  //   const confirmDelete = window.confirm('Are you sure you want to delete this project?');
+  //   if (!confirmDelete) return;
 
-    try {
-      const response = await fetch(`${API_URL}/interiors/${projectId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete project');
-      setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
-    } catch (err) {
-      console.error('Error deleting project:', err);
-      setError('Failed to delete project. Please try again.');
-    }
-  };
+  //   try {
+  //     const response = await fetch(`${API_URL}/interiors/${projectId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     if (!response.ok) throw new Error('Failed to delete project');
+  //     setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
+  //   } catch (err) {
+  //     console.error('Error deleting project:', err);
+  //     setError('Failed to delete project. Please try again.');
+  //   }
+  // };
 
   const renderLoading = () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -100,7 +100,7 @@ const ViewInteriorProject = () => {
             key={project._id}
             project={project}
             handleShowMore={handleShowMore}
-            deleteProject={deleteProject}
+            // deleteProject={deleteProject}
           />
         ))}
       </div>
@@ -125,13 +125,13 @@ const ProjectCard = ({ project, handleShowMore, deleteProject }) => (
       <p><span className="font-medium">Client:</span> {displayData(project.clientName)}</p>
         <p><span className="font-medium">Type:</span> {displayData(project.projectType)}</p>
         <p><span className="font-medium">Project Head:</span> {displayData(project.projectHead)}</p>
-        <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p>
-        <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p>
-        <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p>
-        <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p>
-        <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p>
-        <p><span className="font-medium">Email:</span> {displayData(project.email)}</p>
-        <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p>
+        {/* <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p> */}
+        {/* <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p> */}
+        {/* <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p> */}
+        {/* <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p> */}
+        {/* <p><span className="font-medium">Pin:</span> {displayData(project.Pin)}</p> */}
+        {/* <p><span className="font-medium">Email:</span> {displayData(project.email)}</p> */}
+        {/* <p><span className="font-medium">GST No:</span> {displayData(project.gstNo)}</p> */}
       </div>
     </div>
 
@@ -141,12 +141,6 @@ const ProjectCard = ({ project, handleShowMore, deleteProject }) => (
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
         Show More
-      </button>
-      <button
-        onClick={() => deleteProject(project._id)}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-      >
-        Delete
       </button>
     </div>
   </div>

@@ -16,9 +16,9 @@ import { AdminProvider } from "./context/AdminContext";
 const App = () => {
   const navigate = useNavigate();
 
-  // useEffect(()=>{
-  //   navigate("/login")
-  // },[])
+   useEffect(()=>{
+     navigate("/login")
+  },[])
   return (
     <>
       <AuthProvider>

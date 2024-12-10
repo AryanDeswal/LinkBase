@@ -13,17 +13,9 @@ const ViewUsers = () => {
   const token = window.sessionStorage.getItem('authorization');
 
   const fetchUsers = async () => {
-    try {
-      if (!token) {
-        throw new Error('No authorization token found');
-      }
-      
-      const response = await fetch('https://projectassociate-prxp.onrender.com/api/auth/users', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'authheader': `${token}`
-        }
+    try {  
+      const response = await fetch('https://projectassoicate.onrender.com/api/auth/users', {
+        method: 'GET'
       });
 
       if (!response.ok) {
@@ -35,9 +27,6 @@ const ViewUsers = () => {
     } catch (err) {
       console.error("Error fetching users:", err);
       setError(err.message);
-    //   if (err.message === 'No authorization token found') {
-    //     navigate('/login');
-    //   }
     } finally {
       setLoading(false);
     }
@@ -72,11 +61,11 @@ const ViewUsers = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         console.log("Attempting to delete user with ID:", userId); // Log to verify correct ID
-        const response = await fetch(`https://projectassociate-prxp.onrender.com/api/auth/users/${userId}`, {
+        const response = await fetch(`http://localhost:8000/api/auth/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+  
           }
         });
   

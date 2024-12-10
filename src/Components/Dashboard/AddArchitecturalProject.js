@@ -83,7 +83,7 @@ const AddArchitecturalProject = () => {
           formDataToSend.append(key, value);
         }
       });
-      const response = await axios.post('http://localhost:8000/api/architecture/upload',formData)
+      const response = await axios.post('https://projectassoicate.onrender.com/api/architecture/upload',formData)
 
       // Check if the response is successful
       if(response.error){

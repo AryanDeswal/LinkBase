@@ -121,7 +121,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       //     body: formDataToSend,
       //   }
       // );
-      const response = await axios.post("http://localhost:8000/api/interior/interiors",formData)
+      const response = await axios.post("https://projectassoicate.onrender.com/api/interior/interiors",formData)
 
       console.log("Form data submitted:", response);
       toast.success("Interior project added successfully!");

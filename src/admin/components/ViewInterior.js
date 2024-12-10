@@ -10,7 +10,7 @@ const ViewInteriorProject = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'https://projectassociate-prxp.onrender.com/api/interior';
+  const API_URL = 'https://projectassoicate.onrender.com/api/interior';
 
   useEffect(() => {
     fetchProjects();
@@ -36,7 +36,7 @@ const ViewInteriorProject = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${API_URL}/interiors/${projectId}`, {
+      const response = await fetch(`https://projectassoicate.onrender.com/interiors/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete project');

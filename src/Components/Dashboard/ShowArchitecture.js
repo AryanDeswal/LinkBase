@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const ShowArchitecture = () => {
   const { projectId } = useParams();
   const [projectData, setProjectData] = useState(null);
@@ -12,27 +11,30 @@ const ShowArchitecture = () => {
   const [editingProject, setEditingProject] = useState({});
   const widgetRef = useRef();
 
-  useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        const response = await fetch(
-          `https://projectassoicate.onrender.com/api/architecture/data/${projectId}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch project data");
-        }
-        const data = await response.json();
-        setProjectData(data.data);
-        setEditingProject(data.data); // Initialize editing project data
-      } catch (error) {
-        console.error("Error fetching project data:", error);
-      } finally {
-        setLoading(false);
+  const fetchProjectData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://projectassoicate.onrender.com/api/architecture/data/${projectId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch project data");
       }
-    };
+      const data = await response.json();
+      setProjectData(data.data);
+      setEditingProject(data.data); // Initialize editing project data
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+      toast.error("Failed to fetch project data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Call the fetchProjectData on component mount and whenever projectId changes
+  useEffect(() => {
     if (projectId) {
-      fetchProjectData();
+      fetchProjectData(); // Call fetchProjectData globally
     }
   }, [projectId]);
 
@@ -87,46 +89,97 @@ const ShowArchitecture = () => {
       setProjectData(data.data);
       setEditingProject(data.data);
       toast.success("Project updated successfully!");
+
       setEditing(false);
+      fetchProjectData();
     } catch (error) {
       console.error("Error updating project data:", error);
       toast.error("Failed to update project. Please try again.");
     }
   };
 
+  const handleShareImage = (imageUrl) => {
+    navigator.clipboard.writeText(imageUrl).then(() => {
+      toast.success("Image link copied to clipboard!");
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      toast.error("Failed to copy image link.");
+    });
+  };
+
+  const handleRemoveImage = (sectionName, indexToRemove) => {
+    setEditingProject(prevState => ({
+      ...prevState,
+      [sectionName]: prevState[sectionName].filter((_, index) => index !== indexToRemove)
+    }));
+  };
+
   const renderFileInputs = (sectionName, label) => (
     <div>
       <h3 className="font-bold mb-2 text-2xl">{label}</h3>
-     {editing ? <button
-        type="button"
-        onClick={() => openCloudinaryWidget(sectionName)}
-        className="text-blue-500 text-sm"
-      >
-        + Upload {label}
-      </button> :  null }
-     
-      
-      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-20">
+      {editing && (
+        <button
+          type="button"
+          onClick={() => openCloudinaryWidget(sectionName)}
+          className="text-blue-500 text-sm mb-4"
+        >
+          + Upload {label}
+        </button>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {(editingProject[sectionName] || []).length > 0
           ? (editingProject[sectionName] || []).map((fileUrl, index) => (
-              <li key={index} className="mt-2 text-sm text-gray-600">
-                {fileUrl.length > 0 ? (
-                  fileUrl.endsWith(".pdf") ? (
-                    <iframe src={fileUrl} width="100%" height="600px"></iframe>
-                  ) : (
+              <div key={index} className="relative group">
+                {fileUrl.endsWith(".pdf") ? (
+                  <div className="relative">
+                    <iframe
+                      src={fileUrl}
+                      width="100%"
+                      height="200px"
+                      className="border rounded-md"
+                      title={`File ${index + 1}`}
+                    ></iframe>
+                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={() => handleShareImage(fileUrl)}
+                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                        title="Share File"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                          <polyline points="16 6 12 2 8 6"></polyline>
+                          <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative">
                     <img
                       src={fileUrl}
                       alt={`File ${index + 1}`}
-                      className="w-full h-[20rem]  object-cover"
+                      className="w-full h-60 object-cover rounded-lg"
                     />
-                  )
-                ) : (
-                  "No valid file"
+                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={() => handleShareImage(fileUrl)}
+                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                        title="Share File"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                          <polyline points="16 6 12 2 8 6"></polyline>
+                          <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 )}
-              </li>
+              </div>
             ))
-          : "No File Present"}
-      </ul>
+          : <p>No File Present</p>}
+      </div>
     </div>
   );
 
@@ -179,7 +232,7 @@ const ShowArchitecture = () => {
               </p>
             </div>
 
-            <div className="mt-4 space-y-4 grid grid-cols-2">
+            <div className="mt-4 space-y-4 grid grid-cols-2 gap-6">
               {[
                 "clientName",
                 "projectType",

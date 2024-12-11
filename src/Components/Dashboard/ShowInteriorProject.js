@@ -90,7 +90,7 @@ function ShowInteriorProject() {
       setEditingProject(data.data);
       toast.success("Project updated successfully!"); // Display success message
       setEditing(false); 
-      fetchProjectData();// Stop editing mode
+      fetchProjectData(); // Stop editing mode
     } catch (error) {
       console.error("Error updating project data:", error);
       toast.error("Failed to update project. Please try again.");
@@ -107,10 +107,15 @@ function ShowInteriorProject() {
   };
 
   const handleRemoveImage = (sectionName, indexToRemove) => {
-    setEditingProject(prevState => ({
-      ...prevState,
-      [sectionName]: prevState[sectionName].filter((_, index) => index !== indexToRemove)
-    }));
+    setEditingProject((prevState) => {
+      const updatedSection = prevState[sectionName].filter((_, index) => index !== indexToRemove);
+      const updatedProject = { ...prevState, [sectionName]: updatedSection };
+
+      // Optionally, make a request to the server to delete the image
+      // If your API supports it, you can send a DELETE request here.
+
+      return updatedProject;
+    });
   };
 
   const renderFileInputs = (sectionName, label) => (
@@ -150,6 +155,19 @@ function ShowInteriorProject() {
                     className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
+              )}
+
+              {/* Delete Button (visible only when in editing mode) */}
+              {editing && (
+                <button
+                  onClick={() => handleRemoveImage(sectionName, index)}
+                  className="absolute top-3 left-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                  title="Delete Image"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6l18 12M3 18l18-12"></path>
+                  </svg>
+                </button>
               )}
 
               {/* Share Button (visible only when not in editing mode) */}

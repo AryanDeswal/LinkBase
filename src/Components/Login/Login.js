@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
@@ -123,6 +123,16 @@ const LoginForm = ({ setIsLoggedIn }) => {
               Login Admin
             </button>
           </p>
+         <Link to="/forgetPassword"><p className="text-sm">
+            Forget Password{' '}
+            <button
+              onClick={handleSignupClickAdmin}
+              className="text-blue-500 hover:underline focus:outline-none"
+            >
+              Forget Password
+            </button>
+          </p>
+          </Link> 
         </div>
       </div>
     </div>

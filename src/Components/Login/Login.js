@@ -133,6 +133,16 @@ const LoginForm = ({ setIsLoggedIn }) => {
             </button>
           </p>
           </Link> 
+          <Link to="/forgetEmail"><p className="text-sm">
+            Forget Email{' '}
+            <button
+              onClick={handleSignupClickAdmin}
+              className="text-blue-500 hover:underline focus:outline-none"
+            >
+              Forget Email
+            </button>
+          </p>
+          </Link> 
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import AdminLogin from "./Components/Login/AdminLogin";
 import AdminDashboard from "./admin/adminDashboard";
 import ForgetPassword from "./forget/ForgetPassword";
 import { AdminProvider } from "./context/AdminContext";
+import ForgetEmail from "./forget/ForgetEmail";
 const App = () => {
   const navigate = useNavigate();
 
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/admindashboard" element={<AdminDashboard />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
+            <Route path="/forgetEmail" element={<ForgetEmail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AdminProvider>

@@ -253,6 +253,20 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const forgetEmail = async(req,res)=>{
+    try {
+        const {phone} =  await req.body;
+        const finduser = await User.find({phone:phone}).select("-password -verificationCode");
+        if(!finduser){
+            res.json({message:"Email not found"}).status(404)
+        }
+        res.json({message:finduser[0].email}).status(200)
+
+    } catch (error) {
+        res.json({message:"Server Error"}).status(500)
+    }
+}
+
 
 module.exports = {
     signup,
@@ -263,4 +277,5 @@ module.exports = {
     getUsers,
     updateUser,
     deleteUser,
+    forgetEmail
 };

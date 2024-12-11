@@ -38,6 +38,7 @@ const InteriorDataSchema = new mongoose.Schema({
   },
   Floor_Plan: [String],
   Section: [String],
+  All_Elevation:[String],
   Elevation: [String],
   ThreeD_Model: [String],
   Detail_Working: [String],
@@ -47,6 +48,9 @@ const InteriorDataSchema = new mongoose.Schema({
   Ceiling: [String],
   Electrical: [String],
   Plumbing: [String],
+  Laminator_Venner:[String],
+  Handles_Hardware:[String],
+  Curtains:[String],
   Estimate: [String],
   Onsite: [String],
 });

@@ -1,4 +1,4 @@
-
+const InteriorData =  require("../models/InteriorModel");
 
 const createInteriorData = async (req, res) => {
     try {

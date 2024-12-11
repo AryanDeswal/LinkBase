@@ -31,7 +31,6 @@ const modalDataSchema = new mongoose.Schema({
   Sanction_Drawing:[String],
   Revise_Sanction:[String],
   Completion_Letter: [String],
-
   File_Model_3D: [String],
   Drawings: [String],
   Working_Drawings: [String],

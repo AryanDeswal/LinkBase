@@ -50,7 +50,7 @@ const listEndpoints = (app) => {
 // Log all endpoints when the server starts
 const logEndpoints = () => {
     const endpoints = listEndpoints(app);
-    const baseURL = `http://localhost:${process.env.PORT || 3000}`; // Set the base URL with port
+    const baseURL = `http://localhost:${process.env.PORT || 8000}`; // Set the base URL with port
     console.log('Registered API Endpoints:');
     endpoints.forEach(endpoint => {
         // Ensure endpoint.methods is an array before calling join

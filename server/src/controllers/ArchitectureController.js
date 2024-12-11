@@ -1,15 +1,14 @@
-
+const ModalData =  require("../models/ArchiTectureModel");
 
 // Controller for Handling Form Submission
 const createModalData = async (req, res) => {
     try {
-        const data = req.body; // No need for 'await' as 'req.body' is synchronous
+        const data = await req.body; // No need for 'await' as 'req.body' is synchronous
         console.log(data);
 
         // Create a new instance of ModalData
         const modelData = new ModalData(data);
         console.log(modelData);
-
         // Save the data to the database
         await modelData.save();
 

@@ -1,3 +1,4 @@
+import { artisticFilter } from "@cloudinary/url-gen/actions/effect";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +33,7 @@ function ForgetEmail() {
             setIsSubmitting(true);
             try {
                 // Send phone number to backend to find the email associated with it
-                const response = await fetch('https://projectassociate-prxp.onrender.com/api/auth/forgot-email', {
+                const response = await fetch('https://projectassoicate.onrender.com/api/auth/forgot-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone }),
@@ -41,10 +42,11 @@ function ForgetEmail() {
                 if (!response.ok) throw new Error('User not found');
                 
                 const data = await response.json();
+                alert(data.message)
                 if (data.email) {
                     setUserEmail(data.email); // Set the retrieved email
                 }
-                alert('Email found! Check below.');
+                // alert('Email found! Check below.');
 
             } catch (error) {
                 setErrors({ api: 'No user found with this phone number.' });

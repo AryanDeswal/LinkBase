@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +14,12 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Define sidebarOpen state here
   const navigate = useNavigate();
   const {isLoggedIn} = useAuth();
+
+  useEffect(()=>{
+    if(isLoggedIn){
+      navigate("/home")
+    }
+  },[])
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");

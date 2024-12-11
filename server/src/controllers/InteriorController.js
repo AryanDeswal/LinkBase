@@ -1,112 +1,25 @@
-const AWS = require('aws-sdk');
-const multer = require('multer');
-const InteriorData = require('../models/InteriorModel');
-const { v4: uuidv4 } = require('uuid');
 
-// AWS Configuration
-const BUCKET_NAME = 'interiorbucket1';
-const AWS_REGION = 'ap-south-1';
-
-// Configure AWS
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: AWS_REGION
-});
-
-const s3 = new AWS.S3({
-    signatureVersion: 'v4',
-    params: { Bucket: BUCKET_NAME }
-});
-
-// Multer configuration
-const storage = multer.memoryStorage();
-const fileFilter = (req, file, cb) => {
-    // Allow only specific file types
-    const allowedMimeTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'application/pdf',
-        'application/vnd.dwg',  // AutoCAD files
-        'application/octet-stream'  // Generic binary files
-    ];
-    
-    if (allowedMimeTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error(`Invalid file type. Allowed types: ${allowedMimeTypes.join(', ')}`), false);
-    }
-};
-
-const upload = multer({
-    storage,
-    fileFilter,
-    limits: { 
-        fileSize: 10 * 1024 * 1024, // 10 MB limit
-        files: 25 // Maximum number of files
-    }
-}).fields([
-    { name: 'Floor_Plan_1', maxCount: 1 },
-    { name: 'Floor_Plan_2', maxCount: 1 },
-    { name: 'Floor_Plan_3', maxCount: 1 },
-    { name: 'Floor_Plan_4', maxCount: 1 },
-    { name: 'Section_1', maxCount: 1 },
-    { name: 'Section_2', maxCount: 1 },
-    { name: 'Section_3', maxCount: 1 },
-    { name: 'Section_4', maxCount: 1 },
-    { name: 'All_Elevation', maxCount: 1 },
-    { name: 'Elevation_1', maxCount: 1 },
-    { name: 'Elevation_2', maxCount: 1 },
-    { name: 'Elevation_3', maxCount: 1 },
-    { name: 'Elevation_4', maxCount: 1 },
-    { name: 'ThreeD_Model_1', maxCount: 1 },
-    { name: 'ThreeD_Model_2', maxCount: 1 },
-    { name: 'ThreeD_Model_3', maxCount: 1 },
-    { name: 'ThreeD_Model_4', maxCount: 1 },
-    { name: 'Detail_Working_Layout_1', maxCount: 1 },
-    { name: 'Electrical_Layout_1', maxCount: 1 },
-    { name: 'Electrical_Layout_2', maxCount: 1 },
-    { name: 'Electrical_Layout_3', maxCount: 1 },
-    { name: 'Celling_Layout_1', maxCount: 1 },
-    { name: 'Celling_Layout_2', maxCount: 1 }
-]);
-
-const uploadToS3 = async (file, folder) => {
-    if (!file) return null;
-
-    // Generate a unique filename with UUID
-    const fileExtension = file.originalname.split('.').pop();
-    const fileName = `${folder}/${uuidv4()}-${Date.now()}.${fileExtension}`;
-    
-    const params = {
-        Bucket: BUCKET_NAME,
-        Key: fileName,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-        ContentDisposition: 'inline'
-    };
-
-    try {
-        await s3.putObject(params).promise();
-        return `https://${BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${fileName}`;
-    } catch (error) {
-        console.error('S3 Upload Error:', error);
-        throw new Error(`Upload failed: ${error.message}`);
-    }
-};
 
 const createInteriorData = async (req, res) => {
     try {
-        const data = await req.body;
-        const interiorModel =  await new InteriorData(data);
+        const data = req.body; // 'req.body' is synchronous, no 'await' needed
+
+        // Create a new instance of InteriorData
+        const interiorModel = new InteriorData(data);
         await interiorModel.save();
-        console.log(interiorModel)
-        res.json({message:"Created"}).status(201)
+
+        console.log(interiorModel);
+
+        // Send a success response
+        res.status(201).json({ success: true, message: 'Data created successfully', data: interiorModel });
     } catch (error) {
-        res.json({message:"error"}).status(500)
+        console.error('Create Error:', error);
+
+        // Send a server error response
+        res.status(500).json({ success: false, message: 'Server error', details: error.message });
     }
 };
+
 
 // Error handler middleware
 const handleMulterError = (err, req, res, next) => {

@@ -152,7 +152,6 @@ const getInteriorDataById = async (req, res) => {
 
 
 module.exports = {
-    handleUpload: upload,
     createInteriorData,
     handleMulterError,
     updateInteriorData,

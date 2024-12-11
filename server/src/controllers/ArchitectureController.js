@@ -145,7 +145,6 @@ const getModalDataById = async (req, res) => {
 
 
 module.exports = {
-    handleUpload: upload,
     createModalData,
     updateModalData,
     deleteModalData,

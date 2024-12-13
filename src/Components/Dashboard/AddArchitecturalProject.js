@@ -17,31 +17,27 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     email: "",
     documentSections: {
       Presentation_Drawing: [],
-      File_Model_3D: [],
-      Drawings: [],
       Submission_Drawing: [],
-      All_Floor:[],
-      All_Section:[],
-      All_Elevation:[],
-      Working_Drawings: [],
-      All_Floor: [],
-      All_Section: [],
-      All_Elevation: [],
+      Floor: [],
+      Section: [],
+      Elevation: [],
       Toilet_Layout: [],
-      AllElectric_Drawing: [],
+      Electric_Drawing: [],
       Tile_Layout: [],
-      AllGrills_Railing: [],
-      Pleasant_Beam: [],
+      Grills: [],
+      Railing: [],
+      Column_footing: [],
+      Pleanth_Beam: [],
       StairCase_Drawing: [],
       Slab: [],
-      Column_footing: [],
       Property_Card: [],
+      Property_Map: [],
       Completion_Drawing: [],
-      Estimate:[],
-      Bill:[],
       Sanction_Drawing: [],
       Revise_Sanction: [],
       Completion_Letter: [],
+      Estimate: [],
+      Bill: [],
       Site_Photo: [],
     },
   });
@@ -59,6 +55,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         cloudName: "dmjxco87a",
         uploadPreset: "Architecture",
         multiple: false,
+        resourceType: "auto", // Allow PDFs and other file types
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
@@ -153,19 +150,75 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       <ul>
         {formData.documentSections[sectionName].map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">
-            <a
-              href={fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600"
-            >
-              {fileUrl}
-            </a>
+            {fileUrl.endsWith(".pdf") ? (
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-blue-600"
+              >
+                View PDF
+              </a>
+            ) : (
+              <img
+                src={fileUrl}
+                alt={`Uploaded file ${index + 1}`}
+                className="w-20 h-20 object-cover rounded-md"
+              />
+            )}
           </li>
         ))}
       </ul>
     </div>
   );
+
+  const documentGroups = [
+    {
+      heading: "Drawings1",
+      sections: ["Presentation_Drawing"],
+    },
+    {
+      heading: "Drawings2",
+      sections: ["Submission_Drawing"],
+    },
+    {
+      heading: "Working Drawings",
+      sections: ["Floor", "Section", "Elevation"],
+    },
+    {
+      heading: "Detail Drawings",
+      sections: [
+        "Toilet_Layout",
+        "Electric_Drawing",
+        "Tile_Layout",
+        "Grills",
+        "Railing",
+      ],
+    },
+    {
+      heading: "RCC",
+      sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing", "Slab"],
+    },
+    {
+      heading: "Documents",
+      sections: [
+        "Property_Card",
+        "Property_Map",
+        "Completion_Drawing",
+        "Sanction_Drawing",
+        "Revise_Sanction",
+        "Completion_Letter",
+      ],
+    },
+    {
+      heading: "Estimates and Bills",
+      sections: ["Estimate", "Bill"],
+    },
+    {
+      heading: "Onsite",
+      sections: ["Site_Photo"],
+    },
+  ];
 
   return (
     <div className="w-full max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-lg">
@@ -176,13 +229,12 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         }`}
         onClick={onClick}
       >
-        Add Architecture  Project
+        Add Architecture Project
       </button>
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Project Details */}
         <div className="p-6 bg-gray-50 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {renderFormInput("Title", "title", "Project Title")}
             {renderFormInput("Client Name", "clientName", "Client Name")}
             {renderFormInput("Site Address", "siteAddress", "Site Address")}
@@ -195,11 +247,17 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
             {renderFormInput("Email", "email", "Enter your email", "email")}
           </div>
         </div>
-        {/* Document Upload Sections */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {Object.keys(formData.documentSections).map((sectionKey) =>
-            renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
-          )}
+        <div className="space-y-8">
+          {documentGroups.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {group.sections.map((sectionKey) =>
+                  renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+                )}
+              </div>
+            </div>
+          ))}
         </div>
         <button
           type="submit"

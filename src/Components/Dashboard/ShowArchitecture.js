@@ -129,77 +129,84 @@ const ShowArchitecture = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {(editingProject[sectionName] || []).length > 0
-          ? (editingProject[sectionName] || []).map((fileUrl, index) => (
-              <div key={index} className="relative group">
-                {fileUrl.endsWith(".pdf") ? (
-                  <div className="relative">
-                    <iframe
-                      src={fileUrl}
-                      width="100%"
-                      height="200px"
-                      className="border rounded-md"
-                      title={`File ${index + 1}`}
-                    ></iframe>
-                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        onClick={() => handleShareImage(fileUrl)}
-                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                        title="Share File"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                          <polyline points="16 6 12 2 8 6"></polyline>
-                          <line x1="12" y1="2" x2="12" y2="15"></line>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleRemoveImage(sectionName, index)}
-                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                        title="Remove File"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                          <path d="M9 2V20"></path>
-                          <path d="M15 2V20"></path>
-                        </svg>
-                      </button>
+          ? (editingProject[sectionName] || []).map((fileUrl, index) => {
+              // Extract the file name from the URL
+              const fileName = fileUrl.split("/").pop().split("?")[0]; // Extract filename from URL
+
+              return (
+                <div key={index} className="relative group">
+                  {fileUrl.endsWith(".pdf") ? (
+                    <div className="relative">
+                      <iframe
+                        src={fileUrl}
+                        width="100%"
+                        height="200px"
+                        className="border rounded-md"
+                        title={`File ${index + 1}`}
+                      ></iframe>
+                      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={() => handleShareImage(fileUrl)}
+                          className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                          title="Share File"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleRemoveImage(sectionName, index)}
+                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                          title="Remove File"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
+                            <path d="M9 2V20"></path>
+                            <path d="M15 2V20"></path>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <img
-                      src={fileUrl}
-                      alt={`File ${index + 1}`}
-                      className="w-full h-60 object-cover rounded-lg"
-                    />
-                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        onClick={() => handleShareImage(fileUrl)}
-                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                        title="Share File"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                          <polyline points="16 6 12 2 8 6"></polyline>
-                          <line x1="12" y1="2" x2="12" y2="15"></line>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleRemoveImage(sectionName, index)}
-                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                        title="Remove File"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                          <path d="M9 2V20"></path>
-                          <path d="M15 2V20"></path>
-                        </svg>
-                      </button>
+                  ) : (
+                    <div className="relative">
+                      <img
+                        src={fileUrl}
+                        alt={`File ${index + 1}`}
+                        className="w-full h-60 object-cover rounded-lg"
+                      />
+                      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={() => handleShareImage(fileUrl)}
+                          className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                          title="Share File"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleRemoveImage(sectionName, index)}
+                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                          title="Remove File"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
+                            <path d="M9 2V20"></path>
+                            <path d="M15 2V20"></path>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+                  {/* Display file name */}
+                  <p className="text-center mt-2">{fileName}</p>
+                </div>
+              );
+            })
           : <p>No File Present</p>}
       </div>
     </div>
@@ -286,37 +293,36 @@ const ShowArchitecture = () => {
               "File_Model_3D",
               "Site_Photo",
               "Working_Drawings",
-            ].map((key) => renderFileInputs(key, key.replace("_", " ")))}
-
-            <div className="flex justify-center mt-8 space-x-4">
-              {!editing && (
-                <button
-                  onClick={() => setEditing(true)}
-                  className="bg-blue-600 text-white px-6 py-2 rounded"
-                >
-                  Edit
-                </button>
-              )}
-              {editing && (
+            ].map((key) => renderFileInputs(key, key))}
+            
+            <div className="flex justify-center space-x-4 mt-4">
+              {editing ? (
                 <>
                   <button
                     onClick={handleUpdate}
-                    className="bg-green-600 text-white px-6 py-2 rounded"
+                    className="bg-green-500 text-white px-6 py-2 rounded-full"
                   >
-                    Update
+                    Save Changes
                   </button>
                   <button
                     onClick={() => setEditing(false)}
-                    className="bg-red-600 text-white px-6 py-2 rounded"
+                    className="bg-gray-500 text-white px-6 py-2 rounded-full"
                   >
                     Cancel
                   </button>
                 </>
+              ) : (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="bg-blue-500 text-white px-6 py-2 rounded-full"
+                >
+                  Edit Project
+                </button>
               )}
             </div>
           </div>
         ) : (
-          <p>No project data found.</p>
+          <div className="text-center text-xl text-gray-500">Project Not Found</div>
         )}
       </div>
     </div>

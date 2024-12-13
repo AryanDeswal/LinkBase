@@ -16,23 +16,22 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Floor_Plan: [],
-      Section: [],
-      All_Elevation: [],
-      Elevation: [],
-      ThreeD_Model: [],
-      Detail_Working: [],
-      Flooring: [],
-      Furniture: [],
-      Presentation: [],
+      Presentation_Drawing: [],
       Ceiling: [],
       Electrical: [],
-      Plumbing: [],
-      Laminator_Venner: [],
-      Handles_Hardware: [],
-      Estimate: [],
+      Door_Handle: [],
       Curtains: [],
-      Onsite: [],
+      Furniture: [],
+      Laminates: [],
+      Venner: [],
+      Hinges: [],
+     
+      Plumbing: [],
+      ThreeD_Model: [],
+      Flooring: [],
+      Estimate: [],
+      Bill:[],
+      Site_Photo: [],
     },
   });
 
@@ -157,6 +156,81 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     </div>
   );
 
+  const documentGroups = [
+    {
+      heading: "Presentation1",
+      sections: [
+        "Presentation_Drawing",
+        
+        
+      ],
+    },
+    {
+      heading: "Ceiling1",
+      sections: [
+       
+        "Ceiling",
+        
+      ],
+    },
+    {
+      heading: "Electricals",
+      sections: [
+        
+        "Electrical",
+        
+      ],
+    },
+    {
+      heading: "Door Handless",
+      sections: [
+        
+        
+        "Door_Handle",
+        "Curtains",
+     
+      ],
+    },
+    {
+      heading: "Furniture Details",
+      sections: ["Laminates", "Venner", "Hinges"],
+    },
+    {
+      heading: "Plumbing",
+      sections: [
+        "Plumbing",
+       
+      ],
+    },
+    {
+      heading: "3D Model",
+      sections: [
+        "ThreeD_Model",
+       
+      ],
+    },
+    {
+      heading: "Floor",
+      sections: [
+        "Flooring",
+       
+      ],
+    },
+    {
+      heading: "Estimates",
+      sections: [
+      "Estimate",
+        "Bill"
+       
+      ],
+    },
+   
+    {
+      heading: "Onsite",
+      sections: ["Site_Photo"],
+    },
+  ];
+
   return (
     <div className="w-full max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-lg">
       <ToastContainer />
@@ -172,7 +246,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         {/* Project Details */}
         <div className="p-6 bg-gray-50 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {renderFormInput("Title", "title", "Project Title")}
             {renderFormInput("Client Name", "clientName", "Client Name")}
             {renderFormInput("Site Address", "siteAddress", "Site Address")}
@@ -186,10 +260,17 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           </div>
         </div>
         {/* Document Upload Sections */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {Object.keys(formData.documentSections).map((sectionKey) =>
-            renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
-          )}
+        <div className="space-y-8">
+          {documentGroups.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {group.sections.map((sectionKey) =>
+                  renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+                )}
+              </div>
+            </div>
+          ))}
         </div>
         <button
           type="submit"

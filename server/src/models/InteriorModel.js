@@ -36,19 +36,21 @@ const InteriorDataSchema = new mongoose.Schema({
   email: {
     type: String,
   },
-   Presentation: [String],
+    Presentation_Drawing: [String],
       Ceiling: [String],
       Electrical: [String],
+      Door_Handle: [String],
+      Curtains: [String],
       Furniture: [String],
       Laminates: [String],
       Venner: [String],
       Hinges: [String],
-      Door_Handle: [String],
-      Curtains: [String],
+     
       Plumbing: [String],
       ThreeD_Model: [String],
       Flooring: [String],
       Estimate: [String],
+      Bill: [String],
       Site_Photo: [String],
 });
 InteriorDataSchema.pre("save", async function (next) {

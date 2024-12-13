@@ -55,7 +55,6 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         cloudName: "dmjxco87a",
         uploadPreset: "Architecture",
         multiple: false,
-        resourceType: "auto", // Allow PDFs and other file types
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
@@ -99,6 +98,13 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const transformedObject = {
+      ...formData,
+      ...formData.documentSections, // Spread the contents of documentSections into the main object
+    };
+    
+    // Remove the original documentSections key
+    delete transformedObject.documentSections;
     setLoading(true);
 
     if (Object.keys(errors).length > 0) {
@@ -110,7 +116,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     try {
       const response = await axios.post(
         "https://projectassoicate.onrender.com/api/architecture/upload",
-        { ...formData, ...formData.documentSections }
+        transformedObject
       );
       console.log("Form data submitted:", response);
       toast.success("Architecture project added successfully!");

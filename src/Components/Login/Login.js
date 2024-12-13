@@ -2,6 +2,18 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setIsLoggedIn }) => {
+
+
+  useEffect(()=>{
+    const token =  window.localStorage.getItem('authorization')
+    if(!token){
+      navigate("/login")
+    }
+    else{
+      navigate("/home")
+    }
+  },[])
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});

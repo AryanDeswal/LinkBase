@@ -42,12 +42,39 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePin = (pin) => /^\d{6}$/.test(pin);
 
+  // useEffect(() => {
+  //   widgetRef.current = window.cloudinary.createUploadWidget(
+  //     {
+  //       cloudName: "dmjxco87a",
+  //       uploadPreset: "Architecture",
+  //       multiple: false,
+  //     },
+  //     (error, result) => {
+  //       if (!error && result && result.event === "success") {
+  //         const uploadedUrl = result.info.secure_url;
+  //         const sectionName = widgetRef.current.sectionName;
+  //         if (sectionName) {
+  //           setFormData((prev) => ({
+  //             ...prev,
+  //             documentSections: {
+  //               ...prev.documentSections,
+  //               [sectionName]: [...prev.documentSections[sectionName], uploadedUrl],
+  //             },
+  //           }));
+  //           toast.success("File uploaded successfully!");
+  //         }
+  //       }
+  //     }
+  //   );
+  // }, []);
+
   useEffect(() => {
     widgetRef.current = window.cloudinary.createUploadWidget(
       {
         cloudName: "dmjxco87a",
         uploadPreset: "Architecture",
         multiple: false,
+        clientAllowedFormats: ["pdf", "png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"],
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
@@ -90,6 +117,13 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   };
 
   const handleSubmit = async (e) => {
+    const transformedObject = {
+      ...formData,
+      ...formData.documentSections, // Spread the contents of documentSections into the main object
+    };
+    
+    // Remove the original documentSections key
+    delete transformedObject.documentSections;
     e.preventDefault();
     setLoading(true);
 
@@ -102,7 +136,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     try {
       const response = await axios.post(
         "https://projectassoicate.onrender.com/api/interior/interiors",
-        { ...formData, ...formData.documentSections }
+        transformedObject 
       );
       console.log("Form data submitted:", response);
       toast.success("Interior project added successfully!");

@@ -92,13 +92,22 @@ const ShowArchitecture = () => {
   };
 
   const handleRemoveImage = (sectionName, indexToRemove) => {
-    setEditingProject((prevState) => ({
-      ...prevState,
-      [sectionName]: prevState[sectionName].filter(
+    setEditingProject((prevState) => {
+      const updatedSection = prevState[sectionName].filter(
         (_, index) => index !== indexToRemove
-      ),
-    }));
+      );
+      const updatedState = { ...prevState, [sectionName]: updatedSection };
+  
+      // Sync projectData to reflect changes immediately
+      setProjectData((prevProjectData) => ({
+        ...prevProjectData,
+        [sectionName]: updatedSection,
+      }));
+  
+      return updatedState;
+    });
   };
+  
 
 
   const uploadFileHandler = async (e, sectionName) => {

@@ -6,7 +6,7 @@ const ViewInteriorProject = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [projectsPerPage] = useState(3);
+  const [projectsPerPage] = useState(9);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 

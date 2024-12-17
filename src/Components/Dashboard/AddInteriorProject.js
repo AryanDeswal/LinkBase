@@ -42,58 +42,6 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePin = (pin) => /^\d{6}$/.test(pin);
 
-  // useEffect(() => {
-  //   widgetRef.current = window.cloudinary.createUploadWidget(
-  //     {
-  //       cloudName: "dmjxco87a",
-  //       uploadPreset: "Architecture",
-  //       multiple: false,
-  //     },
-  //     (error, result) => {
-  //       if (!error && result && result.event === "success") {
-  //         const uploadedUrl = result.info.secure_url;
-  //         const sectionName = widgetRef.current.sectionName;
-  //         if (sectionName) {
-  //           setFormData((prev) => ({
-  //             ...prev,
-  //             documentSections: {
-  //               ...prev.documentSections,
-  //               [sectionName]: [...prev.documentSections[sectionName], uploadedUrl],
-  //             },
-  //           }));
-  //           toast.success("File uploaded successfully!");
-  //         }
-  //       }
-  //     }
-  //   );
-  // }, []);
-
-  useEffect(() => {
-    widgetRef.current = window.cloudinary.createUploadWidget(
-      {
-        cloudName: "dmjxco87a",
-        uploadPreset: "Architecture",
-        multiple: false,
-        clientAllowedFormats: ["pdf", "png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"],
-      },
-      (error, result) => {
-        if (!error && result && result.event === "success") {
-          const uploadedUrl = result.info.secure_url;
-          const sectionName = widgetRef.current.sectionName;
-          if (sectionName) {
-            setFormData((prev) => ({
-              ...prev,
-              documentSections: {
-                ...prev.documentSections,
-                [sectionName]: [...prev.documentSections[sectionName], uploadedUrl],
-              },
-            }));
-            toast.success("File uploaded successfully!");
-          }
-        }
-      }
-    );
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -111,10 +59,39 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const openCloudinaryWidget = (sectionName) => {
-    widgetRef.current.sectionName = sectionName;
-    widgetRef.current.open();
+  const uploadFileHandler = async (e, sectionName) => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      toast.error("Please select a file to upload.");
+      return;
+    }
+
+    try {
+      const formDataToUpload = new FormData();
+      formDataToUpload.append("file", file);
+
+      const { data } = await axios.post(
+        "http://localhost:8000/api/auth/upload",
+        formDataToUpload
+      );
+
+      const fileUrl = data.fileUrl;
+      setFormData((prev) => ({
+        ...prev,
+        documentSections: {
+          ...prev.documentSections,
+          [sectionName]: [...prev.documentSections[sectionName], fileUrl],
+        },
+      }));
+
+      toast.success("File uploaded successfully!");
+    } catch (error) {
+      console.error("File upload failed:", error);
+      toast.error("File upload failed. Please try again.");
+    }
   };
+
 
   const handleSubmit = async (e) => {
     const transformedObject = {
@@ -166,29 +143,37 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   const renderFileInputs = (sectionName, label) => (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md">
       <h3 className="font-semibold text-gray-700 mb-2">{label}</h3>
-      <button
-        type="button"
-        onClick={() => openCloudinaryWidget(sectionName)}
+      <input
+        type="file"
+        onChange={(e) => uploadFileHandler(e, sectionName)}
         className="text-blue-500 text-sm mb-2 hover:underline"
-      >
-        + Upload {label}
-      </button>
+      />
       <ul>
         {formData.documentSections[sectionName].map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">
-            <a
-              href={fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600"
-            >
-              {fileUrl}
-            </a>
+            <span className="p-1 font-semibold">{index + 1}.</span>
+            {fileUrl.endsWith(".pdf") ? (
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-blue-600"
+              >
+                View PDF
+              </a>
+            ) : (
+              <img
+                src={fileUrl}
+                alt={`Uploaded file ${index + 1}`}
+                className="w-20 h-20 object-cover rounded-md"
+              />
+            )}
           </li>
         ))}
       </ul>
     </div>
   );
+
 
   const documentGroups = [
     {

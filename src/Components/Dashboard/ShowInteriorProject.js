@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 
 const ShowInteriorProject = () => {
@@ -9,7 +10,6 @@ const ShowInteriorProject = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editingProject, setEditingProject] = useState({});
-  const widgetRef = useRef();
 
   const fetchProjectData = async () => {
     setLoading(true);
@@ -21,8 +21,13 @@ const ShowInteriorProject = () => {
         throw new Error("Failed to fetch project data");
       }
       const data = await response.json();
+      if (!data) {
+        setLoading(true);
+      }
       setProjectData(data.data);
       setEditingProject(data.data); // Initialize editing project data
+      setLoading(false);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching project data:", error);
       toast.error("Failed to fetch project data. Please try again.");
@@ -38,39 +43,9 @@ const ShowInteriorProject = () => {
     }
   }, [projectId]);
 
-  useEffect(() => {
-    widgetRef.current = window.cloudinary.createUploadWidget(
-      {
-        cloudName: "dmjxco87a", // Replace with your Cloudinary cloud name
-        uploadPreset: "Architecture", // Replace with your Cloudinary upload preset
-        multiple: false,
-        resourceType: "raw",
-      },
-      (error, result) => {
-        if (!error && result && result.event === "success") {
-          const uploadedUrl = result.info.secure_url;
-          const sectionName = widgetRef.current.sectionName;
-
-          if (sectionName) {
-            setEditingProject((prevState) => ({
-              ...prevState,
-              [sectionName]: [...(prevState[sectionName] || []), uploadedUrl],
-            }));
-          }
-          toast.success("File uploaded successfully!");
-        }
-      }
-    );
-  }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditingProject((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const openCloudinaryWidget = (sectionName) => {
-    widgetRef.current.sectionName = sectionName;
-    widgetRef.current.open();
   };
 
   const handleUpdate = async () => {
@@ -89,8 +64,8 @@ const ShowInteriorProject = () => {
       const data = await response.json();
       setProjectData(data.data);
       setEditingProject(data.data);
-      toast.success("Project updated successfully!");
 
+      toast.success("Project updated successfully!");
       setEditing(false);
       fetchProjectData();
     } catch (error) {
@@ -100,115 +75,188 @@ const ShowInteriorProject = () => {
   };
 
   const handleShareImage = (imageUrl) => {
-    navigator.clipboard.writeText(imageUrl).then(() => {
-      toast.success("Image link copied to clipboard!");
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-      toast.error("Failed to copy image link.");
-    });
+    navigator.clipboard
+      .writeText(imageUrl)
+      .then(() => {
+        toast.success("Image link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+        toast.error("Failed to copy image link.");
+      });
   };
 
   const handleRemoveImage = (sectionName, indexToRemove) => {
-    setEditingProject(prevState => ({
+    setEditingProject((prevState) => ({
       ...prevState,
-      [sectionName]: prevState[sectionName].filter((_, index) => index !== indexToRemove)
+      [sectionName]: prevState[sectionName].filter(
+        (_, index) => index !== indexToRemove
+      ),
     }));
   };
 
-  const renderFileInputs = (sectionName, label) => (
+  const uploadFileHandler = async (e, sectionName) => {
+    const file = e.target.files[0];
+    if (!file) {
+      toast.error("Please select a file to upload.");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const { data } = await axios.post(
+        "https://projectassoicate.onrender.com/api/auth/upload",
+        formData
+      );
+
+      const fileUrl = data.fileUrl;
+      if (!fileUrl) {
+        setEditingProject({
+          ...editingProject,
+        });
+      }
+      setEditingProject({
+        ...editingProject,
+        [sectionName]: [...editingProject[sectionName], fileUrl],
+      });
+      toast.success("File uploaded successfully!");
+    } catch (error) {
+      console.error("File upload failed:", error);
+      toast.error("File upload failed. Please try again.");
+    }
+  };
+
+  const renderFileInputs = (sectionName) => (
     <div>
-      <h3 className="font-bold mb-2 text-2xl">{label}</h3>
+      <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
       {editing && (
-        <button
-          type="button"
-          onClick={() => openCloudinaryWidget(sectionName)}
+        <input
+          type="file"
+          onChange={(e) => uploadFileHandler(e, sectionName)}
           className="text-blue-500 text-sm mb-4"
-        >
-          + Upload {label}
-        </button>
+        />
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {(editingProject[sectionName] || []).length > 0
-          ? (editingProject[sectionName] || []).map((fileUrl, index) => {
-              // Extract the file name from the URL
-              const fileName = fileUrl.split("/").pop();
+        {(projectData[sectionName] || []).length > 0 ? (
+          (projectData[sectionName] || []).map((fileUrl, index) => {
+            // Extract the file name from the URL
+            const fileName = fileUrl.split("/").pop().split("?")[0]; // Extract filename from URL
 
-              return (
-                <div key={index} className="relative group">
-                  {fileUrl.endsWith(".pdf") ? (
-                    <div className="relative">
-                      <iframe
-                        src={fileUrl}
-                        width="100%"
-                        height="200px"
-                        className="border rounded-md"
-                        title={`File ${index + 1}`}
-                      ></iframe>
-                      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button
-                          onClick={() => handleShareImage(fileUrl)}
-                          className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                          title="Share File"
+            return (
+              <div key={index} className="relative group">
+                {fileUrl.endsWith(".pdf") ? (
+                  <div className="relative">
+                    <iframe
+                      src={fileUrl}
+                      width="100%"
+                      height="200px"
+                      className="border rounded-md"
+                      title={`File ${index + 1}`}
+                    ></iframe>
+                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={() => handleShareImage(fileUrl)}
+                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                        title="Share File"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                            <polyline points="16 6 12 2 8 6"></polyline>
-                            <line x1="12" y1="2" x2="12" y2="15"></line>
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleRemoveImage(sectionName, index)}
-                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                          title="Remove File"
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                          <polyline points="16 6 12 2 8 6"></polyline>
+                          <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleRemoveImage(sectionName, index)}
+                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                        title="Remove File"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                            <path d="M9 2V20"></path>
-                            <path d="M15 2V20"></path>
-                          </svg>
-                        </button>
-                      </div>
+                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
+                          <path d="M9 2V20"></path>
+                          <path d="M15 2V20"></path>
+                        </svg>
+                      </button>
                     </div>
-                  ) : (
-                    <div className="relative">
-                      <img
-                        src={fileUrl}
-                        alt={`File ${index + 1}`}
-                        className="w-full h-60 object-cover rounded-lg"
-                      />
-                      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button
-                          onClick={() => handleShareImage(fileUrl)}
-                          className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                          title="Share File"
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <img
+                      src={fileUrl}
+                      alt={`File ${index + 1}`}
+                      className="w-full h-60 object-cover rounded-lg"
+                    />
+                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={() => handleShareImage(fileUrl)}
+                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                        title="Share File"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                            <polyline points="16 6 12 2 8 6"></polyline>
-                            <line x1="12" y1="2" x2="12" y2="15"></line>
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleRemoveImage(sectionName, index)}
-                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                          title="Remove File"
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                          <polyline points="16 6 12 2 8 6"></polyline>
+                          <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleRemoveImage(sectionName, index)}
+                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                        title="Remove File"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                            <path d="M9 2V20"></path>
-                            <path d="M15 2V20"></path>
-                          </svg>
-                        </button>
-                      </div>
+                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
+                          <path d="M9 2V20"></path>
+                          <path d="M15 2V20"></path>
+                        </svg>
+                      </button>
                     </div>
-                  )}
-                  {/* Display the file name below the preview */}
-                  <p className="text-center mt-2 text-sm">{fileName}</p>
-                </div>
-              );
-            })
-          : <p>No File Present</p>}
+                  </div>
+                )}
+                {/* Display file name */}
+                <p className="text-center mt-2">{fileName}</p>
+              </div>
+            );
+          })
+        ) : (
+          <p>No File Present</p>
+        )}
       </div>
     </div>
   );
@@ -265,10 +313,13 @@ const ShowInteriorProject = () => {
             <div className="mt-4 space-y-4 grid grid-cols-2 gap-6">
               {[
                 "clientName",
-                "projectType",
+                "Aadhar",
+                "Pin",
+                "email",
+                "projectHead",
+                "rccDesignerName",
                 "siteAddress",
-                "gstNo",
-                "mahareraNo",
+                "gstNo"
               ].map((field) => (
                 <div key={field}>
                   <label className="block font-semibold">{field}:</label>
@@ -288,34 +339,35 @@ const ShowInteriorProject = () => {
             </div>
 
             {[
-               "Presentation_Drawing",
-               "Ceiling",
-               "Electrical", 
-               "Door_Handle", 
-               "Curtains",
-               "Furniture",
-               "Laminates",
-               "Venner",
-               "Hinges",
-               "Plumbing",
-               "Windows",
-               "Interior_Fittings",
-            ].map((section) =>
-              renderFileInputs(section, section.replace(/_/g, " "))
-            )}
+              "Bill",
+              "Ceiling",
+              "Curtains",
+              "Door_Handle",
+              "Electrical",
+              "Estimate",
+              "Flooring",
+              "Furniture",
+              "Hinges",
+              "Laminates",
+              "Plumbing",
+              "Presentation_Drawing",
+              "Site_Photo",
+              "ThreeD_Model",
+              "Venner",
+            ].map((key) => renderFileInputs(key))}
 
-            <div className="flex space-x-4 mt-6 justify-center">
+            <div className="flex justify-center space-x-4 mt-4">
               {editing ? (
                 <>
                   <button
                     onClick={handleUpdate}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                    className="bg-green-500 text-white px-6 py-2 rounded-full"
                   >
                     Save Changes
                   </button>
                   <button
                     onClick={() => setEditing(false)}
-                    className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
+                    className="bg-gray-500 text-white px-6 py-2 rounded-full"
                   >
                     Cancel
                   </button>
@@ -323,7 +375,7 @@ const ShowInteriorProject = () => {
               ) : (
                 <button
                   onClick={() => setEditing(true)}
-                  className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
+                  className="bg-blue-500 text-white px-6 py-2 rounded-full"
                 >
                   Edit Project
                 </button>
@@ -331,7 +383,9 @@ const ShowInteriorProject = () => {
             </div>
           </div>
         ) : (
-          <p className="text-center text-xl text-gray-600">Project not found</p>
+          <div className="text-center text-xl text-gray-500">
+            Project Not Found
+          </div>
         )}
       </div>
     </div>

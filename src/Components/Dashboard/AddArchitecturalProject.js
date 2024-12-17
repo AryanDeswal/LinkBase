@@ -65,32 +65,39 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   };
 
   const uploadFileHandler = async (e, sectionName) => {
-    const file = e.target.files[0];
+    const files = e.target.files;
 
-    if (!file) {
-      toast.error("Please select a file to upload.");
+    if (!files.length) {
+      toast.error("Please select files to upload.");
       return;
     }
 
+    const uploadedUrls = [];
     try {
-      const formDataToUpload = new FormData();
-      formDataToUpload.append("file", file);
+      for (const file of files) {
+        const formDataToUpload = new FormData();
+        formDataToUpload.append("file", file);
 
-      const { data } = await axios.post(
-        "https://projectassoicate.onrender.com/api/auth/upload",
-        formDataToUpload
-      );
+        const { data } = await axios.post(
+          "https://projectassoicate.onrender.com/api/auth/upload",
+          formDataToUpload
+        );
 
-      const fileUrl = data.fileUrl;
+        uploadedUrls.push(data.fileUrl); // Store uploaded file URLs
+      }
+
       setFormData((prev) => ({
         ...prev,
         documentSections: {
           ...prev.documentSections,
-          [sectionName]: [...prev.documentSections[sectionName], fileUrl],
+          [sectionName]: [
+            ...prev.documentSections[sectionName],
+            ...uploadedUrls,
+          ],
         },
       }));
 
-      toast.success("File uploaded successfully!");
+      toast.success("Files uploaded successfully!");
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
@@ -153,10 +160,11 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       <h3 className="font-semibold text-gray-700 mb-2">{label}</h3>
       <input
         type="file"
-        onChange={(e) => uploadFileHandler(e, sectionName)}
+        multiple
+        onChange={(e) => uploadFileHandler(e, sectionName)} // Support multi-file selection
         className="text-blue-500 text-sm mb-2 hover:underline"
       />
-      <ul>
+      <ul className="grid grid-cols-2 gap-4 mt-2">
         {formData.documentSections[sectionName].map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">
             {fileUrl.endsWith(".pdf") ? (
@@ -216,30 +224,11 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         </div>
 
         <div className="space-y-8">
-          {renderFileInputs("Presentation_Drawing", "Presentation Drawing")}
-          {renderFileInputs("Submission_Drawing", "Submission Drawing")}
-          {renderFileInputs("Floor", "Floor")}
-          {renderFileInputs("Section", "Section")}
-          {renderFileInputs("Elevation", "Elevation")}
-          {renderFileInputs("Toilet_Layout", "Toilet Layout")}
-          {renderFileInputs("Electric_Drawing", "Electric Drawing")}
-          {renderFileInputs("Tile_Layout", "Tile Layout")}
-          {renderFileInputs("Grills", "Grills")}
-          {renderFileInputs("Railing", "Railing")}
-          {renderFileInputs("Column_footing", "Column Footing")}
-          {renderFileInputs("Pleanth_Beam", "Pleanth Beam")}
-          {renderFileInputs("StairCase_Drawing", "StairCase Drawing")}
-          {renderFileInputs("Slab", "Slab")}
-          {renderFileInputs("Property_Card", "Property Card")}
-          {renderFileInputs("Property_Map", "Property Map")}
-          {renderFileInputs("Completion_Drawing", "Completion Drawing")}
-          {renderFileInputs("Sanction_Drawing", "Sanction Drawing")}
-          {renderFileInputs("Revise_Sanction", "Revise Sanction")}
-          {renderFileInputs("Completion_Letter", "Completion Letter")}
-          {renderFileInputs("Estimate", "Estimate")}
-          {renderFileInputs("Bill", "Bill")}
-          {renderFileInputs("Site_Photo", "Site Photo")}
+          {Object.entries(formData.documentSections).map(([key, label]) =>
+            renderFileInputs(key, key.replace(/_/g, " "))
+          )}
         </div>
+
         <button
           type="submit"
           className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${

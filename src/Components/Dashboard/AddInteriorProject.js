@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -25,23 +25,20 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       Laminates: [],
       Venner: [],
       Hinges: [],
-     
       Plumbing: [],
       ThreeD_Model: [],
       Flooring: [],
       Estimate: [],
-      Bill:[],
+      Bill: [],
       Site_Photo: [],
     },
   });
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const widgetRef = useRef(null);
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePin = (pin) => /^\d{6}$/.test(pin);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,48 +57,53 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   };
 
   const uploadFileHandler = async (e, sectionName) => {
-    const file = e.target.files[0];
+    const files = e.target.files;
 
-    if (!file) {
-      toast.error("Please select a file to upload.");
+    if (!files.length) {
+      toast.error("Please select files to upload.");
       return;
     }
 
+    const uploadedUrls = [];
     try {
-      const formDataToUpload = new FormData();
-      formDataToUpload.append("file", file);
+      for (const file of files) {
+        const formDataToUpload = new FormData();
+        formDataToUpload.append("file", file);
 
-      const { data } = await axios.post(
-        "https://projectassoicate.onrender.com/api/auth/upload",
-        formDataToUpload
-      );
+        const { data } = await axios.post(
+          "https://projectassoicate.onrender.com/api/auth/upload",
+          formDataToUpload
+        );
 
-      const fileUrl = data.fileUrl;
+        uploadedUrls.push(data.fileUrl);
+      }
+
       setFormData((prev) => ({
         ...prev,
         documentSections: {
           ...prev.documentSections,
-          [sectionName]: [...prev.documentSections[sectionName], fileUrl],
+          [sectionName]: [
+            ...prev.documentSections[sectionName],
+            ...uploadedUrls,
+          ],
         },
       }));
 
-      toast.success("File uploaded successfully!");
+      toast.success("Files uploaded successfully!");
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
     }
   };
 
-
   const handleSubmit = async (e) => {
+    e.preventDefault();
     const transformedObject = {
       ...formData,
-      ...formData.documentSections, // Spread the contents of documentSections into the main object
+      ...formData.documentSections,
     };
-    
-    // Remove the original documentSections key
     delete transformedObject.documentSections;
-    e.preventDefault();
+
     setLoading(true);
 
     if (Object.keys(errors).length > 0) {
@@ -111,11 +113,10 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "https://projectassoicate.onrender.com/api/interior/interiors",
-        transformedObject 
+        transformedObject
       );
-      console.log("Form data submitted:", response);
       toast.success("Interior project added successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -127,7 +128,9 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
   const renderFormInput = (label, name, placeholder, type = "text") => (
     <div className="col-span-1">
-      <label className="block mb-2 text-sm font-medium text-gray-700">{label}</label>
+      <label className="block mb-2 text-sm font-medium text-gray-700">
+        {label}
+      </label>
       <input
         type={type}
         name={name}
@@ -136,7 +139,9 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
         placeholder={placeholder}
       />
-      {errors[name] && <p className="text-red-600 text-sm mt-1">{errors[name]}</p>}
+      {errors[name] && (
+        <p className="text-red-600 text-sm mt-1">{errors[name]}</p>
+      )}
     </div>
   );
 
@@ -145,6 +150,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       <h3 className="font-semibold text-gray-700 mb-2">{label}</h3>
       <input
         type="file"
+        multiple
         onChange={(e) => uploadFileHandler(e, sectionName)}
         className="text-blue-500 text-sm mb-2 hover:underline"
       />
@@ -174,80 +180,17 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     </div>
   );
 
-
   const documentGroups = [
-    {
-      heading: "Presentation1",
-      sections: [
-        "Presentation_Drawing",
-        
-        
-      ],
-    },
-    {
-      heading: "Ceiling1",
-      sections: [
-       
-        "Ceiling",
-        
-      ],
-    },
-    {
-      heading: "Electricals",
-      sections: [
-        
-        "Electrical",
-        
-      ],
-    },
-    {
-      heading: "Door Handless",
-      sections: [
-        
-        
-        "Door_Handle",
-        "Curtains",
-     
-      ],
-    },
-    {
-      heading: "Furniture Details",
-      sections: ["Laminates", "Venner", "Hinges"],
-    },
-    {
-      heading: "Plumbing",
-      sections: [
-        "Plumbing",
-       
-      ],
-    },
-    {
-      heading: "3D Model",
-      sections: [
-        "ThreeD_Model",
-       
-      ],
-    },
-    {
-      heading: "Floor",
-      sections: [
-        "Flooring",
-       
-      ],
-    },
-    {
-      heading: "Estimates",
-      sections: [
-      "Estimate",
-        "Bill"
-       
-      ],
-    },
-   
-    {
-      heading: "Onsite",
-      sections: ["Site_Photo"],
-    },
+    { heading: "Presentation", sections: ["Presentation_Drawing"] },
+    { heading: "Ceiling", sections: ["Ceiling"] },
+    { heading: "Electricals", sections: ["Electrical"] },
+    { heading: "Door Handles & Curtains", sections: ["Door_Handle", "Curtains"] },
+    { heading: "Furniture Details", sections: ["Laminates", "Venner", "Hinges"] },
+    { heading: "Plumbing", sections: ["Plumbing"] },
+    { heading: "3D Model", sections: ["ThreeD_Model"] },
+    { heading: "Flooring", sections: ["Flooring"] },
+    { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
+    { heading: "Onsite Photos", sections: ["Site_Photo"] },
   ];
 
   return (
@@ -262,7 +205,6 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         Add Interior Project
       </button>
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Project Details */}
         <div className="p-6 bg-gray-50 rounded-lg shadow-md">
           <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
           <div className="grid md:grid-cols-2 gap-6">
@@ -278,19 +220,16 @@ const AddInteriorProject = ({ isActive, onClick }) => {
             {renderFormInput("Email", "email", "Enter your email", "email")}
           </div>
         </div>
-        {/* Document Upload Sections */}
-        <div className="space-y-8">
-          {documentGroups.map((group, groupIndex) => (
-            <div key={groupIndex}>
-              <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {group.sections.map((sectionKey) =>
-                  renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
-                )}
-              </div>
+        {documentGroups.map((group, index) => (
+          <div key={index}>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {group.sections.map((sectionKey) =>
+                renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
         <button
           type="submit"
           className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${

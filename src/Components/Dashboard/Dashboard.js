@@ -24,13 +24,9 @@ const Dashboard = () => {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
-    toast.success("You have been logged out successfully.", {
-      position: toast.POSITION.TOP_CENTER,
-    }); // Show toast message
-    setTimeout(() => {
-      navigate("/login");
-    }, 3000); // Redirect after 3 seconds
+    navigate("/login");
   };
+  
 
   // Render content dynamically based on active tab
   const renderContent = () => {

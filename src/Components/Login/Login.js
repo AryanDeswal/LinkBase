@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginForm = ({ setIsLoggedIn }) => {
-
-
-  useEffect(()=>{
-    const token =  window.localStorage.getItem('authorization')
-    if(!token){
-      navigate("/login")
+  useEffect(() => {
+    const token = window.localStorage.getItem('authorization');
+    if (!token) {
+      navigate("/login");
+    } else {
+      navigate("/home");
     }
-    else{
-      navigate("/home")
-    }
-  },[])
+  }, []);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,23 +22,21 @@ const LoginForm = ({ setIsLoggedIn }) => {
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
     if (!email) newErrors.email = 'Email is required';
     else if (!emailPattern.test(email)) newErrors.email = 'Invalid email address';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
-  
+
     setErrors(newErrors);
-  
-    // Show alert with all errors
+
     if (Object.keys(newErrors).length > 0) {
-      alert(Object.values(newErrors).join('\n'));
+      toast.error('Please fix the errors in the form.');
       return false;
     }
-  
+
     return true;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,13 +48,13 @@ const LoginForm = ({ setIsLoggedIn }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
-        if (!response.ok) throw new Error('Login failed');
-        const data = await response.json()
-        window.localStorage.setItem("authorization",data.token)
-        alert('Login successful!');
-        navigate('/home'); // Change this to your desired route after login
+        if (!response.ok) throw new Error('Invalid credentials');
+        const data = await response.json();
+        window.localStorage.setItem("authorization", data.token);
+        toast.success('Login successful!');
+        navigate('/home');
       } catch (error) {
-        setErrors({ api: 'Login failed. Please try again.' });
+        toast.error('Invalid email or password. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
@@ -80,6 +77,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
         backgroundPosition: 'center',
       }}
     >
+      <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm bg-opacity-90">
         <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
         <form onSubmit={handleSubmit}>
@@ -135,26 +133,26 @@ const LoginForm = ({ setIsLoggedIn }) => {
               Login Admin
             </button>
           </p>
-         <Link to="/forgetPassword"><p className="text-sm">
-            Forget Password{' '}
-            <button
-              onClick={handleSignupClickAdmin}
-              className="text-blue-500 hover:underline focus:outline-none"
-            >
-              Forget Password
-            </button>
-          </p>
-          </Link> 
-          <Link to="/forgetEmail"><p className="text-sm">
-            Forget Email{' '}
-            <button
-              onClick={handleSignupClickAdmin}
-              className="text-blue-500 hover:underline focus:outline-none"
-            >
-              Forget Email
-            </button>
-          </p>
-          </Link> 
+          <Link to="/forgetPassword">
+            <p className="text-sm">
+              Forget Password{' '}
+              <button
+                className="text-blue-500 hover:underline focus:outline-none"
+              >
+                Forget Password
+              </button>
+            </p>
+          </Link>
+          <Link to="/forgetEmail">
+            <p className="text-sm">
+              Forget Email{' '}
+              <button
+                className="text-blue-500 hover:underline focus:outline-none"
+              >
+                Forget Email
+              </button>
+            </p>
+          </Link>
         </div>
       </div>
     </div>

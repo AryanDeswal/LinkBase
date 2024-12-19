@@ -137,6 +137,7 @@ const ShowInteriorProject = () => {
 
   const renderFileInputs = (sectionName) => (
     <div>
+     
       <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
       {editing && (
         <input
@@ -271,6 +272,15 @@ const ShowInteriorProject = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-10">
+    <div className="flex justify-end">
+  <button
+    onClick={() => window.history.back()} // Navigate back in history
+    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg"
+  >
+    Back
+  </button>
+</div>
+
       <ToastContainer />
       <div className="container mx-auto px-4 py-8">
         {loading ? (

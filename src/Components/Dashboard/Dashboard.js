@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 import ViewArchitecturalProject from "./ViewArchitecturalProject";
 import ViewInteriorProject from "./ViewInteriorProject";
 import { useAuth } from "../../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("addReport");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [logoutMessage, setLogoutMessage] = useState(""); // State for logout message
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
@@ -23,9 +24,10 @@ const Dashboard = () => {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
-    setLogoutMessage("You have been logged out successfully."); // Set logout message
+    toast.success("You have been logged out successfully.", {
+      position: toast.POSITION.TOP_CENTER,
+    }); // Show toast message
     setTimeout(() => {
-      setLogoutMessage("");
       navigate("/login");
     }, 3000); // Redirect after 3 seconds
   };
@@ -72,7 +74,7 @@ const Dashboard = () => {
           sidebarOpen ? "block" : "hidden"
         } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
       >
-        <h2 className="text-xl font-bold mb-6">MG and associate</h2>
+        <h2 className="text-xl font-bold mb-6">MG and Associate</h2>
         <ul>
           <li>
             <button
@@ -122,13 +124,11 @@ const Dashboard = () => {
 
       {/* Content Area */}
       <div className="w-full md:w-3/4 bg-white p-6">
-        {logoutMessage && (
-          <div className="text-center text-green-500 font-bold mb-4">
-            {logoutMessage}
-          </div>
-        )}
         <div className="p-4 bg-gray-100 rounded shadow">{renderContent()}</div>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 };

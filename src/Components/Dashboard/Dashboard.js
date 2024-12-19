@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddArchitecturalProject from "./AddArchitecturalProject";
@@ -11,19 +10,24 @@ import { useAuth } from "../../context/AuthContext";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("addReport");
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Define sidebarOpen state here
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(""); // State for logout message
   const navigate = useNavigate();
-  const {isLoggedIn} = useAuth();
+  const { isLoggedIn } = useAuth();
 
-  useEffect(()=>{
-    if(isLoggedIn){
-      navigate("/home")
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/home");
     }
-  },[])
+  }, []);
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
-    navigate("/login");
+    setLogoutMessage("You have been logged out successfully."); // Set logout message
+    setTimeout(() => {
+      setLogoutMessage("");
+      navigate("/login");
+    }, 3000); // Redirect after 3 seconds
   };
 
   // Render content dynamically based on active tab
@@ -33,26 +37,21 @@ const Dashboard = () => {
         return <AddArchitecturalProject />;
       case "addButton":
         return <AddInteriorProject />;
-      // case 'viewData':
-      //   return <ViewUsers />; // Render the ViewData component
       case "viewReport":
         return <ViewArchitecturalProject />;
       case "seeUsers":
         return <ViewInteriorProject />;
-
       default:
         return <div>Select an option from the sidebar.</div>;
     }
   };
 
-  if(!isLoggedIn){
-    return(
-      <>
+  if (!isLoggedIn) {
+    return (
       <div className="text-red-500 text-center font-bold text-2xl items-center">
-      Please Login First
+        Please Login First
       </div>
-      </>
-    )
+    );
   }
 
   return (
@@ -61,7 +60,7 @@ const Dashboard = () => {
       <div className="md:hidden bg-blue-800 text-white p-4">
         <button
           className="text-lg font-bold"
-          onClick={() => setSidebarOpen(!sidebarOpen)} // Toggle sidebar state
+          onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} size="lg" />
         </button>
@@ -95,16 +94,6 @@ const Dashboard = () => {
               Add Interior Project
             </button>
           </li>
-          {/* <li>
-            <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === 'viewData' ? 'bg-blue-600' : ''
-              }`}
-              onClick={() => setActiveTab('viewData')}
-            >
-              View Users
-            </button>
-          </li> */}
           <li>
             <button
               className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
@@ -115,7 +104,6 @@ const Dashboard = () => {
               View Architectural Report
             </button>
           </li>
-
           <li>
             <button
               className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
@@ -134,6 +122,11 @@ const Dashboard = () => {
 
       {/* Content Area */}
       <div className="w-full md:w-3/4 bg-white p-6">
+        {logoutMessage && (
+          <div className="text-center text-green-500 font-bold mb-4">
+            {logoutMessage}
+          </div>
+        )}
         <div className="p-4 bg-gray-100 rounded shadow">{renderContent()}</div>
       </div>
     </div>

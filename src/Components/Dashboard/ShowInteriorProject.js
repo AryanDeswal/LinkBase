@@ -320,14 +320,16 @@ const ShowInteriorProject = () => {
 
             <div className="mt-4 space-y-4 grid grid-cols-2 gap-6">
               {[
+                "title",
                 "clientName",
-                "Aadhar",
-                "Pin",
-                "email",
+                "siteAddress",
+                "gstNo",
                 "projectHead",
                 "rccDesignerName",
-                "siteAddress",
-                "gstNo"
+                "Aadhar",
+                "Pan",
+                "Pin",  
+                "email",
               ].map((field) => (
                 <div key={field}>
                   <label className="block font-semibold">{field}:</label>

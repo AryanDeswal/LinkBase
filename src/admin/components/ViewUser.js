@@ -61,12 +61,11 @@ const ViewUsers = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         console.log("Attempting to delete user with ID:", userId); // Log to verify correct ID
-        const response = await fetch(`http://localhost:8000/api/auth/users/${userId}`, {
+        const response = await fetch(`https://projectassoicate.onrender.com/api/auth/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-  
-          }
+          },
         });
   
         if (!response.ok) {
@@ -81,9 +80,16 @@ const ViewUsers = () => {
         if (currentUsers.length === 1 && currentPage > 1) {
           setCurrentPage(prev => prev - 1);
         }
+  
+        // Show success message
+        setPopupMessage('User deleted successfully!');
+        setTimeout(() => setPopupMessage(''), 3000); // Hide after 3 seconds
       } catch (err) {
         console.error("Error deleting user:", err);
-        setError(err.message);
+  
+        // Show error message
+        setPopupMessage(`Error: ${err.message}`);
+        setTimeout(() => setPopupMessage(''), 3000); // Hide after 3 seconds
       }
     }
   };

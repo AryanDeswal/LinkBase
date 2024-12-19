@@ -31,7 +31,7 @@ const sendVerificationEmail = async (email, name, phone, verificationCode) => {
 
 const sendPasswordResetEmail = async (email, resetToken) => {
     try {
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/resetpassword?token=${resetToken}`;
         
         await transporter.sendMail({
             from: process.env.EMAIL_USER,

@@ -9,13 +9,14 @@ const ViewUsers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [popupMessage, setPopupMessage] = useState('');
   const usersPerPage = 5;
   const token = window.sessionStorage.getItem('authorization');
 
   const fetchUsers = async () => {
-    try {  
+    try {
       const response = await fetch('https://projectassoicate.onrender.com/api/auth/users', {
-        method: 'GET'
+        method: 'GET',
       });
 
       if (!response.ok) {
@@ -25,7 +26,7 @@ const ViewUsers = () => {
       const data = await response.json();
       setUsers(data);
     } catch (err) {
-      console.error("Error fetching users:", err);
+      console.error('Error fetching users:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -60,41 +61,36 @@ const ViewUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        console.log("Attempting to delete user with ID:", userId); // Log to verify correct ID
-        const response = await fetch(`https://projectassoicate.onrender.com/api/auth/users/${userId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
+        const response = await fetch(
+          `https://projectassoicate.onrender.com/api/auth/users/${userId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to delete user');
         }
-  
-        // Update state to remove deleted user immediately
-        setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
-  
-        // Adjust current page if necessary
+
+        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+
         if (currentUsers.length === 1 && currentPage > 1) {
-          setCurrentPage(prev => prev - 1);
+          setCurrentPage((prev) => prev - 1);
         }
-  
-        // Show success message
+
         setPopupMessage('User deleted successfully!');
-        setTimeout(() => setPopupMessage(''), 3000); // Hide after 3 seconds
+        setTimeout(() => setPopupMessage(''), 3000);
       } catch (err) {
-        console.error("Error deleting user:", err);
-  
-        // Show error message
+        console.error('Error deleting user:', err);
         setPopupMessage(`Error: ${err.message}`);
-        setTimeout(() => setPopupMessage(''), 3000); // Hide after 3 seconds
+        setTimeout(() => setPopupMessage(''), 3000);
       }
     }
   };
-  
-  
 
   if (loading) {
     return (
@@ -114,6 +110,12 @@ const ViewUsers = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      {popupMessage && (
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow">
+          {popupMessage}
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">View Users</h2>
         <div className="relative flex-1 md:flex-initial">
@@ -125,12 +127,6 @@ const ViewUsers = () => {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
-          {/* <button 
-            className="bg-blue-500 px-4 py-2 rounded-lg text-white ml-4 hover:bg-blue-600 transition-colors"
-            onClick={logoutHandler}
-          >
-            Logout
-          </button> */}
         </div>
       </div>
 
@@ -138,9 +134,15 @@ const ViewUsers = () => {
         <table className="w-full table-auto">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Contact
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -148,7 +150,11 @@ const ViewUsers = () => {
               <tr key={user._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
-                    <img className="h-10 w-10 rounded-full mr-3" src={user.avatar || ''} alt={user.name} />
+                    <img
+                      className="h-10 w-10 rounded-full mr-3"
+                      src={user.avatar || ''}
+                      alt={user.name}
+                    />
                     <div>
                       <div className="font-medium text-gray-900">{user.name}</div>
                       <div className="text-sm text-gray-500">{user.dob}</div>
@@ -158,15 +164,16 @@ const ViewUsers = () => {
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
                     <div className="flex items-center text-sm text-gray-500">📧 {user.email}</div>
-                    <div className="flex items-center text-sm text-gray-500 mt-1">📍 {user.address}</div>
+                    <div className="flex items-center text-sm text-gray-500 mt-1">
+                      📍 {user.address}
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end space-x-4">
-                    <button 
-                      onClick={() => handleDelete(user._id)} 
+                    <button
+                      onClick={() => handleDelete(user._id)}
                       className="text-red-500 hover:text-red-700 transition-colors"
-                      disabled={loading}
                     >
                       <FaTrashAlt size={20} />
                     </button>

@@ -112,14 +112,23 @@ const AdminLogin = ({ setIsLoggedIn }) => {
 
           <button
             type="submit"
-            className={`w-full py-2 rounded-md text-white ${
+            className={`w-full py-2  mt-10 rounded-md text-white ${
               isSubmitting ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
             }`}
             disabled={isSubmitting}
           >
             {isSubmitting ? "Submitting..." : "Login"}
           </button>
+        
+          
         </form>
+        <button
+      type="button"
+      className="w-full py-2 mt-20 rounded-md text-white bg-blue-500 hover:bg-blue-600"
+      onClick={() => navigate("/login")}
+    >
+      Back to Login
+    </button>
       </div>
     </div>
   );

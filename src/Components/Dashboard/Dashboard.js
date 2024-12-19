@@ -70,17 +70,17 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={${
+        className={`${
           sidebarOpen ? "block" : "hidden"
-        } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen}
+        } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
       >
         <h2 className="text-xl font-bold mb-6">MG and Associate</h2>
         <ul>
           <li>
             <button
-              className={w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
                 activeTab === "addReport" ? "bg-blue-600" : ""
-              }}
+              }`}
               onClick={() => setActiveTab("addReport")}
             >
               Add Architectural Project
@@ -88,9 +88,9 @@ const Dashboard = () => {
           </li>
           <li>
             <button
-              className={w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
                 activeTab === "addButton" ? "bg-blue-600" : ""
-              }}
+              }`}
               onClick={() => setActiveTab("addButton")}
             >
               Add Interior Project
@@ -98,9 +98,9 @@ const Dashboard = () => {
           </li>
           <li>
             <button
-              className={w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
                 activeTab === "viewReport" ? "bg-blue-600" : ""
-              }}
+              }`}
               onClick={() => setActiveTab("viewReport")}
             >
               View Architectural Report
@@ -108,9 +108,9 @@ const Dashboard = () => {
           </li>
           <li>
             <button
-              className={w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
                 activeTab === "seeUsers" ? "bg-blue-600" : ""
-              }}
+              }`}
               onClick={() => setActiveTab("seeUsers")}
             >
               View Interior Report

@@ -41,7 +41,7 @@ function ForgetPassword() {
         console.log(data);
         setErrors({});
         alert("Password reset email sent. Please check your email.");
-        navigate("/login"); // Redirect to login after success
+        navigate("/"); // Redirect to login after success
       } catch (error) {
         setErrors({ api: "Failed to send reset email. Please try again." });
       } finally {
@@ -62,7 +62,7 @@ function ForgetPassword() {
         }}
       >
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm bg-opacity-90">
-          <h1 className="text-3xl font-bold mb-6 text-center">Forget Pasaword</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">Forget Password</h1>
           <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium mb-1">
@@ -91,7 +91,7 @@ function ForgetPassword() {
             }`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Send Reset Email"}
+            {isSubmitting ? "Submitting..." : "Send Reset Password Email"}
           </button>
         </form>
         </div>

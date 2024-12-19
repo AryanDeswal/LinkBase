@@ -125,7 +125,7 @@ const AdminLogin = ({ setIsLoggedIn }) => {
         <button
       type="button"
       className="w-full py-2 mt-20 rounded-md text-white bg-blue-500 hover:bg-blue-600"
-      onClick={() => navigate("/login")}
+      onClick={() => navigate("/")}
     >
       Back to Login
     </button>

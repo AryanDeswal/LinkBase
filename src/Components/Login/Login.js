@@ -7,7 +7,7 @@ const LoginForm = ({ setIsLoggedIn }) => {
   useEffect(() => {
     const token = window.localStorage.getItem('authorization');
     if (!token) {
-      navigate("/login");
+      navigate("/");
     } else {
       navigate("/home");
     }

@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
-    navigate("/login");
+    navigate("/");
   };
   
 

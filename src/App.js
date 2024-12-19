@@ -14,19 +14,18 @@ import AdminDashboard from "./admin/adminDashboard";
 import ForgetPassword from "./forget/ForgetPassword";
 import { AdminProvider } from "./context/AdminContext";
 import ForgetEmail from "./forget/ForgetEmail";
+import ResetPassword from "./forget/ResetPassword";
 const App = () => {
   const navigate = useNavigate();
 
-   useEffect(()=>{
-     navigate("/login")
-  },[])
+ 
   return (
     <>
       <AuthProvider>
         <AdminProvider>
           <Routes>
             <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<LoginForm />} />
+            <Route path="/" element={<LoginForm />} />
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/otp-verification" element={<OtpVerification />} />
             <Route path="/show/:projectId" element={<ShowInteriorProject />} />
@@ -35,6 +34,7 @@ const App = () => {
             <Route path="/admindashboard" element={<AdminDashboard />} />
             <Route path="/forgetpassword" element={<ForgetPassword />} />
             <Route path="/forgetEmail" element={<ForgetEmail />} />
+            <Route path="/resetpassword" element={<ResetPassword/>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AdminProvider>

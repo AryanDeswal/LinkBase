@@ -117,9 +117,18 @@ const Dashboard = () => {
             </button>
           </li>
         </ul>
-        <div className="flex flex-col items-center bg-red-500 p-2">
-          <button onClick={logoutHandler}>Logout</button>
-        </div>
+      </div>
+
+      {/* Logout Button for Mobile and Desktop */}
+      <div className="md:hidden bg-red-500 text-white p-4">
+        <button onClick={logoutHandler} className="w-full text-center font-bold">
+          Logout
+        </button>
+      </div>
+      <div className="hidden md:flex flex-col items-center bg-red-500 p-2">
+        <button onClick={logoutHandler} className="text-white font-bold">
+          Logout
+        </button>
       </div>
 
       {/* Content Area */}

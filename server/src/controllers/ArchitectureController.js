@@ -1,26 +1,46 @@
 const ModalData =  require("../models/ArchiTectureModel");
 
-// Controller for Handling Form Submission
-const createModalData = async (req, res) => {
+
+const createArchitectureData = async (req, res) => {
     try {
-        const data = await req.body; // No need for 'await' as 'req.body' is synchronous
-        console.log(data);
+        const data = req.body; // 'req.body' is synchronous, no 'await' needed
 
-        // Create a new instance of ModalData
-        const modelData = new ModalData(data);
-        console.log(modelData);
-        // Save the data to the database
-        await modelData.save();
+        // Create a new instance of InteriorData
+        const interiorModel = new ModalData(data);
+        await interiorModel.save();
 
-        // Send a success response with the created data
-        res.status(201).json({ success: true, message: 'Data created successfully', data: modelData });
+        console.log(interiorModel);
+
+        // Send a success response
+        res.status(201).json({ success: true, message: 'Data created successfully', data: interiorModel });
     } catch (error) {
         console.error('Create Error:', error);
 
         // Send a server error response
-        res.status(500).json({ success: false, error: 'Server error', details: error.message });
+        res.status(500).json({ success: false, message: 'Server error', details: error.message });
     }
 };
+
+const handleMulterError = (err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({
+                success: false,
+                error: 'File size limit exceeded. Maximum size is 10MB.'
+            });
+        }
+        if (err.code === 'LIMIT_FILE_COUNT') {
+            return res.status(400).json({
+                success: false,
+                error: 'Too many files uploaded.'
+            });
+        }
+    }
+    next(err);
+};
+
+
+
 
 
 // Controller to Update ModalData
@@ -144,7 +164,8 @@ const getModalDataById = async (req, res) => {
 
 
 module.exports = {
-    createModalData,
+    createArchitectureData,
+    handleMulterError,
     updateModalData,
     deleteModalData,
     getModalData,

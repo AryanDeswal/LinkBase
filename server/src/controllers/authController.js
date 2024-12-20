@@ -25,13 +25,18 @@ const signup = async (req, res) => {
 
         const { name, email, dob, phone, password, address } = req.body;
 
-        const existingUser = await User.findOne({ email });
+        // Check if email already exists (active users)
+        const existingUser = await User.findOne({ email, deleted: false });  // Ensure we check for active users
         if (existingUser) {
             return res.status(400).json({ message: 'Email already registered' });
         }
 
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationCode = generateVerificationCode();
+
+        // Log the generated verification code for debugging
+        console.log(`Generated verification code for ${email}: ${verificationCode}`);
 
         const user = new User({
             name,
@@ -44,15 +49,25 @@ const signup = async (req, res) => {
         });
 
         await user.save();
-        await sendVerificationEmail(email, name, phone, verificationCode);
+        
+        // Attempt to send the verification email
+        try {
+            await sendVerificationEmail(email, name, phone, verificationCode);
+            console.log(`Verification email sent to ${email}`);
+        } catch (emailError) {
+            console.error(`Failed to send email: ${emailError.message}`);
+            return res.status(500).json({ message: 'Failed to send verification email' });
+        }
 
         res.status(201).json({ 
             message: 'User registered successfully. Awaiting verification.' 
         });
     } catch (error) {
+        console.error('Error during signup:', error.message);
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Get users function
 const getUsers = async (req, res) => {

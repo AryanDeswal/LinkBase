@@ -27,7 +27,7 @@ function ResetPassword() {
         if (!response.ok) throw new Error("Failed to send reset email");
         await response.json();
         setErrors({});
-        alert("Password reset email sent. Please check your email.");
+        alert("Password Successfully reseted.");
         navigate("/"); // Redirect to login after success
       } catch (error) {
         setErrors({ api: "Failed to send reset email. Please try again." });

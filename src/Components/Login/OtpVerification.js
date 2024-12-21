@@ -50,7 +50,7 @@ const OtpVerification = () => {
       }
 
       alert(data.message); // Show success message
-      navigate('/login'); // Redirect to login page
+      navigate('/'); // Redirect to login page
     } catch (err) {
       console.error('Error during OTP verification:', err);
       setError('An error occurred. Please try again.'); // Set error state

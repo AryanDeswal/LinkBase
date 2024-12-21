@@ -18,8 +18,8 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    phone:{
-        type:String,
+    phone: {
+        type: String,
         required: true,
         unique: true
     },
@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordExpires: {
         type: Date
+    },
+    deleted: {
+        type: Boolean,
+        default: false  // Set it to false initially
     },
     createdAt: {
         type: Date,

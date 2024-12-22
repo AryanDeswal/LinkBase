@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -45,6 +45,8 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   const [loading, setLoading] = useState(false);
   const [uploadingSection, setUploadingSection] = useState(null);
   const [errors, setErrors] = useState({});
+  const [toggle, setToggle] = useState({});
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePin = (pin) => /^\d{6}$/.test(pin);
@@ -75,7 +77,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
 
     if (uploadingSection === sectionName) {
       toast.warning("Already uploading files for this section.");
-      return; // Prevent multiple uploads for the same section.
+      return;
     }
 
     setUploadingSection(sectionName);
@@ -131,17 +133,62 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       return;
     }
 
+    if (isFormSubmitting) {
+      toast.info("Form is already being submitted.");
+      return;
+    }
+
+    setIsFormSubmitting(true);
+
     try {
       await axios.post(
         "https://projectassoicate-1.onrender.com/api/architecture/upload",
         transformedObject
       );
       toast.success("Architecture project added successfully!");
+      setFormData({
+        title: "",
+        clientName: "",
+        siteAddress: "",
+        gstNo: "",
+        projectHead: "",
+        rccDesignerName: "",
+        PAN: "",
+        Aadhar: "",
+        Pin: "",
+        email: "",
+        documentSections: {
+          Presentation_Drawing: [],
+          Submission_Drawing: [],
+          Floor: [],
+          Section: [],
+          Elevation: [],
+          Toilet_Layout: [],
+          Electric_Drawing: [],
+          Tile_Layout: [],
+          Grills: [],
+          Railing: [],
+          Column_footing: [],
+          Pleanth_Beam: [],
+          StairCase_Drawing: [],
+          Slab: [],
+          Property_Card: [],
+          Property_Map: [],
+          Completion_Drawing: [],
+          Sanction_Drawing: [],
+          Revise_Sanction: [],
+          Completion_Letter: [],
+          Estimate: [],
+          Bill: [],
+          Site_Photo: [],
+        },
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error submitting form: " + error.message);
     } finally {
       setLoading(false);
+      setIsFormSubmitting(false);
     }
   };
 
@@ -177,7 +224,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         <p className="text-blue-600 font-medium">Uploading...</p>
       )}
       <ul>
-        {formData.documentSections[sectionName].map((fileUrl, index) => (
+        {formData.documentSections[sectionName]?.map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">
             <span className="p-1 font-semibold">{index + 1}.</span>
             {fileUrl.endsWith(".pdf") ? (
@@ -203,11 +250,11 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   );
 
   const documentGroups = [
-    { heading: "Drawing", sections: ["Presentation_Drawing","Submission_Drawing"] },
-    { heading: "Working Drawing", sections: ["Floor","Section","Elevation"] },
-    { heading: "Detail Drawing", sections: ["Toilet_Layout","Electric_Drawing","Tile_Layout","Grills","Railing"] },
-    { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing","Slab"] },
-    { heading: "Documents", sections: ["Property_Card", "Property_Map", "Completion_Drawing", "Sanction_Drawing","Revise_Sanction","Completion_Letter"] },
+    { heading: "Drawing", sections: ["Presentation_Drawing", "Submission_Drawing"] },
+    { heading: "Working Drawing", sections: ["Floor", "Section", "Elevation"] },
+    { heading: "Detail Drawing", sections: ["Toilet_Layout", "Electric_Drawing", "Tile_Layout", "Grills", "Railing"] },
+    { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing", "Slab"] },
+    { heading: "Documents", sections: ["Property_Card", "Property_Map", "Completion_Drawing", "Sanction_Drawing", "Revise_Sanction", "Completion_Letter"] },
     { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
     { heading: "Onsite Photos", sections: ["Site_Photo"] },
   ];
@@ -221,43 +268,47 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         }`}
         onClick={onClick}
       >
-        Add Interior Project
+        Add Architecture Project
       </button>
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="p-6 bg-gray-50 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {renderFormInput("Title", "title", "Project Title")}
-            {renderFormInput("Client Name", "clientName", "Client Name")}
-            {renderFormInput("Site Address", "siteAddress", "Site Address")}
-            {renderFormInput("GST No", "gstNo", "GST No")}
-            {renderFormInput("Project Head", "projectHead", "Project Head")}
-            {renderFormInput("RCC Designer Name", "rccDesignerName", "RCC Designer Name")}
-            {renderFormInput("PAN", "PAN", "PAN")}
-            {renderFormInput("Aadhar", "Aadhar", "Enter 12-digit Aadhar")}
-            {renderFormInput("Pin", "Pin", "Enter 6-digit Pin")}
-            {renderFormInput("Email", "email", "Enter your email", "email")}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {renderFormInput("Title", "title", "Enter project title")}
+          {renderFormInput("Client Name", "clientName", "Enter client name")}
+          {renderFormInput("Site Address", "siteAddress", "Enter site address")}
+          {renderFormInput("GST No", "gstNo", "Enter GST number")}
+          {renderFormInput("Project Head", "projectHead", "Enter project head")}
+          {renderFormInput("RCC Designer Name", "rccDesignerName", "Enter RCC designer name")}
+          {renderFormInput("PAN", "PAN", "Enter PAN")}
+          {renderFormInput("Aadhar", "Aadhar", "Enter Aadhar")}
+          {renderFormInput("Pin", "Pin", "Enter Pin")}
+          {renderFormInput("Email", "email", "Enter email", "email")}
         </div>
-        {documentGroups.map((group, index) => (
-          <div key={index}>
-            <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {group.sections.map((sectionKey) =>
-                renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
-              )}
-            </div>
+
+        {documentGroups.map((group, idx) => (
+          <div key={idx}>
+            <h3 className="text-xl font-bold">{group.heading}</h3>
+            {group.sections.map((section) =>
+              renderFileInputs(section, `${section.replace("_", " ")} Documents`)
+            )}
           </div>
         ))}
-        <button
-          type="submit"
-          className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Submit Project"}
-        </button>
+
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            className="py-2 px-6 bg-gray-400 text-white rounded-md"
+            onClick={onClick}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="py-2 px-6 bg-blue-500 text-white rounded-md disabled:bg-blue-300"
+            disabled={loading || isFormSubmitting}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -17,10 +17,13 @@ const Dashboard = () => {
   const { isLoggedIn } = useAuth();
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/home");
+    if (!isLoggedIn) {
+      navigate("/"); // Redirect to the home page if not logged in
+    } else {
+      // If the user is logged in, set the default active tab here
+      setActiveTab("addButton"); // You can set any default tab you want
     }
-  }, []);
+  }, [isLoggedIn, navigate]);
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");

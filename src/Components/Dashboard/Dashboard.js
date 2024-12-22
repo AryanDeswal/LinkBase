@@ -35,7 +35,6 @@ const Dashboard = () => {
       case "addButton":
         return <AddInteriorProject />;
 
-        
       case "addReport":
         return <AddArchitecturalProject />;
       
@@ -76,21 +75,22 @@ if (!isLoggedIn) {
           <li>
             <button
               className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "addReport" ? "bg-blue-600" : ""
-              }`}
-              onClick={() => setActiveTab("addReport")}
-            >
-              Add Architectural Project
-            </button>
-          </li>
-          <li>
-            <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
                 activeTab === "addButton" ? "bg-blue-600" : ""
               }`}
               onClick={() => setActiveTab("addButton")}
             >
               Add Interior Project
+            </button>
+          </li>
+          <li>
+            <button
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
+                activeTab === "addReport" ? "bg-blue-600" : ""
+              }`}
+              onClick={() => setActiveTab("addReport")}
+            >
+           
+              Add Architectural Project
             </button>
           </li>
           <li>

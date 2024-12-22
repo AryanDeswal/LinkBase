@@ -35,6 +35,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploadingSection, setUploadingSection] = useState(null);
   const [errors, setErrors] = useState({});
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -64,19 +65,21 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       return;
     }
 
-    const uploadedUrls = [];
+    setUploadingSection(sectionName);
     try {
-      for (const file of files) {
-        const formDataToUpload = new FormData();
-        formDataToUpload.append("file", file);
+      const uploadedUrls = await Promise.all(
+        Array.from(files).map(async (file) => {
+          const formDataToUpload = new FormData();
+          formDataToUpload.append("file", file);
 
-        const { data } = await axios.post(
-          "https://projectassoicate.onrender.com/api/auth/upload",
-          formDataToUpload
-        );
+          const { data } = await axios.post(
+            "https://projectassoicate.onrender.com/api/auth/upload",
+            formDataToUpload
+          );
 
-        uploadedUrls.push(data.fileUrl);
-      }
+          return data.fileUrl;
+        })
+      );
 
       setFormData((prev) => ({
         ...prev,
@@ -93,6 +96,8 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
+    } finally {
+      setUploadingSection(null);
     }
   };
 
@@ -154,6 +159,9 @@ const AddInteriorProject = ({ isActive, onClick }) => {
         onChange={(e) => uploadFileHandler(e, sectionName)}
         className="text-blue-500 text-sm mb-2 hover:underline"
       />
+      {uploadingSection === sectionName && (
+        <p className="text-blue-600 font-medium">Uploading...</p>
+      )}
       <ul>
         {formData.documentSections[sectionName].map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">

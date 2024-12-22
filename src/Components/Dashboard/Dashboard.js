@@ -24,6 +24,7 @@ const Dashboard = () => {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
+    alert("Logged out successfully!");
     navigate("/");
   };
   
@@ -43,13 +44,10 @@ const Dashboard = () => {
         return <div>Select an option from the sidebar.</div>;
     }
   };
-
   if (!isLoggedIn) {
-    return (
-      <div className="text-red-500 text-center font-bold text-2xl items-center">
-        Please Login First
-      </div>
-    );
+    // Navigate to the home page if the user is not logged in
+    navigate("/");
+    return null; // Avoid rendering the JSX below if navigating away
   }
 
   return (

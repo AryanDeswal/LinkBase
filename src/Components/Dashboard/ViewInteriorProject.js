@@ -31,21 +31,21 @@ const ViewInteriorProject = () => {
     }
   };
 
-  // const deleteProject = async (projectId) => {
-  //   const confirmDelete = window.confirm('Are you sure you want to delete this project?');
-  //   if (!confirmDelete) return;
+  const deleteProject = async (projectId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this project?');
+    if (!confirmDelete) return;
 
-  //   try {
-  //     const response = await fetch(`${API_URL}/interiors/${projectId}`, {
-  //       method: 'DELETE',
-  //     });
-  //     if (!response.ok) throw new Error('Failed to delete project');
-  //     setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
-  //   } catch (err) {
-  //     console.error('Error deleting project:', err);
-  //     setError('Failed to delete project. Please try again.');
-  //   }
-  // };
+    try {
+      const response = await fetch(`${API_URL}/interiors/${projectId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete project');
+      setProjectData((prevData) => prevData.filter((project) => project._id !== projectId));
+    } catch (err) {
+      console.error('Error deleting project:', err);
+      setError('Failed to delete project. Please try again.');
+    }
+  };
 
   const renderLoading = () => (
     <div className="flex justify-center items-center min-h-screen">

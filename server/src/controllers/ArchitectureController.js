@@ -74,6 +74,8 @@ const updateModalData = async (req, res) => {
 };
 
 // Controller to Delete ModalData
+const BUCKET_NAME = 'buildingbucket1';
+
 const deleteModalData = async (req, res) => {
     try {
         const { id } = req.params;
@@ -85,17 +87,19 @@ const deleteModalData = async (req, res) => {
         }
 
         const deletePromises = [];
+
         // Iterate over the fields of the deleted data
-        for (const fieldName in deletedData.toObject()) {
-            const fileUrls = deletedData[fieldName];
-            if (Array.isArray(fileUrls)) {
-                fileUrls.forEach((fileUrl) => {
-                    const fileKey = fileUrl.split('buildingbucket1/')[1]; // Updated with your bucket name
-                    if (fileKey) {
-                        // Add the delete promises for each file
-                        deletePromises.push(
-                            s3.deleteObject({ Bucket: 'buildingbucket1', Key: fileKey }).promise(),
-                        );
+        for (const [fieldName, fieldValue] of Object.entries(deletedData.toObject())) {
+            if (Array.isArray(fieldValue)) {
+                fieldValue.forEach((fileUrl) => {
+                    if (typeof fileUrl === 'string' && fileUrl.includes(BUCKET_NAME)) {
+                        const fileKey = fileUrl.split(`${BUCKET_NAME}/`)[1]; // Extract the file key
+                        if (fileKey) {
+                            // Add the delete promises for each file
+                            deletePromises.push(
+                                s3.deleteObject({ Bucket: BUCKET_NAME, Key: fileKey }).promise()
+                            );
+                        }
                     }
                 });
             }
@@ -106,7 +110,7 @@ const deleteModalData = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Data deleted successfully',
+            message: 'Data and associated files deleted successfully',
         });
     } catch (error) {
         console.error('Delete Error:', error);

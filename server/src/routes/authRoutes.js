@@ -5,6 +5,8 @@ const { signup, verify, login, getUsers, forgotPassword, resetPassword , deleteU
 const { signupValidation, loginValidation } = require('../utils/validation');
 const { authenticateMiddleware } = require('../middleware/auth');
 const {uploadFiles,upload} = require('../controllers/uploadController');
+const { uploadArchitecture ,uploads } = require('../controllers/ArchitectureuploadController');
+
 
 // User signup
 router.post('/signup', signupValidation, signup);
@@ -31,5 +33,8 @@ router.post('/reset-password', resetPassword);
 router.delete('/users/:id',deleteUser);
 
 router.post('/upload',upload.single("file"),uploadFiles);
+
+
+router.post('/uploadarchitecture',uploads.single("file"),uploadArchitecture);
 
 module.exports = router;

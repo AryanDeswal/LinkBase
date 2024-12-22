@@ -68,42 +68,44 @@ const updateInteriorData = async (req, res) => {
   };
   
 
-const deleteInteriorData = async (req, res) => {
-    try {
-        const { id } = req.params;
+  const BUCKET_NAME = 'buildingbucket1';
 
-        // Find the existing document
-        const existingData = await InteriorData.findById(id);
-        if (!existingData) {
-            return res.status(404).json({ success: false, error: 'Record not found' });
-        }
-
-        // Delete files from S3
-        const deletePromises = Object.values(existingData.toObject()).map(async (fileUrl) => {
-            if (typeof fileUrl === 'string' && fileUrl.includes('buildingbucket1')) {
-                const fileKey = fileUrl.split('buildingbucket1/')[1];
-                try {
-                    await s3.deleteObject({ Bucket: 'buildingbucket1', Key: fileKey }).promise();
-                    console.log(`Deleted ${fileUrl} from S3.`);
-                } catch (s3Error) {
-                    console.error(`Failed to delete ${fileUrl}:`, s3Error.message);
-                }
-            }
-        });
-
-        // Wait for all delete operations to finish
-        await Promise.all(deletePromises);
-
-        // Delete the document from the database
-        await InteriorData.findByIdAndDelete(id);
-
-        res.status(200).json({ success: true, message: 'Record deleted successfully' });
-    } catch (error) {
-        console.error('Server Error:', error);
-        res.status(500).json({ success: false, error: 'Delete failed', details: error.message });
-    }
-};
-
+  const deleteInteriorData = async (req, res) => {
+      try {
+          const { id } = req.params;
+  
+          // Find the existing document
+          const existingData = await InteriorData.findById(id);
+          if (!existingData) {
+              return res.status(404).json({ success: false, error: 'Record not found' });
+          }
+  
+          // Delete files from S3
+          const deletePromises = Object.values(existingData.toObject()).map(async (fileUrl) => {
+              if (typeof fileUrl === 'string' && fileUrl.includes(BUCKET_NAME)) {
+                  const fileKey = fileUrl.split(`${BUCKET_NAME}/`)[1];
+                  try {
+                      await s3.deleteObject({ Bucket: BUCKET_NAME, Key: fileKey }).promise();
+                      console.log(`Deleted ${fileUrl} from S3.`);
+                  } catch (s3Error) {
+                      console.error(`Failed to delete ${fileUrl}:`, s3Error.message);
+                  }
+              }
+          });
+  
+          // Wait for all delete operations to finish
+          await Promise.all(deletePromises);
+  
+          // Delete the document from the database
+          await InteriorData.findByIdAndDelete(id);
+  
+          res.status(200).json({ success: true, message: 'Record deleted successfully' });
+      } catch (error) {
+          console.error('Server Error:', error);
+          res.status(500).json({ success: false, error: 'Delete failed', details: error.message });
+      }
+  };
+  
 const getAllInteriorData = async (req, res) => {
     try {
         // Fetch all interior data from the database

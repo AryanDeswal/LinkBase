@@ -25,13 +25,9 @@ const signup = async (req, res) => {
 
         const { name, email, dob, phone, password, address } = req.body;
 
-        // Check if the email exists, even if it's deleted
-        const existingUser = await User.findOne({ email });
-        
-        if (existingUser && existingUser.deleted) {
-            // If the user is deleted, you can either re-enable them or proceed to create a new user
-            await User.findByIdAndUpdate(existingUser._id, { deleted: false });  // Re-enable the user
-        } else if (existingUser && !existingUser.deleted) {
+        // Check if email already exists (active users)
+        const existingUser = await User.findOne({ email, deleted: false });
+        if (existingUser) {
             return res.status(400).json({ message: 'Email already registered' });
         }
 
@@ -265,10 +261,10 @@ const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Soft delete the user by setting deleted to true
-        const deletedUser = await User.findByIdAndUpdate(id, { deleted: true }, { new: true });
+        // Delete the user from the database
+        const result = await User.deleteOne({ _id: id });
 
-        if (!deletedUser) {
+        if (result.deletedCount === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 

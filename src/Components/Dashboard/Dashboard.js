@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const logoutHandler = () => {
     window.localStorage.removeItem("authorization");
-    alert("Logged out successfully!");
+    alert("You have been logged out.");
     navigate("/");
   };
   
@@ -32,10 +32,13 @@ const Dashboard = () => {
   // Render content dynamically based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case "addReport":
-        return <AddArchitecturalProject />;
       case "addButton":
         return <AddInteriorProject />;
+
+        
+      case "addReport":
+        return <AddArchitecturalProject />;
+      
       case "viewReport":
         return <ViewArchitecturalProject />;
       case "seeUsers":
@@ -44,7 +47,7 @@ const Dashboard = () => {
         return <div>Select an option from the sidebar.</div>;
     }
   };
-  if (!isLoggedIn) {
+if (!isLoggedIn) {
     // Navigate to the home page if the user is not logged in
     navigate("/");
     return null; // Avoid rendering the JSX below if navigating away

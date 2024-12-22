@@ -43,6 +43,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploadingSection, setUploadingSection] = useState(null);
   const [errors, setErrors] = useState({});
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -72,19 +73,27 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       return;
     }
 
-    const uploadedUrls = [];
+    if (uploadingSection === sectionName) {
+      toast.warning("Already uploading files for this section.");
+      return; // Prevent multiple uploads for the same section.
+    }
+
+    setUploadingSection(sectionName);
+
     try {
-      for (const file of files) {
-        const formDataToUpload = new FormData();
-        formDataToUpload.append("file", file);
+      const uploadedUrls = await Promise.all(
+        Array.from(files).map(async (file) => {
+          const formDataToUpload = new FormData();
+          formDataToUpload.append("file", file);
 
-        const { data } = await axios.post(
-          "https://projectassoicate.onrender.com/api/auth/upload",
-          formDataToUpload
-        );
+          const { data } = await axios.post(
+            "http://localhost:8000/api/auth/uploadarchitecture",
+            formDataToUpload
+          );
 
-        uploadedUrls.push(data.fileUrl); // Store uploaded file URLs
-      }
+          return data.fileUrl;
+        })
+      );
 
       setFormData((prev) => ({
         ...prev,
@@ -101,6 +110,8 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
+    } finally {
+      setUploadingSection(null);
     }
   };
 
@@ -121,12 +132,10 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     }
 
     try {
-      const response = await axios.post(
-        "https://projectassoicate.onrender.com/api/architecture/upload",
+      await axios.post(
+        "http://localhost:8000/api/architecture/upload",
         transformedObject
       );
-
-      console.log("Form data submitted:", response);
       toast.success("Architecture project added successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -161,12 +170,16 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       <input
         type="file"
         multiple
-        onChange={(e) => uploadFileHandler(e, sectionName)} // Support multi-file selection
+        onChange={(e) => uploadFileHandler(e, sectionName)}
         className="text-blue-500 text-sm mb-2 hover:underline"
       />
-      <ul className="grid grid-cols-2 gap-4 mt-2">
+      {uploadingSection === sectionName && (
+        <p className="text-blue-600 font-medium">Uploading...</p>
+      )}
+      <ul>
         {formData.documentSections[sectionName].map((fileUrl, index) => (
           <li key={index} className="text-sm text-gray-600 truncate">
+            <span className="p-1 font-semibold">{index + 1}.</span>
             {fileUrl.endsWith(".pdf") ? (
               <a
                 href={fileUrl}
@@ -189,6 +202,16 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     </div>
   );
 
+  const documentGroups = [
+    { heading: "Drawing", sections: ["Presentation_Drawing","Submission_Drawing"] },
+    { heading: "Working Drawing", sections: ["Floor","Section","Elevation"] },
+    { heading: "Detail Drawing", sections: ["Toilet_Layout","Electric_Drawing","Tile_Layout","Grills","Railing"] },
+    { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing","Slab"] },
+    { heading: "Documents", sections: ["Property_Card", "Property_Map", "Completion_Drawing", "Sanction_Drawing","Revise_Sanction","Completion_Letter"] },
+    { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
+    { heading: "Onsite Photos", sections: ["Site_Photo"] },
+  ];
+
   return (
     <div className="w-full max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-lg">
       <ToastContainer />
@@ -198,37 +221,34 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         }`}
         onClick={onClick}
       >
-        Add Architecture Project
+        Add Interior Project
       </button>
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="p-6 bg-gray-50 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
-            Project Details
-          </h2>
+          <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {renderFormInput("Title", "title", "Project Title")}
             {renderFormInput("Client Name", "clientName", "Client Name")}
             {renderFormInput("Site Address", "siteAddress", "Site Address")}
             {renderFormInput("GST No", "gstNo", "GST No")}
             {renderFormInput("Project Head", "projectHead", "Project Head")}
-            {renderFormInput(
-              "RCC Designer Name",
-              "rccDesignerName",
-              "RCC Designer Name"
-            )}
+            {renderFormInput("RCC Designer Name", "rccDesignerName", "RCC Designer Name")}
             {renderFormInput("PAN", "PAN", "PAN")}
             {renderFormInput("Aadhar", "Aadhar", "Enter 12-digit Aadhar")}
             {renderFormInput("Pin", "Pin", "Enter 6-digit Pin")}
             {renderFormInput("Email", "email", "Enter your email", "email")}
           </div>
         </div>
-
-        <div className="space-y-8">
-          {Object.entries(formData.documentSections).map(([key, label]) =>
-            renderFileInputs(key, key.replace(/_/g, " "))
-          )}
-        </div>
-
+        {documentGroups.map((group, index) => (
+          <div key={index}>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {group.sections.map((sectionKey) =>
+                renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+              )}
+            </div>
+          </div>
+        ))}
         <button
           type="submit"
           className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${

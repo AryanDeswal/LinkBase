@@ -36,7 +36,7 @@ const ViewInteriorProject = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`https://projectassoicate.onrender.com/api/interior/interiors/${projectId}`, {
+      const response = await fetch(`http://localhost:8000/api/interior/interiors/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete project');

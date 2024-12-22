@@ -35,7 +35,7 @@ const ViewArchitecturalProject = () => {
 
   const handleDelete = async (projectId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/architecture/upload/${projectId}`, {
+      const response = await fetch(`https://projectassoicate.onrender.com/api/architecture/upload/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

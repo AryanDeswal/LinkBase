@@ -16,7 +16,7 @@ const ShowArchitecture = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://projectassoicate.onrender.com/api/architecture/data/${projectId}`
+        `https://projectassoicate-1.onrender.com/api/architecture/data/${projectId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch project data");
@@ -56,7 +56,7 @@ const ShowArchitecture = () => {
   const handleUpdate = async () => {
     try {
       const response = await fetch(
-        `https://projectassoicate.onrender.com/api/architecture/update/${editingProject._id}`,
+        `https://projectassoicate-1.onrender.com/api/architecture/update/${editingProject._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ const ShowArchitecture = () => {
       formData.append("file", file);
   
       const { data } = await axios.post(
-        "https://projectassoicate.onrender.com/api/auth/upload",
+        "https://projectassoicate-1.onrender.com/api/auth/upload",
         formData
       );
   

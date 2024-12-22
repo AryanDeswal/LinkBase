@@ -44,7 +44,7 @@ const AdminLogin = ({ setIsLoggedIn }) => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch("https://projectassoicate.onrender.com/signinadmin", {
+        const response = await fetch("https://projectassoicate-1.onrender.com/signinadmin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

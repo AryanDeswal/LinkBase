@@ -33,7 +33,7 @@ function ForgetEmail() {
             setIsSubmitting(true);
             try {
                 // Send phone number to backend to find the email associated with it
-                const response = await fetch('https://projectassoicate.onrender.com/api/auth/forgot-email', {
+                const response = await fetch('https://projectassoicate-1.onrender.com/api/auth/forgot-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone }),

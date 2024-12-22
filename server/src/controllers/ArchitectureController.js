@@ -78,26 +78,30 @@ const deleteModalData = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Find and delete the data from MongoDB
         const deletedData = await ModalData.findByIdAndDelete(id);
         if (!deletedData) {
             return res.status(404).json({ success: false, message: 'Data not found' });
         }
 
         const deletePromises = [];
+        // Iterate over the fields of the deleted data
         for (const fieldName in deletedData.toObject()) {
             const fileUrls = deletedData[fieldName];
             if (Array.isArray(fileUrls)) {
                 fileUrls.forEach((fileUrl) => {
-                    const fileKey = fileUrl.split(`${BUCKET_NAME}/`)[1];
+                    const fileKey = fileUrl.split('buildingbucket1/')[1]; // Updated with your bucket name
                     if (fileKey) {
+                        // Add the delete promises for each file
                         deletePromises.push(
-                            s3.deleteObject({ Bucket: BUCKET_NAME, Key: fileKey }).promise(),
+                            s3.deleteObject({ Bucket: 'buildingbucket1', Key: fileKey }).promise(),
                         );
                     }
                 });
             }
         }
 
+        // Wait for all delete operations to finish
         await Promise.all(deletePromises);
 
         res.status(200).json({
@@ -109,6 +113,7 @@ const deleteModalData = async (req, res) => {
         res.status(500).json({ success: false, error: 'Delete failed', details: error.message });
     }
 };
+
 
 // Controller to Fetch ModalData
 const getModalData = async (req, res) => {

@@ -257,7 +257,7 @@ const updateUser = async (req, res) => {
 };
 
 // Delete user function
-const deleteUser = async (req, res) => {
+ const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -273,6 +273,7 @@ const deleteUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 const forgetEmail = async(req,res)=>{

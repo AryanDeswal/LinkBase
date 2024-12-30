@@ -41,7 +41,7 @@ const SignupForm = () => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch('https://projectassoicate-1.onrender.com/api/auth/signup', {
+        const response = await fetch('https://projectassoicate-3.onrender.com/api/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

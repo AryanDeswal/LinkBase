@@ -15,7 +15,7 @@ const ShowInteriorProject = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://projectassoicate-1.onrender.com/api/interior/interior/${projectId}`
+        `https://projectassoicate-3.onrender.com/api/interior/interior/${projectId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch project data");
@@ -51,7 +51,7 @@ const ShowInteriorProject = () => {
   const handleUpdate = async () => {
     try {
       const response = await fetch(
-        `https://projectassoicate-1.onrender.com/api/interior/update/interiors/${editingProject._id}`,
+        `https://projectassoicate-3.onrender.com/api/interior/update/interiors/${editingProject._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -114,7 +114,7 @@ const ShowInteriorProject = () => {
       formData.append("file", file);
 
       const { data } = await axios.post(
-        "https://projectassoicate-1.onrender.com/api/auth/upload",
+        "https://projectassoicate-3.onrender.com/api/auth/upload",
         formData
       );
 

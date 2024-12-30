@@ -15,7 +15,7 @@ const ViewUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://projectassoicate-1.onrender.com/api/auth/users', {
+      const response = await fetch('https://projectassoicate-3.onrender.com/api/auth/users', {
         method: 'GET',
       });
 
@@ -62,7 +62,7 @@ const ViewUsers = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         const response = await fetch(
-          `https://projectassoicate-1.onrender.com/api/auth/users/${userId}`,
+          `https://projectassoicate-3.onrender.com/api/auth/users/${userId}`,
           {
             method: 'DELETE',
             headers: {

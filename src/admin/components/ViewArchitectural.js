@@ -10,7 +10,7 @@ const ViewArchitecturalProject = () => {
   const [projectsPerPage] = useState(6);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const API_URL = 'https://projectassoicate-3.onrender.com/api/architecture/data';
+  const API_URL = 'https://projectassoicate-1.onrender.com/api/architecture/data';
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -35,7 +35,7 @@ const ViewArchitecturalProject = () => {
 
   const handleDelete = async (projectId) => {
     try {
-      const response = await fetch(`https://projectassoicate-3.onrender.com/api/architecture/upload/${projectId}`, {
+      const response = await fetch(`https://projectassoicate-1.onrender.com/api/architecture/upload/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

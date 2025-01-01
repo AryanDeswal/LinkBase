@@ -16,7 +16,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Presentation_Drawing: [],
+      Presentation_DrawingI: [],
       Ceiling: [],
       Electrical: [],
       Door_Handle: [],
@@ -189,7 +189,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   );
 
   const documentGroups = [
-    { heading: "Presentation", sections: ["Presentation_Drawing"] },
+    { heading: "Presentation", sections: ["Presentation_DrawingI"] },
     { heading: "Ceiling", sections: ["Ceiling"] },
     { heading: "Electricals", sections: ["Electrical"] },
     { heading: "Door Handles & Curtains", sections: ["Door_Handle", "Curtains"] },

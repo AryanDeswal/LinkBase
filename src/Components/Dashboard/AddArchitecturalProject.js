@@ -16,7 +16,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Presentation_Drawing: [],
+      Presentation_DrawingsA: [],
       Submission_Drawing: [],
       Floor: [],
       Section: [],
@@ -158,7 +158,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         Pin: "",
         email: "",
         documentSections: {
-          Presentation_Drawing: [],
+          Presentation_DrawingsA: [],
           Submission_Drawing: [],
           Floor: [],
           Section: [],
@@ -250,7 +250,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   );
 
   const documentGroups = [
-    { heading: "Drawing", sections: ["Presentation_Drawing", "Submission_Drawing"] },
+    { heading: "Drawing", sections: ["Presentation_DrawingsA", "Submission_Drawing"] },
     { heading: "Working Drawing", sections: ["Floor", "Section", "Elevation"] },
     { heading: "Detail Drawing", sections: ["Toilet_Layout", "Electric_Drawing", "Tile_Layout", "Grills", "Railing"] },
     { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing", "Slab"] },

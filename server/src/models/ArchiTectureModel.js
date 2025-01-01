@@ -15,7 +15,7 @@ const modalDataSchema = new mongoose.Schema({
   Pin: { type: String },
   email: { type: String },
   
-  Presentation_Drawings: [String],
+  Presentation_DrawingsA: [String],
   Submission_Drawing: [String],
   Floor: [String],
   Section: [String],

@@ -36,7 +36,7 @@ const InteriorDataSchema = new mongoose.Schema({
   email: {
     type: String,
   },
-    Presentation_Drawing: [String],
+    Presentation_DrawingI: [String],
       Ceiling: [String],
       Electrical: [String],
       Door_Handle: [String],

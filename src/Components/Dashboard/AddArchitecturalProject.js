@@ -89,7 +89,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
           formDataToUpload.append("file", file);
 
           const { data } = await axios.post(
-            "https://projectassoicate-3.onrender.com/api/auth/uploadarchitecture",
+            "https://projectassoicate-1.onrender.com/api/auth/uploadarchitecture",
             formDataToUpload
           );
 
@@ -142,7 +142,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
 
     try {
       await axios.post(
-        "https://projectassoicate-3.onrender.com/api/architecture/upload",
+        "https://projectassoicate-1.onrender.com/api/architecture/upload",
         transformedObject
       );
       toast.success("Architecture project added successfully!");

@@ -365,7 +365,7 @@ const ShowArchitecture = () => {
             </div>
 
             {[
-              "Presentation_Drawing",
+              "Presentation_DrawingsA",
               "Submission_Drawing",
               "Floor",
               "Section",

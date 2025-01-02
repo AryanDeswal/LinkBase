@@ -370,7 +370,7 @@ const ShowInteriorProject = () => {
               "Hinges",
               "Laminates",
               "Plumbing",
-              "Presentation_Drawing",
+              "Presentation_DrawingI",
               "Site_Photo",
               "ThreeD_Model",
               "Venner",

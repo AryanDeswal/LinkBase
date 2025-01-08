@@ -10,7 +10,7 @@ const ViewInteriorProject = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  const API_URL = 'https://projectassoicate-3.onrender.com/api/interior';
+  const API_URL = 'https://projectassoicate-mt1x.onrender.com/api/interior';
 
   useEffect(() => {
     fetchProjects();
@@ -36,7 +36,7 @@ const ViewInteriorProject = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`https://projectassoicate-3.onrender.com/api/interior/interiors/${projectId}`, {
+      const response = await fetch(`https://projectassoicate-mt1x.onrender.com/api/interior/interiors/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete project');

@@ -10,7 +10,7 @@ const ViewArchitecturalProject = () => {
   const [projectsPerPage] = useState(9);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const API_URL = 'https://projectassoicate-3.onrender.com/api/architecture/data';
+  const API_URL = 'https://projectassoicate-mt1x.onrender.com/api/architecture/data';
 
   useEffect(() => {
     const fetchProjects = async () => {

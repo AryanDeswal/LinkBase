@@ -16,7 +16,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Presentation_Drawing: [],
+      Presentation_DrawingI: [],
       Ceiling: [],
       Electrical: [],
       Door_Handle: [],
@@ -26,7 +26,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
       Venner: [],
       Hinges: [],
       Plumbing: [],
-      Three3D_Model : [],
+      ThreeD_Model: [],
       Flooring: [],
       Estimate: [],
       Bill: [],
@@ -189,13 +189,13 @@ const AddInteriorProject = ({ isActive, onClick }) => {
   );
 
   const documentGroups = [
-    { heading: "Presentation", sections: ["Presentation_Drawing"] },
+    { heading: "Presentation", sections: ["Presentation_DrawingI"] },
     { heading: "Ceiling", sections: ["Ceiling"] },
     { heading: "Electricals", sections: ["Electrical"] },
     { heading: "Door Handles & Curtains", sections: ["Door_Handle", "Curtains"] },
-    { heading: "Furniture Details", sections: ["Furniture","Laminates", "Venner", "Hinges"] },
+    { heading: "Furniture Details", sections: ["Laminates", "Venner", "Hinges"] },
     { heading: "Plumbing", sections: ["Plumbing"] },
-    { heading: "3D Model", sections: ["Three3D_Model"] },
+    { heading: "3D Model", sections: ["ThreeD_Model"] },
     { heading: "Flooring", sections: ["Flooring"] },
     { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
     { heading: "Onsite Photos", sections: ["Site_Photo"] },

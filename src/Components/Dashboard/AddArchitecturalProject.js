@@ -16,34 +16,29 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Area_Calculations: [],
-      Presentation_Drawings: [],
-      Submission_Drawings: [],
-      Center_Line: [],
-      Floor_Plans: [],
-      Sections: [],
-      Elevations: [],
-      Compound_Wall_Details: [],
-      Toilet_Layouts: [],
-      Electric_Layouts: [],
-      Tile_Layouts: [],
-      Grill_Details: [],
-      Railing_Details: [],
-      Column_footing_Drawings: [],
-      Plinth_Beam_Drawings: [],
-      StairCase_Details: [],
-      Slab_Drawings: [],
+      Presentation_DrawingsA: [],
+      Submission_Drawing: [],
+      Floor: [],
+      Section: [],
+      Elevation: [],
+      Toilet_Layout: [],
+      Electric_Drawing: [],
+      Tile_Layout: [],
+      Grills: [],
+      Railing: [],
+      Column_footing: [],
+      Pleanth_Beam: [],
+      StairCase_Drawing: [],
+      Slab: [],
       Property_Card: [],
-
       Property_Map: [],
-      Sanction_Drawings: [],
-      Revise_Sanction_Drawings: [],
-      Completion_Drawings: [],
+      Completion_Drawing: [],
+      Sanction_Drawing: [],
+      Revise_Sanction: [],
       Completion_Letter: [],
       Estimate: [],
-      Bills_Documents: [],
-      Site_Photos: [],
-      Other_Documents: [],
+      Bill: [],
+      Site_Photo: [],
     },
   });
 
@@ -163,34 +158,29 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         Pin: "",
         email: "",
         documentSections: {
-          Area_Calculations: [],
-          Presentation_Drawings: [],
-          Submission_Drawings: [],
-          Center_Line: [],
-          Floor_Plans: [],
-          Sections: [],
-          Elevations: [],
-          Compound_Wall_Details: [],
-          Toilet_Layouts: [],
-          Electric_Layouts: [],
-          Tile_Layouts: [],
-          Grill_Details: [],
-          Railing_Details: [],
-          Column_footing_Drawings: [],
-          Plinth_Beam_Drawings: [],
-          StairCase_Details: [],
-          Slab_Drawings: [],
+          Presentation_DrawingsA: [],
+          Submission_Drawing: [],
+          Floor: [],
+          Section: [],
+          Elevation: [],
+          Toilet_Layout: [],
+          Electric_Drawing: [],
+          Tile_Layout: [],
+          Grills: [],
+          Railing: [],
+          Column_footing: [],
+          Pleanth_Beam: [],
+          StairCase_Drawing: [],
+          Slab: [],
           Property_Card: [],
-    
           Property_Map: [],
-          Sanction_Drawings: [],
-          Revise_Sanction_Drawings: [],
-          Completion_Drawings: [],
+          Completion_Drawing: [],
+          Sanction_Drawing: [],
+          Revise_Sanction: [],
           Completion_Letter: [],
           Estimate: [],
-          Bills_Documents: [],
-          Site_Photos: [],
-          Other_Documents: [],
+          Bill: [],
+          Site_Photo: [],
         },
       });
     } catch (error) {
@@ -260,46 +250,13 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
   );
 
   const documentGroups = [
-    {
-      heading: "Drawings",
-      sections: [
-        "Area_Calculations",
-        "Presentation_Drawings",
-        "Submission_Drawings",
-      ],
-    },
-    {
-      heading: "Working Drawings",
-      sections: ["Center_Line", "Floor_Plans", "Sections", "Elevations"],
-    },
-    {
-      heading: "Detail Drawings",
-      sections: [
-        "Compound_Wall_Details",
-        "Toilet_Layouts",
-        "Electric_Layouts",
-        "Tile_Layouts",
-        "Grill_Details",
-        "Railing_Details",
-      ],
-    },
-    {
-      heading: "RCC",
-      sections: ["Column_footing_Drawings", "Plinth_Beam_Drawings", "StairCase_Details", "Slab_Drawings"],
-    },
-    {
-      heading: "Documents & Other",
-      sections: [
-        "Property_Card",
-        "Property_Map",
-        "Sanction_Drawings",
-        " Revise_Sanction_Drawings",
-        "Completion_Drawings",
-        "Completion_Letter",
-      ],
-    },
-    { heading: "Estimates & Bills", sections: ["Estimate", "Bills_Documents"] },
-    { heading: "Onsite Photos", sections: ["Site_Photos","Other_Documents"] },
+    { heading: "Drawing", sections: ["Presentation_DrawingsA", "Submission_Drawing"] },
+    { heading: "Working Drawing", sections: ["Floor", "Section", "Elevation"] },
+    { heading: "Detail Drawing", sections: ["Toilet_Layout", "Electric_Drawing", "Tile_Layout", "Grills", "Railing"] },
+    { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing", "Slab"] },
+    { heading: "Documents", sections: ["Property_Card", "Property_Map", "Completion_Drawing", "Sanction_Drawing", "Revise_Sanction", "Completion_Letter"] },
+    { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
+    { heading: "Onsite Photos", sections: ["Site_Photo"] },
   ];
 
   return (
@@ -320,11 +277,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
           {renderFormInput("Site Address", "siteAddress", "Enter site address")}
           {renderFormInput("GST No", "gstNo", "Enter GST number")}
           {renderFormInput("Project Head", "projectHead", "Enter project head")}
-          {renderFormInput(
-            "RCC Designer Name",
-            "rccDesignerName",
-            "Enter RCC designer name"
-          )}
+          {renderFormInput("RCC Designer Name", "rccDesignerName", "Enter RCC designer name")}
           {renderFormInput("PAN", "PAN", "Enter PAN")}
           {renderFormInput("Aadhar", "Aadhar", "Enter Aadhar")}
           {renderFormInput("Pin", "Pin", "Enter Pin")}
@@ -332,14 +285,13 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         </div>
 
         {documentGroups.map((group, idx) => (
-  <div key={idx}>
-    <h3 className="text-xl font-bold">{group.heading}</h3>
-    {group.sections.map((section) =>
-      renderFileInputs(section, section.replace("_", " "))
-    )}
-  </div>
-))}
-
+          <div key={idx}>
+            <h3 className="text-xl font-bold">{group.heading}</h3>
+            {group.sections.map((section) =>
+              renderFileInputs(section, `${section.replace("_", " ")} Documents`)
+            )}
+          </div>
+        ))}
 
         <div className="flex justify-end space-x-4">
           <button

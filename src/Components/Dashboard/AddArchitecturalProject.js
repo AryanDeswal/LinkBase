@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const AddArchitecturalProject = ({ isActive, onClick }) => {
+const AddArchitectureProject = ({ isActive, onClick }) => {
   const [formData, setFormData] = useState({
     title: "",
     clientName: "",
@@ -16,44 +16,46 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     Pin: "",
     email: "",
     documentSections: {
-      Presentation_DrawingsA: [],
-      Submission_Drawing: [],
-      Floor: [],
-      Section: [],
-      Elevation: [],
-      Toilet_Layout: [],
-      Electric_Drawing: [],
-      Tile_Layout: [],
-      Grills: [],
-      Railing: [],
-      Column_footing: [],
-      Pleanth_Beam: [],
-      StairCase_Drawing: [],
-      Slab: [],
+      Area_Calculations: [],
+      Presentation_Drawings: [],
+      Submission_Drawings: [],
+      Center_Line: [],
+      Floor_Plans: [],
+      Sections: [],
+      Elevations: [],
+      Compound_Wall_Details: [],
+      Toilet_Layouts: [],
+      Electric_Layouts: [],
+      Tile_Layouts: [],
+      Grill_Details: [],
+      Railing_Details: [],
+      Column_footing_Drawings: [],
+      Plinth_Beam_Drawings: [],
+      StairCase_Details: [],
+      Slab_Drawings: [],
       Property_Card: [],
       Property_Map: [],
-      Completion_Drawing: [],
-      Sanction_Drawing: [],
-      Revise_Sanction: [],
+      Sanction_Drawings: [],
+      Revise_Sanction_Drawings: [],
+      Completion_Drawings: [],
       Completion_Letter: [],
       Estimate: [],
-      Bill: [],
-      Site_Photo: [],
+      Bills_Documents: [],
+      Site_Photos: [],
+      Other_Documents: [],
     },
   });
 
   const [loading, setLoading] = useState(false);
   const [uploadingSection, setUploadingSection] = useState(null);
   const [errors, setErrors] = useState({});
-  const [toggle, setToggle] = useState({});
-  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePin = (pin) => /^\d{6}$/.test(pin);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    let newErrors = { ...errors };
+    const newErrors = { ...errors };
 
     if (name === "email" && !validateEmail(value)) {
       newErrors.email = "Invalid email format.";
@@ -64,7 +66,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     }
 
     setErrors(newErrors);
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value || "" }));
   };
 
   const uploadFileHandler = async (e, sectionName) => {
@@ -75,13 +77,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       return;
     }
 
-    if (uploadingSection === sectionName) {
-      toast.warning("Already uploading files for this section.");
-      return;
-    }
-
     setUploadingSection(sectionName);
-
     try {
       const uploadedUrls = await Promise.all(
         Array.from(files).map(async (file) => {
@@ -89,7 +85,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
           formDataToUpload.append("file", file);
 
           const { data } = await axios.post(
-            "https://projectassoicate-mt1x.onrender.com/api/auth/upload",
+            "https://projectassociate-fld7.onrender.com/api/auth/uploadarchitecture",
             formDataToUpload
           );
 
@@ -102,7 +98,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         documentSections: {
           ...prev.documentSections,
           [sectionName]: [
-            ...prev.documentSections[sectionName],
+            ...(prev.documentSections[sectionName] || []),
             ...uploadedUrls,
           ],
         },
@@ -125,70 +121,23 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
     };
     delete transformedObject.documentSections;
 
-    setLoading(true);
-
     if (Object.keys(errors).length > 0) {
       toast.error("Please fix the errors before submitting.");
-      setLoading(false);
       return;
     }
 
-    if (isFormSubmitting) {
-      toast.info("Form is already being submitted.");
-      return;
-    }
-
-    setIsFormSubmitting(true);
-
+    setLoading(true);
     try {
       await axios.post(
-        "https://projectassoicate-mt1x.onrender.com/api/architecture/upload",
+        "https://projectassociate-fld7.onrender.com/api/architecture/upload",
         transformedObject
       );
       toast.success("Architecture project added successfully!");
-      setFormData({
-        title: "",
-        clientName: "",
-        siteAddress: "",
-        gstNo: "",
-        projectHead: "",
-        rccDesignerName: "",
-        PAN: "",
-        Aadhar: "",
-        Pin: "",
-        email: "",
-        documentSections: {
-          Presentation_DrawingsA: [],
-          Submission_Drawing: [],
-          Floor: [],
-          Section: [],
-          Elevation: [],
-          Toilet_Layout: [],
-          Electric_Drawing: [],
-          Tile_Layout: [],
-          Grills: [],
-          Railing: [],
-          Column_footing: [],
-          Pleanth_Beam: [],
-          StairCase_Drawing: [],
-          Slab: [],
-          Property_Card: [],
-          Property_Map: [],
-          Completion_Drawing: [],
-          Sanction_Drawing: [],
-          Revise_Sanction: [],
-          Completion_Letter: [],
-          Estimate: [],
-          Bill: [],
-          Site_Photo: [],
-        },
-      });
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form: " + error.message);
+      toast.error("Error submitting form: ${error.message}");
     } finally {
       setLoading(false);
-      setIsFormSubmitting(false);
     }
   };
 
@@ -200,7 +149,7 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
       <input
         type={type}
         name={name}
-        value={formData[name]}
+        value={formData[name] || ""}
         onChange={handleInputChange}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
         placeholder={placeholder}
@@ -224,39 +173,41 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         <p className="text-blue-600 font-medium">Uploading...</p>
       )}
       <ul>
-        {formData.documentSections[sectionName]?.map((fileUrl, index) => (
-          <li key={index} className="text-sm text-gray-600 truncate">
-            <span className="p-1 font-semibold">{index + 1}.</span>
-            {fileUrl.endsWith(".pdf") ? (
-              <a
-                href={fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-blue-600"
-              >
-                View PDF
-              </a>
-            ) : (
-              <img
-                src={fileUrl}
-                alt={`Uploaded file ${index + 1}`}
-                className="w-20 h-20 object-cover rounded-md"
-              />
-            )}
-          </li>
-        ))}
+        {(formData.documentSections[sectionName] || []).map(
+          (fileUrl, index) => (
+            <li key={index} className="text-sm text-gray-600 truncate">
+              <span className="p-1 font-semibold">{index + 1}.</span>
+              {fileUrl.endsWith(".pdf") ? (
+                <a
+                  href={fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600"
+                >
+                  View PDF
+                </a>
+              ) : (
+                <img
+                  src={fileUrl}
+                  alt={"Uploaded file ${index + 1}"}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
+              )}
+            </li>
+          )
+        )}
       </ul>
     </div>
   );
 
   const documentGroups = [
-    { heading: "Drawing", sections: ["Presentation_DrawingsA", "Submission_Drawing"] },
-    { heading: "Working Drawing", sections: ["Floor", "Section", "Elevation"] },
-    { heading: "Detail Drawing", sections: ["Toilet_Layout", "Electric_Drawing", "Tile_Layout", "Grills", "Railing"] },
-    { heading: "RCC", sections: ["Column_footing", "Pleanth_Beam", "StairCase_Drawing", "Slab"] },
-    { heading: "Documents", sections: ["Property_Card", "Property_Map", "Completion_Drawing", "Sanction_Drawing", "Revise_Sanction", "Completion_Letter"] },
-    { heading: "Estimates & Bills", sections: ["Estimate", "Bill"] },
-    { heading: "Onsite Photos", sections: ["Site_Photo"] },
+    { heading: "Drawings", sections: ["Area_Calculations", "Presentation_Drawings", "Submission_Drawings"] },
+    { heading: "Working Drawings", sections: ["Center_Line", "Floor_Plans", "Sections", "Elevations"] },
+    { heading: "Detail Drawings", sections: ["Compound_Wall_Details", "Toilet_Layouts", "Electric_Layouts", "Tile_Layouts", "Grill_Details", "Railing_Details"] },
+    { heading: "RCC", sections: ["Column_footing_Drawings", "Plinth_Beam_Drawings", "StairCase_Details", "Slab_Drawings"] },
+    { heading: "Documents & Other", sections: ["Property_Card", "Property_Map", "Sanction_Drawings", "Revise_Sanction_Drawings", "Completion_Drawings", "Completion_Letter"] },
+    { heading: "Estimates & Bills", sections: ["Estimate", "Bills_Documents"] },
+    { heading: "Onsite Photos", sections: ["Site_Photos", "Other_Documents"] },
   ];
 
   return (
@@ -271,47 +222,43 @@ const AddArchitecturalProject = ({ isActive, onClick }) => {
         Add Architecture Project
       </button>
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {renderFormInput("Title", "title", "Enter project title")}
-          {renderFormInput("Client Name", "clientName", "Enter client name")}
-          {renderFormInput("Site Address", "siteAddress", "Enter site address")}
-          {renderFormInput("GST No", "gstNo", "Enter GST number")}
-          {renderFormInput("Project Head", "projectHead", "Enter project head")}
-          {renderFormInput("RCC Designer Name", "rccDesignerName", "Enter RCC designer name")}
-          {renderFormInput("PAN", "PAN", "Enter PAN")}
-          {renderFormInput("Aadhar", "Aadhar", "Enter Aadhar")}
-          {renderFormInput("Pin", "Pin", "Enter Pin")}
-          {renderFormInput("Email", "email", "Enter email", "email")}
+        <div className="p-6 bg-gray-50 rounded-lg shadow-md">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {renderFormInput("Title", "title", "Project Title")}
+            {renderFormInput("Client Name", "clientName", "Client Name")}
+            {renderFormInput("Site Address", "siteAddress", "Site Address")}
+            {renderFormInput("GST No", "gstNo", "GST No")}
+            {renderFormInput("Project Head", "projectHead", "Project Head")}
+            {renderFormInput("RCC Designer Name", "rccDesignerName", "RCC Designer Name")}
+            {renderFormInput("PAN", "PAN", "PAN")}
+            {renderFormInput("Aadhar", "Aadhar", "Enter 12-digit Aadhar")}
+            {renderFormInput("Pin", "Pin", "Enter 6-digit Pin")}
+            {renderFormInput("Email", "email", "Enter your email", "email")}
+          </div>
         </div>
-
-        {documentGroups.map((group, idx) => (
-          <div key={idx}>
-            <h3 className="text-xl font-bold">{group.heading}</h3>
-            {group.sections.map((section) =>
-              renderFileInputs(section, `${section.replace("_", " ")} Documents`)
-            )}
+        {documentGroups.map((group, index) => (
+          <div key={index}>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {group.sections.map((sectionKey) =>
+                renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+              )}
+            </div>
           </div>
         ))}
-
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            className="py-2 px-6 bg-gray-400 text-white rounded-md"
-            onClick={onClick}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="py-2 px-6 bg-blue-500 text-white rounded-md disabled:bg-blue-300"
-            disabled={loading || isFormSubmitting}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 transition-all"
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit Project"}
+        </button>
       </form>
     </div>
   );
 };
 
-export default AddArchitecturalProject;
+export default AddArchitectureProject;

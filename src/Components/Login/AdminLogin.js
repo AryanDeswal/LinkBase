@@ -7,6 +7,7 @@ const AdminLogin = ({ setIsLoggedIn }) => {
   const token = window.localStorage.getItem("authorization");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State to manage show/hide password
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const AdminLogin = ({ setIsLoggedIn }) => {
     if (validate()) {
       setIsSubmitting(true);
       try {
-        const response = await fetch("https://projectassoicate-mt1x.onrender.com/signinadmin", {
+        const response = await fetch("https://projectassociate-fld7.onrender.com/signinadmin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -98,15 +99,24 @@ const AdminLogin = ({ setIsLoggedIn }) => {
             <label htmlFor="password" className="block text-sm font-medium mb-1">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`w-full p-2 border rounded-md ${
-                errors.password ? "border-red-500" : "border-gray-300"
-              }`}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"} // Toggle between "text" and "password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`w-full p-2 border rounded-md ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 text-gray-500"
+                onClick={() => setShowPassword((prev) => !prev)} // Toggle showPassword state
+              >
+                {showPassword ? "Hide" : "Show"} {/* Button label */}
+              </button>
+            </div>
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 

@@ -73,7 +73,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
           formDataToUpload.append("file", file);
 
           const { data } = await axios.post(
-            "https://projectassoicate-mt1x.onrender.com/api/auth/upload",
+            "https://projectassociate-fld7.onrender.com/api/auth/upload",
             formDataToUpload
           );
 
@@ -119,7 +119,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
 
     try {
       await axios.post(
-        "https://projectassoicate-mt1x.onrender.com/api/interior/interiors",
+        "https://projectassociate-fld7.onrender.com/api/interior/interiors",
         transformedObject
       );
       toast.success("Interior project added successfully!");

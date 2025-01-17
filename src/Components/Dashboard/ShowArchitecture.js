@@ -16,7 +16,7 @@ const ShowArchitecture = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://projectassoicate-mt1x.onrender.com/api/architecture/data/${projectId}`
+        `https://projectassociate-fld7.onrender.com/api/architecture/data/${projectId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch project data");
@@ -56,7 +56,7 @@ const ShowArchitecture = () => {
   const handleUpdate = async () => {
     try {
       const response = await fetch(
-        `https://projectassoicate-mt1x.onrender.com/api/architecture/update/${editingProject._id}`,
+        `https://projectassociate-fld7.onrender.com/api/architecture/update/${editingProject._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ const ShowArchitecture = () => {
       formData.append("file", file);
   
       const { data } = await axios.post(
-        "https://projectassoicate-mt1x.onrender.com/api/auth/upload",
+        "https://projectassociate-fld7.onrender.com/api/auth/upload",
         formData
       );
   
@@ -340,7 +340,7 @@ const ShowArchitecture = () => {
                 "projectHead",
                 "rccDesignerName",
                 "Aadhar",
-                "Pan",
+                "PAN",
                 "Pin",  
                 "email",
                
@@ -365,29 +365,33 @@ const ShowArchitecture = () => {
             </div>
 
             {[
-              "Presentation_DrawingsA",
-              "Submission_Drawing",
-              "Floor",
-              "Section",
-              "Elevation",
-              "Toilet_Layout",
-              "Electric_Drawing",
-              "Tile_Layout",
-              "Grills",
-              "Railing",
-              "Column_footing",
-              "Pleanth_Beam",
-              "StairCase_Drawing",
-              "Slab",
+              "Area_Calculations",
+              "Presentation_Drawings",
+              "Submission_Drawings",
+              "Center_Line",
+              "Floor_Plans",
+              "Sections",
+              "Elevations",
+              "Compound_Wall_Details",
+              "Toilet_Layouts",
+              "Electric_Layouts",
+              "Tile_Layouts",
+              "Grill_Details",
+              "Railing_Details",
+              "Column_footing_Drawings",
+              "Plinth_Beam_Drawings",
+              "StairCase_Details",
+              "Slab_Drawings",
               "Property_Card",
               "Property_Map",
-              "Completion_Drawing",
-              "Sanction_Drawing",
-              "Revise_Sanction",
+              "Sanction_Drawings",
+              "Revise_Sanction_Drawings",
+              "Completion_Drawings",
               "Completion_Letter",
               "Estimate",
-              "Bill",
-              "Site_Photo"
+              "Bills_Documents",
+              "Site_Photos",
+              "Other_Documents"
             ].map((key) => renderFileInputs(key))}
 
             <div className="flex justify-center space-x-4 mt-4">

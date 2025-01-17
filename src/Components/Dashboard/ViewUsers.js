@@ -18,7 +18,7 @@ const ViewUsers = () => {
         throw new Error('No authorization token found');
       }
       
-      const response = await fetch('https://projectassoicate-mt1x.onrender.com/api/auth/users', {
+      const response = await fetch('https://projectassociate-fld7.onrender.com/api/auth/users', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const ViewUsers = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         console.log("Attempting to delete user with ID:", userId); // Log to verify correct ID
-        const response = await fetch(`https://projectassoicate-mt1x.onrender.com/api/auth/users/${userId}`, {
+        const response = await fetch(`https://projectassociate-fld7.onrender.com/api/auth/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

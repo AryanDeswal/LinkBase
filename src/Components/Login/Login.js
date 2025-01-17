@@ -7,6 +7,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const LoginForm = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('https://projectassoicate-mt1x.onrender.com/api/auth/login', {
+      const response = await fetch('https://projectassociate-fld7.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -74,24 +75,50 @@ const LoginForm = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm bg-opacity-90">
         <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
         <form onSubmit={handleSubmit}>
-          {['email', 'password'].map((field) => (
-            <div key={field} className="mb-4">
-              <label htmlFor={field} className="block text-sm font-medium mb-1">
-                {field === 'email' ? 'Enter Email' : 'Password'}
-              </label>
+          {/* Email Field */}
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Enter Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full p-2 border rounded-md ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          </div>
+
+          {/* Password Field */}
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <div className="relative">
               <input
-                type={field}
-                id={field}
-                value={formData[field]}
+                type={showPassword ? 'text' : 'password'} // Toggle input type
+                id="password"
+                value={formData.password}
                 onChange={handleChange}
                 className={`w-full p-2 border rounded-md ${
-                  errors[field] ? 'border-red-500' : 'border-gray-300'
+                  errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)} // Toggle visibility state
+                className="absolute right-3 top-2 text-sm text-gray-600 focus:outline-none"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
             </div>
-          ))}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full py-2 rounded-md text-white ${

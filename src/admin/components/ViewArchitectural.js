@@ -10,7 +10,7 @@ const ViewArchitecturalProject = () => {
   const [projectsPerPage] = useState(6);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const API_URL = 'https://projectassoicate-mt1x.onrender.com/api/architecture/data';
+  const API_URL = 'https://projectassociate-fld7.onrender.com/api/architecture/data';
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -35,7 +35,7 @@ const ViewArchitecturalProject = () => {
 
   const handleDelete = async (projectId) => {
     try {
-      const response = await fetch(`https://projectassoicate-mt1x.onrender.com/api/architecture/upload/${projectId}`, {
+      const response = await fetch(`https://projectassociate-fld7.onrender.com/api/architecture/upload/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -124,6 +124,14 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
   // Function to display default text if data is missing
   const displayData = (data) => (data ? data : "-");
 
+  // Function to handle delete with confirmation
+  const confirmDelete = (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this project?");
+    if (isConfirmed) {
+      handleDelete(id);
+    }
+  };
+
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col justify-between h-full">
       <div className="space-y-2 text-gray-600 text-center">
@@ -145,7 +153,7 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
             Show More
           </button>
           <button 
-            onClick={() => handleDelete(project._id)}
+            onClick={() => confirmDelete(project._id)}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
           >
             <FaTrash className="mr-2" />

@@ -31,7 +31,7 @@ const OtpVerification = () => {
     setLoading(true); // Set loading state to true
 
     try {
-      const response = await fetch('https://projectassoicate-mt1x.onrender.com/api/auth/verify', {
+      const response = await fetch('https://projectassociate-fld7.onrender.com/api/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

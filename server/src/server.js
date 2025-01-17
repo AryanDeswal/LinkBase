@@ -1,5 +1,6 @@
 // src/server.js
-require('dotenv').config();
+const env = process.env.NODE_ENV || 'development'; // Default to 'development' if NODE_ENV is not set
+require('dotenv').config({ path: `.env.${env}` });
 const express = require('express');
 const path = require('path'); 
 const connectDB = require('./config/database');

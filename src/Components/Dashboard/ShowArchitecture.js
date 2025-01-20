@@ -1,4 +1,4 @@
-import React, { useEffect,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -10,7 +10,7 @@ const ShowArchitecture = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editingProject, setEditingProject] = useState({});
-  
+  const [expandedSections, setExpandedSections] = useState({}); // Track dropdown states
 
   const fetchProjectData = async () => {
     setLoading(true);
@@ -22,12 +22,12 @@ const ShowArchitecture = () => {
         throw new Error("Failed to fetch project data");
       }
       const data = await response.json();
-      if(!data){
+      if (!data) {
         setLoading(true)
       }
-        setProjectData(data.data);
-        setEditingProject(data.data); // Initialize editing project data
-        setLoading(false)
+      setProjectData(data.data);
+      setEditingProject(data.data); // Initialize editing project data
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching project data:", error);
       toast.error("Failed to fetch project data. Please try again.");
@@ -43,16 +43,11 @@ const ShowArchitecture = () => {
     }
   }, [projectId]);
 
-
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditingProject((prev) => ({ ...prev, [name]: value }));
   };
 
- 
-
-  
   const handleUpdate = async () => {
     try {
       const response = await fetch(
@@ -69,7 +64,7 @@ const ShowArchitecture = () => {
       const data = await response.json();
       setProjectData(data.data);
       setEditingProject(data.data);
-      
+
       toast.success("Project updated successfully!");
       setEditing(false);
       fetchProjectData();
@@ -77,6 +72,13 @@ const ShowArchitecture = () => {
       console.error("Error updating project data:", error);
       toast.error("Failed to update project. Please try again.");
     }
+  };
+
+  const toggleSection = (sectionName) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionName]: !prev[sectionName],
+    }));
   };
 
   const handleShareImage = (imageUrl) => {
@@ -97,18 +99,16 @@ const ShowArchitecture = () => {
         (_, index) => index !== indexToRemove
       );
       const updatedState = { ...prevState, [sectionName]: updatedSection };
-  
+
       // Sync projectData to reflect changes immediately
       setProjectData((prevProjectData) => ({
         ...prevProjectData,
         [sectionName]: updatedSection,
       }));
-  
+
       return updatedState;
     });
   };
-  
-
 
   const uploadFileHandler = async (e, sectionName) => {
     const file = e.target.files[0];
@@ -119,32 +119,32 @@ const ShowArchitecture = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-  
+
       const { data } = await axios.post(
         "https://projectassociate-fld7.onrender.com/api/auth/upload",
         formData
       );
-  
-        const fileUrl = data.fileUrl;
-        setEditingProject({
-          ...editingProject,
-            [sectionName]:[...editingProject[sectionName],fileUrl]
-        })
+
+      const fileUrl = data.fileUrl;
+      setEditingProject({
+        ...editingProject,
+        [sectionName]: [...editingProject[sectionName], fileUrl]
+      })
       toast.success("File uploaded successfully!");
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
     }
   };
-  
+
   const renderFileInputs = (sectionName) => (
     <div>
-   
+
       <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
       {editing && (
         <input
           type="file"
-          onChange={(e)=>uploadFileHandler(e,sectionName)}
+          onChange={(e) => uploadFileHandler(e, sectionName)}
           className="text-blue-500 text-sm mb-4"
         />
       )}
@@ -211,11 +211,13 @@ const ShowArchitecture = () => {
                   </div>
                 ) : (
                   <div className="relative">
-                    <img
-                      src={fileUrl}
-                      alt={`File ${index + 1}`}
-                      className="w-full h-60 object-cover rounded-lg"
-                    />
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={fileUrl}
+                        alt={`File ${index + 1}`}
+                        className="w-full h-60 object-cover rounded-lg"
+                      />
+                    </a>
                     <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
                         onClick={() => handleShareImage(fileUrl)}
@@ -272,16 +274,58 @@ const ShowArchitecture = () => {
     </div>
   );
 
+  const renderSection = (sectionName, fields) => (
+    <div className="mb-4">
+      <div
+        className="flex justify-between items-center cursor-pointer bg-blue-100 px-4 py-3 rounded-lg shadow"
+        onClick={() => toggleSection(sectionName)}
+      >
+        <h3 className="text-xl font-bold text-blue-700">{sectionName}</h3>
+        <button>
+          {expandedSections[sectionName] ? "▲" : "▼"}
+        </button>
+      </div>
+      {sectionName === "Project Details" ?
+        expandedSections[sectionName] && (
+          <div className="mt-2 ml-4">
+            {fields.map((field) => (
+              <div key={field} className="my-2">
+                <label className="block font-medium">{field}:</label>
+                {editing ? (
+                  <input
+                    type="text"
+                    name={field}
+                    value={editingProject[field] || ""}
+                    onChange={handleChange}
+                    className="border p-2 rounded w-full"
+                  />
+                ) : (
+                  <p>{projectData[field]}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        ) :
+        expandedSections[sectionName] && (
+          <div className="mt-2 ml-4">
+            {fields.map((field) => (
+              renderFileInputs(field)
+            ))}
+          </div>
+        )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 p-10">
-<div className="flex justify-end">
-  <button
-    onClick={() => window.history.back()} // Navigate back in history
-    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg"
-  >
-    Back
-  </button>
-</div>
+      <div className="flex justify-end">
+        <button
+          onClick={() => window.history.back()} // Navigate back in history
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg"
+        >
+          Back
+        </button>
+      </div>
 
       <ToastContainer />
 
@@ -292,107 +336,53 @@ const ShowArchitecture = () => {
           </div>
         ) : projectData ? (
           <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-                Title:{" "}
-                {editing ? (
-                  <input
-                    type="text"
-                    name="title"
-                    value={editingProject.title}
-                    onChange={(e) =>
-                      setEditingProject((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    className="border p-2 rounded"
-                  />
-                ) : (
-                  projectData.title
-                )}
-              </h1>
-              <p className="text-gray-600 text-lg">
-                {editing ? (
-                  <textarea
-                    name="description"
-                    value={editingProject.description}
-                    onChange={(e) =>
-                      setEditingProject((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    className="border p-2 rounded w-full"
-                  />
-                ) : (
-                  projectData.description
-                )}
-              </p>
-            </div>
-
-            <div className="mt-4 space-y-4 grid grid-cols-2 gap-6">
-              {[
-                "title",
-                "clientName",
-                "siteAddress",
-                "gstNo",
-                "projectHead",
-                "rccDesignerName",
-                "Aadhar",
-                "PAN",
-                "Pin",  
-                "email",
-               
-
-
-              ].map((field) => (
-                <div key={field}>
-                  <label className="block font-semibold">{field}:</label>
-                  {editing ? (
-                    <input
-                      type="text"
-                      name={field}
-                      value={editingProject[field]}
-                      onChange={handleChange}
-                      className="border p-2 rounded w-full"
-                    />
-                  ) : (
-                    <p>{projectData[field]}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {[
+            {renderSection("Project Details", [
+              "title",
+              "clientName",
+              "siteAddress",
+              "gstNo",
+              "projectHead",
+              "rccDesignerName",
+              "Aadhar",
+              "PAN",
+              "Pin",
+              "email",
+            ])}
+            {renderSection("Drawings", [
               "Area_Calculations",
               "Presentation_Drawings",
               "Submission_Drawings",
+            ])}
+            {renderSection("Working Drawings", [
               "Center_Line",
               "Floor_Plans",
               "Sections",
               "Elevations",
+            ])}
+            {renderSection("Detail Drawings", [
               "Compound_Wall_Details",
               "Toilet_Layouts",
               "Electric_Layouts",
               "Tile_Layouts",
               "Grill_Details",
               "Railing_Details",
+            ])}
+            {renderSection("RCC", [
               "Column_footing_Drawings",
               "Plinth_Beam_Drawings",
               "StairCase_Details",
               "Slab_Drawings",
+            ])}
+            {renderSection("Documents & Other", [
               "Property_Card",
               "Property_Map",
               "Sanction_Drawings",
               "Revise_Sanction_Drawings",
               "Completion_Drawings",
               "Completion_Letter",
-              "Estimate",
-              "Bills_Documents",
-              "Site_Photos",
-              "Other_Documents"
-            ].map((key) => renderFileInputs(key))}
+            ])}
+            {renderSection("Estimates & Bills", ["Estimate", "Bills_Documents"])}
+            {renderSection("Onsite Photos", ["Site_Photos", "Other_Documents"])}
 
             <div className="flex justify-center space-x-4 mt-4">
               {editing ? (

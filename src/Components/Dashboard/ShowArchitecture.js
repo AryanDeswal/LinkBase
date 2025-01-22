@@ -274,6 +274,19 @@ const ShowArchitecture = () => {
     </div>
   );
 
+  const myMap = new Map([
+    ["title", "Title"],
+    ["clientName", "Client Name"],
+    ["siteAddress", "Site Address"],
+    ["gstNo", "GST Number"],
+    ["projectHead", "Project Head"],
+    ["rccDesignerName", "RCC Designer Name"],
+    ["Aadhar", "Aadhar"],
+    ["PAN", "PAN"],
+    ["Pin", "Pin"],
+    ["email", "Email"]
+  ]);
+
   const renderSection = (sectionName, fields) => (
     <div className="mb-4">
       <div
@@ -288,22 +301,34 @@ const ShowArchitecture = () => {
       {sectionName === "Project Details" ?
         expandedSections[sectionName] && (
           <div className="mt-2 ml-4">
-            {fields.map((field) => (
-              <div key={field} className="my-2">
-                <label className="block font-medium">{field}:</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name={field}
-                    value={editingProject[field] || ""}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full"
-                  />
-                ) : (
-                  <p>{projectData[field]}</p>
-                )}
-              </div>
-            ))}
+            <table className="table-auto border-collapse border border-gray-300 w-full">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2">Field</th>
+                  <th className="border border-gray-300 px-4 py-2">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fields.map((field) => (
+                  <tr key={field} className="text-gray-800">
+                    <td className="border border-gray-300 px-4 py-2 font-bold">{myMap.get(field)}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {editing ? (
+                        <input
+                          type="text"
+                          name={field}
+                          value={editingProject[field] || ""}
+                          onChange={handleChange}
+                          className="border p-2 rounded w-full"
+                        />
+                      ) : (
+                        <p>{projectData[field]}</p>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) :
         expandedSections[sectionName] && (

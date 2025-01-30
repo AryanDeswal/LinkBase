@@ -135,6 +135,19 @@ const ShowInteriorProject = () => {
     }
   };
 
+  const myMap = new Map([
+    ["title", "Title"],
+    ["clientName", "Client Name"],
+    ["siteAddress", "Site Address"],
+    ["gstNo", "GST Number"],
+    ["projectHead", "Project Head"],
+    ["rccDesignerName", "RCC Designer Name"],
+    ["Aadhar", "Aadhar"],
+    ["Pan", "PAN"],
+    ["Pin", "Pin"],
+    ["email", "Email"]
+  ]);
+
   const renderFileInputs = (sectionName) => (
     <div>
      
@@ -342,7 +355,7 @@ const ShowInteriorProject = () => {
                 "email",
               ].map((field) => (
                 <div key={field}>
-                  <label className="block font-semibold">{field}:</label>
+                  <label className="block font-semibold">{myMap.get(field)}:</label>
                   {editing ? (
                     <input
                       type="text"
@@ -359,21 +372,21 @@ const ShowInteriorProject = () => {
             </div>
 
             {[
-              "Bill",
-              "Ceiling",
-              "Curtains",
-              "Door_Handle",
-              "Electrical",
+              "Presentation_DrawingI",
               "Estimate",
+              "ThreeD_Model",
+              "Ceiling",
+              "Electrical",
+              "Plumbing",
               "Flooring",
               "Furniture",
-              "Hinges",
-              "Laminates",
-              "Plumbing",
-              "Presentation_DrawingI",
+              "Bill",
               "Site_Photo",
-              "ThreeD_Model",
+              "Curtains",
+              "Door_Handle",
+              "Hinges",
               "Venner",
+              "Laminates",
             ].map((key) => renderFileInputs(key))}
 
             <div className="flex justify-center space-x-4 mt-4">

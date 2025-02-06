@@ -56,7 +56,7 @@ const Dashboard = () => {
           sidebarOpen ? "block" : "hidden"
         } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
       >
-        <h2 className="text-xl font-bold mb-6">MG and Associate</h2>
+        <h2 className="text-xl font-bold mb-6">Mayur Gandhi & Associate</h2>
         <ul>
           <li>
             <button

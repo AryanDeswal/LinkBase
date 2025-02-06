@@ -17,7 +17,7 @@ function ResetPassword() {
       setIsSubmitting(true);
       try {
         const response = await fetch(
-          "https://projectassoicate-1.onrender.com/api/auth/reset-password",
+          "https://projectassociate-fld7.onrender.com/api/auth/reset-password",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

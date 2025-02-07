@@ -92,13 +92,13 @@ const ShowInteriorProject = () => {
         (_, index) => index !== indexToRemove
       );
       const updatedState = { ...prevState, [sectionName]: updatedSection };
-  
+
       // Sync projectData to reflect changes immediately
       setProjectData((prevProjectData) => ({
         ...prevProjectData,
         [sectionName]: updatedSection,
       }));
-  
+
       return updatedState;
     });
   };
@@ -150,7 +150,7 @@ const ShowInteriorProject = () => {
 
   const renderFileInputs = (sectionName) => (
     <div>
-     
+
       <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
       {editing && (
         <input
@@ -285,14 +285,14 @@ const ShowInteriorProject = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-10">
-    <div className="flex justify-end">
-  <button
-    onClick={() => window.history.back()} // Navigate back in history
-    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg"
-  >
-    Back
-  </button>
-</div>
+      <div className="flex justify-end">
+        <button
+          onClick={() => window.history.back()} // Navigate back in history
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg"
+        >
+          Back
+        </button>
+      </div>
 
       <ToastContainer />
       <div className="container mx-auto px-4 py-8">
@@ -341,35 +341,44 @@ const ShowInteriorProject = () => {
               </p>
             </div>
 
-            <div className="mt-4 space-y-4 grid grid-cols-2 gap-6">
-              {[
-                "title",
-                "clientName",
-                "siteAddress",
-                "gstNo",
-                "projectHead",
-                "rccDesignerName",
-                "Aadhar",
-                "Pan",
-                "Pin",  
-                "email",
-              ].map((field) => (
-                <div key={field}>
-                  <label className="block font-semibold">{myMap.get(field)}:</label>
-                  {editing ? (
-                    <input
-                      type="text"
-                      name={field}
-                      value={editingProject[field]}
-                      onChange={handleChange}
-                      className="border p-2 rounded w-full"
-                    />
-                  ) : (
-                    <p>{projectData[field]}</p>
-                  )}
-                </div>
-              ))}
-            </div>
+            <table className="mt-4 w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border p-2">Field</th>
+                  <th className="border p-2">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  "title",
+                  "clientName",
+                  "siteAddress",
+                  "gstNo",
+                  "projectHead",
+                  "Aadhar",
+                  "Pan",
+                  "Pin",
+                  "email",
+                ].map((field) => (
+                  <tr key={field} className="border">
+                    <td className="border p-2 font-semibold">{myMap.get(field)}:</td>
+                    <td className="border p-2">
+                      {editing ? (
+                        <input
+                          type="text"
+                          name={field}
+                          value={editingProject[field]}
+                          onChange={handleChange}
+                          className="border p-2 rounded w-full"
+                        />
+                      ) : (
+                        <p>{projectData[field]}</p>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
             {[
               "Presentation_DrawingI",

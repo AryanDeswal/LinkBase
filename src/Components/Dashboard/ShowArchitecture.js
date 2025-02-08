@@ -140,7 +140,7 @@ const ShowArchitecture = () => {
   const renderFileInputs = (sectionName) => (
     <div>
 
-      <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
+      <h3 className="font-bold mb-2 text-2xl">{myMap.get(sectionName)}</h3>
       {editing && (
         <input
           type="file"
@@ -284,7 +284,35 @@ const ShowArchitecture = () => {
     ["Aadhar", "Aadhar"],
     ["PAN", "PAN"],
     ["Pin", "Pin"],
-    ["email", "Email"]
+    ["email", "Email"],
+    ["Area_Calculations", "Area Calculations"],
+    ["Presentation_Drawings", "Presentation Drawings"],
+    ["Submission_Drawings", "Submission Drawings"],
+    ["Center_Line", "Center Line"],
+    ["Floor_Plans", "Floor Plans"],
+    ["Sections", "Sections"],
+    ["Elevations", "Elevations"],
+    ["Compound_Wall_Details", "Compound_Wall Details"],
+    ["Toilet_Layouts", "Toilet Layouts"],
+    ["Electric_Layouts", "Electric Layouts"],
+    ["Tile_Layouts", "Tile Layouts"],
+    ["Grill_Details", "Grill Details"],
+    ["Railing_Details", "Railing Details"],
+    ["Column_footing_Drawings", "Column Footing Drawings"],
+    ["Plinth_Beam_Drawings", "Plinth Beam Drawings"],
+    ["StairCase_Details", "StairCase Details"],
+    ["Slab_Drawings", "Slab Drawings"],
+    ["Property_Card", "Property Card"],
+    ["Property_Map", "Property Map"],
+    ["Sanction_Drawings", "Sanction Drawings"],
+    ["Revise_Sanction_Drawings", "Revise Sanction Drawings"],
+    ["Completion_Drawings", "Completion Drawings"],
+    ["Completion_Letter", "Completion Letter"],
+    ["Estimate", "Estimate"],
+    ["Bills_Documents", "Bills"],
+    ["Consultancy_Fees","Consultancy Fees"],
+    ["Site_Photos", "Site Photos"],
+    ["Other_Documents", "Other Documents"]
   ]);
 
   const renderSection = (sectionName, fields) => (
@@ -406,8 +434,15 @@ const ShowArchitecture = () => {
               "Completion_Drawings",
               "Completion_Letter",
             ])}
-            {renderSection("Estimates & Bills", ["Estimate", "Bills_Documents"])}
-            {renderSection("Onsite Photos", ["Site_Photos", "Other_Documents"])}
+            {renderSection("Estimates & Bills", [
+              "Estimate", 
+              "Bills_Documents",
+              "Consultancy_Fees"
+            ])}
+            {renderSection("Onsite Photos", [
+              "Site_Photos", 
+              "Other_Documents"
+            ])}
 
             <div className="flex justify-center space-x-4 mt-4">
               {editing ? (

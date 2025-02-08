@@ -41,6 +41,7 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
       Completion_Letter: [],
       Estimate: [],
       Bills_Documents: [],
+      Consultancy_Fees: [],
       Site_Photos: [],
       Other_Documents: [],
     },
@@ -160,9 +161,50 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
     </div>
   );
 
-  const renderFileInputs = (sectionName, label) => (
+  const myMap = new Map([
+    ["title", "Title"],
+    ["clientName", "Client Name"],
+    ["siteAddress", "Site Address"],
+    ["gstNo", "GST Number"],
+    ["projectHead", "Project Head"],
+    ["rccDesignerName", "RCC Designer Name"],
+    ["Aadhar", "Aadhar"],
+    ["PAN", "PAN"],
+    ["Pin", "Pin"],
+    ["email", "Email"],
+    ["Area_Calculations", "Area Calculations"],
+    ["Presentation_Drawings", "Presentation Drawings"],
+    ["Submission_Drawings", "Submission Drawings"],
+    ["Center_Line", "Center Line"],
+    ["Floor_Plans", "Floor Plans"],
+    ["Sections", "Sections"],
+    ["Elevations", "Elevations"],
+    ["Compound_Wall_Details", "Compound_Wall Details"],
+    ["Toilet_Layouts", "Toilet Layouts"],
+    ["Electric_Layouts", "Electric Layouts"],
+    ["Tile_Layouts", "Tile Layouts"],
+    ["Grill_Details", "Grill Details"],
+    ["Railing_Details", "Railing Details"],
+    ["Column_footing_Drawings", "Column Footing Drawings"],
+    ["Plinth_Beam_Drawings", "Plinth Beam Drawings"],
+    ["StairCase_Details", "StairCase Details"],
+    ["Slab_Drawings", "Slab Drawings"],
+    ["Property_Card", "Property Card"],
+    ["Property_Map", "Property Map"],
+    ["Sanction_Drawings", "Sanction Drawings"],
+    ["Revise_Sanction_Drawings", "Revise Sanction Drawings"],
+    ["Completion_Drawings", "Completion Drawings"],
+    ["Completion_Letter", "Completion Letter"],
+    ["Estimate", "Estimate"],
+    ["Bills_Documents", "Bills"],
+    ["Consultancy_Fees", "Consultancy Fees"],
+    ["Site_Photos", "Site Photos"],
+    ["Other_Documents", "Other Documents"]
+  ]);
+
+  const renderFileInputs = (sectionName) => (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md">
-      <h3 className="font-semibold text-gray-700 mb-2">{label}</h3>
+      <h3 className="font-semibold text-gray-700 mb-2">{myMap.get(sectionName)}</h3>
       <input
         type="file"
         multiple
@@ -206,7 +248,7 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
     { heading: "Detail Drawings", sections: ["Compound_Wall_Details", "Toilet_Layouts", "Electric_Layouts", "Tile_Layouts", "Grill_Details", "Railing_Details"] },
     { heading: "RCC", sections: ["Column_footing_Drawings", "Plinth_Beam_Drawings", "StairCase_Details", "Slab_Drawings"] },
     { heading: "Documents & Other", sections: ["Property_Card", "Property_Map", "Sanction_Drawings", "Revise_Sanction_Drawings", "Completion_Drawings", "Completion_Letter"] },
-    { heading: "Estimates & Bills", sections: ["Estimate", "Bills_Documents"] },
+    { heading: "Estimates & Bills", sections: ["Estimate", "Bills_Documents", "Consultancy_Fees"] },
     { heading: "Onsite Photos", sections: ["Site_Photos", "Other_Documents"] },
   ];
 
@@ -214,9 +256,8 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
     <div className="w-full max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-lg">
       <ToastContainer />
       <button
-        className={`w-full p-3 mb-6 rounded-lg transition-all font-semibold text-lg ${
-          isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-        }`}
+        className={`w-full p-3 mb-6 rounded-lg transition-all font-semibold text-lg ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+          }`}
         onClick={onClick}
       >
         Add Architecture Project
@@ -242,16 +283,15 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
             <h2 className="text-lg font-bold text-gray-800 mb-4">{group.heading}</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {group.sections.map((sectionKey) =>
-                renderFileInputs(sectionKey, sectionKey.replace(/_/g, " "))
+                renderFileInputs(sectionKey)
               )}
             </div>
           </div>
         ))}
         <button
           type="submit"
-          className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 transition-all"
-          }`}
+          className={`w-full p-3 text-lg font-medium rounded-lg text-white bg-blue-600 ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 transition-all"
+            }`}
           disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Project"}

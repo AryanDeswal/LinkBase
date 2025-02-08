@@ -38,6 +38,7 @@ const modalDataSchema = new mongoose.Schema({
   Completion_Letter: [String],
   Estimate: [String],
   Bills_Documents: [String],
+  Consultancy_Fees:[String],
   Site_Photos: [String],
   Other_Documents: [String],
 });

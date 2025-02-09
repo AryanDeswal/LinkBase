@@ -7,6 +7,7 @@ const modalDataSchema = new mongoose.Schema({
   siteAddress: { type: String },
   gstNo: { type: String },
   projectHead: { type: String },
+  leadFirm: { type: String },
   rccDesignerName: { type: String },
   PAN: { type: String },
   Aadhar: { type: String },

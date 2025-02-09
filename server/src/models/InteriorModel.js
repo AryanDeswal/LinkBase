@@ -15,14 +15,11 @@ const InteriorDataSchema = new mongoose.Schema({
   gstNo: {
     type: String,
   },
-  mahareraNo: {
-    type: String,
-  },
   projectHead: {
     type: String,
   },
-  rccDesignerName: {
-    type: String,
+  leadFirm: { 
+    type: String 
   },
   Pan: {
     type: String,

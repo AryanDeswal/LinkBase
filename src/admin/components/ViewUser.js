@@ -152,7 +152,7 @@ const ViewUsers = () => {
                   <div className="flex items-center">
                     <img
                       className="h-10 w-10 rounded-full mr-3"
-                      src={user.avatar || ''}
+                      src={'/human-icon.png'}
                       alt={user.name}
                     />
                     <div>

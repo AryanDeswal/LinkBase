@@ -26,11 +26,11 @@ const Dashboard = () => {
   }, [isLoggedIn, navigate]);
 
   const logoutHandler = () => {
+    const confirmDelete = window.confirm('Are you sure you want to logout?');
+    if (!confirmDelete) return;
     window.localStorage.removeItem("authorization");
-    alert("You have been logged out.");
     navigate("/");
   };
-  
 
   // Render content dynamically based on active tab
   const renderContent = () => {
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
       case "addReport":
         return <AddArchitecturalProject />;
-      
+
       case "viewReport":
         return <ViewArchitecturalProject />;
       case "seeUsers":
@@ -49,7 +49,7 @@ const Dashboard = () => {
         return <div>Select an option from the sidebar.</div>;
     }
   };
-if (!isLoggedIn) {
+  if (!isLoggedIn) {
     // Navigate to the home page if the user is not logged in
     navigate("/");
     return null; // Avoid rendering the JSX below if navigating away
@@ -69,17 +69,15 @@ if (!isLoggedIn) {
 
       {/* Sidebar */}
       <div
-        className={`${
-          sidebarOpen ? "block" : "hidden"
-        } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
+        className={`${sidebarOpen ? "block" : "hidden"
+          } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
       >
         <h2 className="text-xl font-bold mb-6">Mayur Gandhi & Associate</h2>
         <ul>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "addButton" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "addButton" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("addButton")}
             >
               Add Interior Project
@@ -87,20 +85,18 @@ if (!isLoggedIn) {
           </li>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "addReport" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "addReport" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("addReport")}
             >
-           
+
               Add Architectural Project
             </button>
           </li>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "viewReport" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "viewReport" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("viewReport")}
             >
               View Architectural Report
@@ -108,9 +104,8 @@ if (!isLoggedIn) {
           </li>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "seeUsers" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "seeUsers" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("seeUsers")}
             >
               View Interior Report

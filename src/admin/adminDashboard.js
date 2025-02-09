@@ -14,6 +14,8 @@ const Dashboard = () => {
   const { isAdmin } = useAdmin();
 
   const logoutHandler = () => {
+    const confirmDelete = window.confirm('Are you sure you want to logout?');
+    if (!confirmDelete) return;
     window.sessionStorage.removeItem("authorizationadmin");
     navigate("/adminlogin");
   };
@@ -52,17 +54,15 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`${
-          sidebarOpen ? "block" : "hidden"
-        } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
+        className={`${sidebarOpen ? "block" : "hidden"
+          } md:block w-full md:w-1/4 bg-blue-800 text-white p-4 md:min-h-screen`}
       >
         <h2 className="text-xl font-bold mb-6">Mayur Gandhi & Associate</h2>
         <ul>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "viewData" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "viewData" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("viewData")}
             >
               View Users
@@ -70,9 +70,8 @@ const Dashboard = () => {
           </li>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "viewReport" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "viewReport" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("viewReport")}
             >
               View Architectural Report
@@ -80,9 +79,8 @@ const Dashboard = () => {
           </li>
           <li>
             <button
-              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${
-                activeTab === "seeUsers" ? "bg-blue-600" : ""
-              }`}
+              className={`w-full text-left p-2 mb-2 rounded hover:bg-blue-700 ${activeTab === "seeUsers" ? "bg-blue-600" : ""
+                }`}
               onClick={() => setActiveTab("seeUsers")}
             >
               View Interior Report

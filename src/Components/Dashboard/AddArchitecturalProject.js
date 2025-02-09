@@ -10,6 +10,7 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
     siteAddress: "",
     gstNo: "",
     projectHead: "",
+    leadFirm: "",
     rccDesignerName: "",
     PAN: "",
     Aadhar: "",
@@ -167,6 +168,7 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
     ["siteAddress", "Site Address"],
     ["gstNo", "GST Number"],
     ["projectHead", "Project Head"],
+    ["leadFirm","Lead Firm"],
     ["rccDesignerName", "RCC Designer Name"],
     ["Aadhar", "Aadhar"],
     ["PAN", "PAN"],
@@ -271,6 +273,7 @@ const AddArchitectureProject = ({ isActive, onClick }) => {
             {renderFormInput("Site Address", "siteAddress", "Site Address")}
             {renderFormInput("GST No", "gstNo", "GST No")}
             {renderFormInput("Project Head", "projectHead", "Project Head")}
+            {renderFormInput("Lead Firm", "leadFirm", "Lead Firm")}
             {renderFormInput("RCC Designer Name", "rccDesignerName", "RCC Designer Name")}
             {renderFormInput("PAN", "PAN", "PAN")}
             {renderFormInput("Aadhar", "Aadhar", "Enter 12-digit Aadhar")}

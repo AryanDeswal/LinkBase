@@ -126,7 +126,7 @@ const ProjectCard = ({ project, handleShowMore, deleteProject }) => (
         <p><span className="font-medium">Client:</span> {displayData(project.clientName)}</p>
         <p><span className="font-medium">Type:</span> {displayData(project.projectType)}</p>
         <p><span className="font-medium">Project Head:</span> {displayData(project.projectHead)}</p>
-        <p><span className="font-medium">Rcc Designer Name:</span> {displayData(project.rccDesignerName)}</p>
+        <p><span className="font-medium">Lead Firm:</span> {displayData(project.leadFirm)}</p>
         <p><span className="font-medium">Address:</span> {displayData(project.siteAddress)}</p>
         <p><span className="font-medium">Pan:</span> {displayData(project.Pan)}</p>
         <p><span className="font-medium">Aadhar:</span> {displayData(project.Aadhar)}</p>

@@ -10,6 +10,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
     siteAddress: "",
     gstNo: "",
     projectHead: "",
+    leadFirm: "",
     PAN: "",
     Aadhar: "",
     Pin: "",
@@ -220,6 +221,7 @@ const AddInteriorProject = ({ isActive, onClick }) => {
             {renderFormInput("Site Address", "siteAddress", "Site Address")}
             {renderFormInput("GST No", "gstNo", "GST No")}
             {renderFormInput("Project Head", "projectHead", "Project Head")}
+            {renderFormInput("Lead Firm", "leadFirm", "Lead Firm")}
             {renderFormInput("PAN", "PAN", "PAN")}
             {renderFormInput("Aadhar", "Aadhar", "Enter 12-digit Aadhar")}
             {renderFormInput("Pin", "Pin", "Enter 6-digit Pin")}

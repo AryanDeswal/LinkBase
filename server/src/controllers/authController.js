@@ -23,7 +23,7 @@ const signup = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, dob, phone, password, address } = req.body;
+        const { name, email, dob, phone, familyPhoneNumber, password, address } = req.body;
 
         // Check if email already exists (active users)
         const existingUser = await User.findOne({ email, deleted: false });
@@ -43,13 +43,14 @@ const signup = async (req, res) => {
             email,
             dob,
             phone,
+            familyPhoneNumber,
             password: hashedPassword,
             address,
             verificationCode
         });
 
         await user.save();
-        
+
         // Attempt to send the verification email
         try {
             await sendVerificationEmail(email, name, phone, verificationCode);
@@ -59,8 +60,8 @@ const signup = async (req, res) => {
             return res.status(500).json({ message: 'Failed to send verification email' });
         }
 
-        res.status(201).json({ 
-            message: 'User registered successfully. Awaiting verification.' 
+        res.status(201).json({
+            message: 'User registered successfully. Awaiting verification.'
         });
     } catch (error) {
         console.error('Error during signup:', error.message);
@@ -107,7 +108,7 @@ const verify = async (req, res) => {
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
         }
@@ -127,13 +128,13 @@ const forgotPassword = async (req, res) => {
         const emailSent = await sendPasswordResetEmail(email, resetToken);
 
         if (!emailSent) {
-            return res.status(500).json({ 
-                message: 'Error sending password reset email' 
+            return res.status(500).json({
+                message: 'Error sending password reset email'
             });
         }
 
-        res.json({ 
-            message: 'Password reset link has been sent to your email' 
+        res.json({
+            message: 'Password reset link has been sent to your email'
         });
 
     } catch (error) {
@@ -157,8 +158,8 @@ const login = async (req, res) => {
         }
 
         if (!user.isVerified) {
-            return res.status(401).json({ 
-                message: 'Please verify your email first' 
+            return res.status(401).json({
+                message: 'Please verify your email first'
             });
         }
 
@@ -190,8 +191,8 @@ const resetPassword = async (req, res) => {
         const { token, newPassword } = req.body;
 
         if (!token || !newPassword) {
-            return res.status(400).json({ 
-                message: 'Token and new password are required' 
+            return res.status(400).json({
+                message: 'Token and new password are required'
             });
         }
 
@@ -201,14 +202,14 @@ const resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ 
-                message: 'Password reset token is invalid or has expired' 
+            return res.status(400).json({
+                message: 'Password reset token is invalid or has expired'
             });
         }
 
         // Hash the new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        
+
         // Update user's password and clear reset token fields
         user.password = hashedPassword;
         user.resetPasswordToken = undefined;
@@ -257,7 +258,7 @@ const updateUser = async (req, res) => {
 };
 
 // Delete user function
- const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -276,17 +277,17 @@ const updateUser = async (req, res) => {
 
 
 
-const forgetEmail = async(req,res)=>{
+const forgetEmail = async (req, res) => {
     try {
-        const {phone} =  await req.body;
-        const finduser = await User.find({phone:phone}).select("-password -verificationCode");
-        if(!finduser){
-            res.json({message:"Email not found"}).status(404)
+        const { phone } = await req.body;
+        const finduser = await User.find({ phone: phone }).select("-password -verificationCode");
+        if (!finduser) {
+            res.json({ message: "Email not found" }).status(404)
         }
-        res.json({message:finduser[0].email}).status(200)
+        res.json({ message: finduser[0].email }).status(200)
 
     } catch (error) {
-        res.json({message:"Server Error"}).status(500)
+        res.json({ message: "Server Error" }).status(500)
     }
 }
 

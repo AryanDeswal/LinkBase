@@ -141,7 +141,7 @@ const ShowInteriorProject = () => {
     ["siteAddress", "Site Address"],
     ["gstNo", "GST Number"],
     ["projectHead", "Project Head"],
-    ["leadFirm","Lead Firm"],
+    ["leadFirm", "Lead Firm"],
     ["rccDesignerName", "RCC Designer Name"],
     ["Aadhar", "Aadhar"],
     ["Pan", "PAN"],
@@ -151,7 +151,6 @@ const ShowInteriorProject = () => {
 
   const renderFileInputs = (sectionName) => (
     <div>
-
       <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
       {editing && (
         <input
@@ -164,20 +163,21 @@ const ShowInteriorProject = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {(projectData[sectionName] || []).length > 0 ? (
           (projectData[sectionName] || []).map((fileUrl, index) => {
-            // Extract the file name from the URL
-            const fileName = fileUrl.split("/").pop().split("?")[0]; // Extract filename from URL
+            const fileName = fileUrl.split("/").pop().split("?")[0];
 
             return (
               <div key={index} className="relative group">
                 {fileUrl.endsWith(".pdf") ? (
                   <div className="relative">
-                    <iframe
-                      src={fileUrl}
-                      width="100%"
-                      height="200px"
-                      className="border rounded-md"
-                      title={`File ${index + 1}`}
-                    ></iframe>
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                      <iframe
+                        src={fileUrl}
+                        width="100%"
+                        height="200px"
+                        className="border rounded-md cursor-pointer"
+                        title={`File ${index + 1}`}
+                      ></iframe>
+                    </a>
                     <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
                         onClick={() => handleShareImage(fileUrl)}
@@ -223,11 +223,13 @@ const ShowInteriorProject = () => {
                   </div>
                 ) : (
                   <div className="relative">
-                    <img
-                      src={fileUrl}
-                      alt={`File ${index + 1}`}
-                      className="w-full h-60 object-cover rounded-lg"
-                    />
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={fileUrl}
+                        alt={`File ${index + 1}`}
+                        className="w-full h-60 object-cover rounded-lg cursor-pointer"
+                      />
+                    </a>
                     <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
                         onClick={() => handleShareImage(fileUrl)}
@@ -272,7 +274,6 @@ const ShowInteriorProject = () => {
                     </div>
                   </div>
                 )}
-                {/* Display file name */}
                 <p className="text-center mt-2">{fileName}</p>
               </div>
             );

@@ -6,6 +6,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [phone, setPhone] = useState('');
+  const [familyPhoneNumber, setfamilyPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [address, setAddress] = useState('');
@@ -51,6 +52,7 @@ const SignupForm = () => {
             email,
             dob,
             phone,
+            familyPhoneNumber,
             password,
             confirmPassword, // Include confirmPassword in the request body
             address,
@@ -123,11 +125,24 @@ const SignupForm = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your phone number"
+              maxLength="10"
+            />
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Family Phone Number</label>
+            <input
+              type="text"
+              value={familyPhoneNumber}
+              onChange={(e) => setfamilyPhoneNumber(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your phone number"
               maxLength="10"

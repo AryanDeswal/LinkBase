@@ -10,6 +10,7 @@ const ShowInteriorProject = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editingProject, setEditingProject] = useState({});
+  const [expandedSections, setExpandedSections] = useState({}); // Track dropdown states
   const [uploadingSection, setUploadingSection] = useState(null);
 
   const fetchProjectData = async () => {
@@ -73,6 +74,13 @@ const ShowInteriorProject = () => {
       console.error("Error updating project data:", error);
       toast.error("Failed to update project. Please try again.");
     }
+  };
+
+  const toggleSection = (sectionName) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionName]: !prev[sectionName],
+    }));
   };
 
   const handleShareImage = (imageUrl) => {
@@ -150,12 +158,80 @@ const ShowInteriorProject = () => {
     ["Aadhar", "Aadhar"],
     ["Pan", "PAN"],
     ["Pin", "Pin"],
-    ["email", "Email"]
+    ["email", "Email"],
+    ["Presentation_DrawingI", "Presentation Drawing"],
+    ["Estimate", "Estimate"],
+    ["ThreeD_Model", "3D Model"],
+    ["Ceiling", "Ceiling"],
+    ["Electrical", "Electrical"],
+    ["Plumbing", "Plumbing"],
+    ["Flooring", "Flooring"],
+    ["Bill", "Bill"],
+    ["Site_Photo", "Site Photos"],
+    ["Curtains", "Curtains"],
+    ["Door_Handle", "Door Handle"],
+    ["Hinges", "Hinges"],
+    ["Venner", "Venner"],
+    ["Laminates", "Laminates"]
   ]);
+
+  const renderSection = (sectionName, fields) => (
+    <div className="mb-4">
+      <div
+        className="flex justify-between items-center cursor-pointer bg-blue-100 px-4 py-3 rounded-lg shadow"
+        onClick={() => toggleSection(sectionName)}
+      >
+        <h3 className="text-xl font-bold text-blue-700">{sectionName}</h3>
+        <button>
+          {expandedSections[sectionName] ? "▲" : "▼"}
+        </button>
+      </div>
+      {sectionName === "Project Details" ?
+        expandedSections[sectionName] && (
+          <div className="mt-2 ml-4">
+            <table className="table-auto border-collapse border border-gray-300 w-full">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2">Field</th>
+                  <th className="border border-gray-300 px-4 py-2">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fields.map((field) => (
+                  <tr key={field} className="text-gray-800">
+                    <td className="border border-gray-300 px-4 py-2 font-bold">{myMap.get(field)}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {editing ? (
+                        <input
+                          type="text"
+                          name={field}
+                          value={editingProject[field] || ""}
+                          onChange={handleChange}
+                          className="border p-2 rounded w-full"
+                        />
+                      ) : (
+                        <p>{projectData[field]}</p>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) :
+        expandedSections[sectionName] && (
+          <div className="mt-2 ml-4">
+            {fields.map((field) => (
+              renderFileInputs(field)
+            ))}
+          </div>
+        )}
+    </div>
+  );
 
   const renderFileInputs = (sectionName) => (
     <div>
-      <h3 className="font-bold mb-2 text-2xl">{sectionName}</h3>
+      <h3 className="font-bold mb-2 text-2xl">{myMap.get(sectionName)}</h3>
       {editing && (
         <input
           type="file"
@@ -305,6 +381,7 @@ const ShowInteriorProject = () => {
       </div>
 
       <ToastContainer />
+
       <div className="container mx-auto px-4 py-8">
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -312,102 +389,52 @@ const ShowInteriorProject = () => {
           </div>
         ) : projectData ? (
           <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-                Title:{" "}
-                {editing ? (
-                  <input
-                    type="text"
-                    name="title"
-                    value={editingProject.title}
-                    onChange={(e) =>
-                      setEditingProject((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    className="border p-2 rounded"
-                  />
-                ) : (
-                  projectData.title
-                )}
-              </h1>
-              <p className="text-gray-600 text-lg">
-                {editing ? (
-                  <textarea
-                    name="description"
-                    value={editingProject.description}
-                    onChange={(e) =>
-                      setEditingProject((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    className="border p-2 rounded w-full"
-                  />
-                ) : (
-                  projectData.description
-                )}
-              </p>
-            </div>
-
-            <table className="mt-4 w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border p-2">Field</th>
-                  <th className="border p-2">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  "title",
-                  "clientName",
-                  "siteAddress",
-                  "gstNo",
-                  "projectHead",
-                  "leadFirm",
-                  "Aadhar",
-                  "Pan",
-                  "Pin",
-                  "email",
-                ].map((field) => (
-                  <tr key={field} className="border">
-                    <td className="border p-2 font-semibold">{myMap.get(field)}:</td>
-                    <td className="border p-2">
-                      {editing ? (
-                        <input
-                          type="text"
-                          name={field}
-                          value={editingProject[field]}
-                          onChange={handleChange}
-                          className="border p-2 rounded w-full"
-                        />
-                      ) : (
-                        <p>{projectData[field]}</p>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {[
+            {renderSection("Project Details", [
+              "title",
+              "clientName",
+              "siteAddress",
+              "gstNo",
+              "projectHead",
+              "leadFirm",
+              "Aadhar",
+              "Pan",
+              "Pin",
+              "email",
+            ])}
+            {renderSection("Presentation Drawing", [
               "Presentation_DrawingI",
-              "Estimate",
-              "ThreeD_Model",
+            ])}
+            {renderSection("Ceiling Detail", [
               "Ceiling",
-              "Electrical",
-              "Plumbing",
-              "Flooring",
-              "Furniture",
-              "Bill",
-              "Site_Photo",
-              "Curtains",
+            ])}
+            {renderSection("Electrical Layout", [
+              "Property_Card",
+            ])}
+            {renderSection("Door Handles & Curtains", [
               "Door_Handle",
-              "Hinges",
-              "Venner",
+              "Curtains",
+            ])}
+            {renderSection("Furniture Details", [
               "Laminates",
-            ].map((key) => renderFileInputs(key))}
+              "Venner",
+              "Hinges"
+            ])}
+            {renderSection("Plumbing Layout", [
+              "Plumbing",
+            ])}
+            {renderSection("3D Model", [
+              "ThreeD_Model",
+            ])}
+            {renderSection("Flooring Layout", [
+              "Flooring",
+            ])}
+            {renderSection("Estimate & Bills", [
+              "Estimate",
+              "Bill"
+            ])}
+            {renderSection("Onsite Photos", [
+              "Site_Photo",
+            ])}
 
             <div className="flex justify-center space-x-4 mt-4">
               {editing ? (

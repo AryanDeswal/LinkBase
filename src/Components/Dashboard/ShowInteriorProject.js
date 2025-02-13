@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import { saveAs } from "file-saver";
 
 const ShowInteriorProject = () => {
   const { projectId } = useParams();
@@ -111,6 +112,16 @@ const ShowInteriorProject = () => {
       return updatedState;
     });
   };
+
+  const handleDownloadImage = async (fileUrl, fileName) => {
+      try {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        saveAs(blob, fileName);
+      } catch (error) {
+        console.error("Error downloading the file:", error);
+      }
+    }
 
   const uploadFileHandler = async (e, sectionName) => {
     const file = e.target.files[0];
@@ -316,6 +327,26 @@ const ShowInteriorProject = () => {
                     </a>
                     <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
+                        onClick={() => handleDownloadImage(fileUrl, fileName)}
+                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                        title="Download File"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="8 12 12 16 16 12"></polyline>
+                          <line x1="12" y1="16" x2="12" y2="4"></line>
+                        </svg>
+                      </button>
+                      <button
                         onClick={() => handleShareImage(fileUrl)}
                         className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
                         title="Share File"
@@ -408,7 +439,7 @@ const ShowInteriorProject = () => {
               "Ceiling",
             ])}
             {renderSection("Electrical Layout", [
-              "Property_Card",
+              "Electrical",
             ])}
             {renderSection("Door Handles & Curtains", [
               "Door_Handle",

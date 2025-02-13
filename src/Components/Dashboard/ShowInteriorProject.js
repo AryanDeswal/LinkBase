@@ -10,6 +10,7 @@ const ShowInteriorProject = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editingProject, setEditingProject] = useState({});
+  const [uploadingSection, setUploadingSection] = useState(null);
 
   const fetchProjectData = async () => {
     setLoading(true);
@@ -109,6 +110,7 @@ const ShowInteriorProject = () => {
       toast.error("Please select a file to upload.");
       return;
     }
+    setUploadingSection(sectionName);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -132,6 +134,8 @@ const ShowInteriorProject = () => {
     } catch (error) {
       console.error("File upload failed:", error);
       toast.error("File upload failed. Please try again.");
+    } finally {
+      setUploadingSection(null);
     }
   };
 
@@ -158,6 +162,10 @@ const ShowInteriorProject = () => {
           onChange={(e) => uploadFileHandler(e, sectionName)}
           className="text-blue-500 text-sm mb-4"
         />
+      )
+      }
+      {uploadingSection === sectionName && (
+        <p className="text-blue-600 font-medium">Uploading...</p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

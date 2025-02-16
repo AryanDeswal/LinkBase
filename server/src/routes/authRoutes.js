@@ -1,7 +1,7 @@
 // src/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
-const { signup, verify, login, getUsers, forgotPassword, resetPassword , deleteUser,forgetEmail} = require('../controllers/authController');
+const { signup, verify, login, getUsers, forgotPassword, resetPassword ,editUser, deleteUser,forgetEmail} = require('../controllers/authController');
 const { signupValidation, loginValidation } = require('../utils/validation');
 const { authenticateMiddleware } = require('../middleware/auth');
 const {uploadFiles,upload} = require('../controllers/uploadController');
@@ -19,6 +19,8 @@ router.post('/login', loginValidation, login);
 
 // Get all users (authenticated)
 router.get('/users', getUsers); 
+// Edit users (authenticated)
+router.patch('/users/:id', editUser); 
 //delete useer
 router.delete('/users/:id', deleteUser);
 

@@ -114,14 +114,14 @@ const ShowInteriorProject = () => {
   };
 
   const handleDownloadImage = async (fileUrl, fileName) => {
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        saveAs(blob, fileName);
-      } catch (error) {
-        console.error("Error downloading the file:", error);
-      }
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
     }
+  }
 
   const uploadFileHandler = async (e, sectionName) => {
     const file = e.target.files[0];
@@ -262,133 +262,85 @@ const ShowInteriorProject = () => {
 
             return (
               <div key={index} className="relative group">
-                {fileUrl.endsWith(".pdf") ? (
-                  <div className="relative">
-                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                      <iframe
-                        src={fileUrl}
-                        width="100%"
-                        height="200px"
-                        className="border rounded-md cursor-pointer"
-                        title={`File ${index + 1}`}
-                      ></iframe>
-                    </a>
-                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        onClick={() => handleShareImage(fileUrl)}
-                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                        title="Share File"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                          <polyline points="16 6 12 2 8 6"></polyline>
-                          <line x1="12" y1="2" x2="12" y2="15"></line>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleRemoveImage(sectionName, index)}
-                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                        title="Remove File"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                          <path d="M9 2V20"></path>
-                          <path d="M15 2V20"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={fileUrl}
-                        alt={`File ${index + 1}`}
-                        className="w-full h-60 object-cover rounded-lg cursor-pointer"
-                      />
-                    </a>
-                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        onClick={() => handleDownloadImage(fileUrl, fileName)}
-                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                        title="Download File"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="8 12 12 16 16 12"></polyline>
-                          <line x1="12" y1="16" x2="12" y2="4"></line>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleShareImage(fileUrl)}
-                        className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
-                        title="Share File"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                          <polyline points="16 6 12 2 8 6"></polyline>
-                          <line x1="12" y1="2" x2="12" y2="15"></line>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleRemoveImage(sectionName, index)}
-                        className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
-                        title="Remove File"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
-                          <path d="M9 2V20"></path>
-                          <path d="M15 2V20"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                )}
+                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="block">
+                  {fileUrl.endsWith(".pdf") ? (
+                    <iframe
+                      src={fileUrl}
+                      width="100%"
+                      height="200px"
+                      className="border rounded-md pointer-events-none"
+                      title={`File ${index + 1}`}
+                    ></iframe>
+                  ) : (
+                    <img
+                      src={fileUrl}
+                      alt={`File ${index + 1}`}
+                      className="w-full h-60 object-cover rounded-lg"
+                    />
+                  )}
+                </a>
+                <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={() => handleDownloadImage(fileUrl, fileName)}
+                    className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                    title="Download File"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="8 12 12 16 16 12"></polyline>
+                      <line x1="12" y1="16" x2="12" y2="4"></line>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleShareImage(fileUrl)}
+                    className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 shadow-md"
+                    title="Share File"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                      <polyline points="16 6 12 2 8 6"></polyline>
+                      <line x1="12" y1="2" x2="12" y2="15"></line>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleRemoveImage(sectionName, index)}
+                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                    title="Remove File"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M6 2L18 2L18 20L6 20L6 2Z"></path>
+                      <path d="M9 2V20"></path>
+                      <path d="M15 2V20"></path>
+                    </svg>
+                  </button>
+                </div>
                 <p className="text-center mt-2">{fileName}</p>
               </div>
             );

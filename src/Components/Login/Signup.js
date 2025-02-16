@@ -27,6 +27,8 @@ const SignupForm = () => {
     if (!dob) newErrors.dob = 'Date of Birth is required';
     if (!phone) newErrors.phone = 'Phone number is required';
     else if (!phonePattern.test(phone)) newErrors.phone = 'Phone number must be exactly 10 digits';
+    if (!familyPhoneNumber) newErrors.familyPhoneNumber = 'Family Phone number is required';
+    else if (!phonePattern.test(familyPhoneNumber)) newErrors.familyPhoneNumber = 'Family Phone number must be exactly 10 digits';
     if (!password) newErrors.password = 'Password is required';
     else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
     if (!confirmPassword) newErrors.confirmPassword = 'Confirm Password is required';
@@ -60,10 +62,10 @@ const SignupForm = () => {
         });
         // if (!response.ok) throw new Error('Signup failed');
         const data = await response.json();
-        if(data.message == "Email already registered"){
+        if (data.message == "Email already registered") {
           alert("Email already registered")
         }
-        else{
+        else {
           alert('Signup successful! Please verify your OTP.');
           navigate('/otp-verification', { state: { email } });
         }
@@ -144,10 +146,10 @@ const SignupForm = () => {
               value={familyPhoneNumber}
               onChange={(e) => setfamilyPhoneNumber(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your phone number"
+              placeholder="Enter your family phone number"
               maxLength="10"
             />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            {errors.familyPhoneNumber && <p className="text-red-500 text-sm mt-1">{errors.familyPhoneNumber}</p>}
           </div>
 
           <div className="mb-4">
@@ -209,16 +211,15 @@ const SignupForm = () => {
 
           <button
             type="submit"
-            className={`w-full py-2 rounded-md text-white ${
-              isSubmitting ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'
-            }`}
+            className={`w-full py-2 rounded-md text-white ${isSubmitting ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'
+              }`}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Register'}
           </button>
         </form>
         <a href='/' className='text-center text-blue-400 flex flex-col items-center pt-2 '>
-            Already have an account
+          Already have an account
         </a>
       </div>
     </div>

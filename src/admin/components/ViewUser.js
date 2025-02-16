@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaTrashAlt, FaEye } from 'react-icons/fa';
+import { FaTrashAlt, FaEye, FaEdit } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const ViewUsers = () => {
@@ -11,6 +11,8 @@ const ViewUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [popupMessage, setPopupMessage] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
   const usersPerPage = 5;
   const token = window.sessionStorage.getItem('authorization');
 
@@ -37,6 +39,48 @@ const ViewUsers = () => {
   useEffect(() => {
     fetchUsers();
   }, [token, navigate]);
+
+  const handleEdit = (user) => {
+    setEditingUser(user);
+    setEditFormData(user);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `https://projectassociate-fld7.onrender.com/api/auth/users/${editingUser._id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(editFormData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === editingUser._id ? editFormData : user))
+      );
+      setPopupMessage('User updated successfully!');
+      setTimeout(() => setPopupMessage(''), 3000);
+      setEditingUser(null);
+    } catch (err) {
+      console.error('Error updating user:', err);
+      setPopupMessage(`Error: ${err.message}`);
+      setTimeout(() => setPopupMessage(''), 3000);
+    }
+  };
 
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
@@ -172,9 +216,12 @@ const ViewUsers = () => {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end space-x-4">
-                  <button onClick={() => setSelectedUser(user)} className="text-blue-500">
-                    <FaEye size={20} />
-                  </button>
+                    <button onClick={() => setSelectedUser(user)} className="text-blue-500">
+                      <FaEye size={20} />
+                    </button>
+                    <button onClick={() => handleEdit(user)} className="text-green-500">
+                      <FaEdit size={20} />
+                    </button>
                     <button
                       onClick={() => handleDelete(user._id)}
                       className="text-red-500 hover:text-red-700 transition-colors"
@@ -209,14 +256,86 @@ const ViewUsers = () => {
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
-            }`}
+            className={`px-3 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
+              }`}
           >
             {index + 1}
           </button>
         ))}
       </div>
+
+      {editingUser && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Edit User</h2>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={editFormData.name}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+              placeholder="Enter your name"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={editFormData.email}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+              placeholder="Enter your email"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={editFormData.dob ? new Date(editFormData.dob).toISOString().split("T")[0] : ""}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input
+              type="text"
+              name="phone"
+              value={editFormData.phone}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+              placeholder="Enter your phone number"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">Family Phone Number</label>
+            <input
+              type="text"
+              name="familyPhoneNumber"
+              value={editFormData.familyPhoneNumber}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+              placeholder="Enter your family phone number"
+            />
+
+            <label className="block text-sm font-medium text-gray-700">Address</label>
+            <input
+              type="text"
+              name="address"
+              value={editFormData.address}
+              onChange={handleEditChange}
+              className="w-full border p-2 mb-2"
+              placeholder="Enter your address"
+            />
+
+            <button className="bg-blue-500 text-white px-4 py-2 mr-2" onClick={handleEditSubmit}>
+              Save
+            </button>
+            <button className="bg-gray-500 text-white px-4 py-2" onClick={() => setEditingUser(null)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

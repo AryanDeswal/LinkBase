@@ -95,21 +95,52 @@ const ShowArchitecture = () => {
       });
   };
 
-  const handleRemoveImage = (sectionName, indexToRemove) => {
-    setEditingProject((prevState) => {
-      const updatedSection = prevState[sectionName].filter(
-        (_, index) => index !== indexToRemove
+  const handleRemoveImage = async (sectionName, indexToRemove) => {
+    if (!window.confirm('Are you sure you want to delete this file?')) return;
+
+    try {
+      setEditingProject((prevState) => {
+        const updatedSection = prevState[sectionName].filter(
+          (_, index) => index !== indexToRemove
+        );
+        const updatedState = { ...prevState, [sectionName]: updatedSection };
+
+        // Sync projectData to reflect changes immediately
+        setProjectData((prevProjectData) => ({
+          ...prevProjectData,
+          [sectionName]: updatedSection,
+        }));
+
+        return updatedState;
+      });
+
+      // Extract the file URL before state update
+      const toDeleteSection = editingProject[sectionName][indexToRemove];
+
+      if (!toDeleteSection) {
+        console.error('No file found to delete');
+        return;
+      }
+
+      const response = await fetch(
+        `https://projectassociate-fld7.onrender.com/api/auth/file/${encodeURIComponent(toDeleteSection)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       );
-      const updatedState = { ...prevState, [sectionName]: updatedSection };
 
-      // Sync projectData to reflect changes immediately
-      setProjectData((prevProjectData) => ({
-        ...prevProjectData,
-        [sectionName]: updatedSection,
-      }));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete file');
+      }
 
-      return updatedState;
-    });
+      toast.success("File deleted successfully!");
+    } catch (err) {
+      console.error('Error deleting file:', err);
+    }
   };
 
   const handleDownloadImage = async (fileUrl, fileName) => {
@@ -231,7 +262,8 @@ const ShowArchitecture = () => {
                       <line x1="12" y1="2" x2="12" y2="15"></line>
                     </svg>
                   </button>
-                  <button
+                  {editing && (
+                    <button
                     onClick={() => handleRemoveImage(sectionName, index)}
                     className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
                     title="Remove File"
@@ -251,6 +283,7 @@ const ShowArchitecture = () => {
                       <path d="M15 2V20"></path>
                     </svg>
                   </button>
+                )}
                 </div>
                 <p className="text-center mt-2">{fileName}</p>
               </div>

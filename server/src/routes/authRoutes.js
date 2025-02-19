@@ -1,6 +1,7 @@
 // src/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
+const {deleteFile} = require('../controllers/uploadController')
 const { signup, verify, login, getUsers, forgotPassword, resetPassword ,editUser, deleteUser,forgetEmail} = require('../controllers/authController');
 const { signupValidation, loginValidation } = require('../utils/validation');
 const { authenticateMiddleware } = require('../middleware/auth');
@@ -33,6 +34,8 @@ router.post("/forgot-email",forgetEmail);
 router.post('/reset-password', resetPassword);
 
 router.delete('/users/:id',deleteUser);
+
+router.delete('/file/:s3Url',deleteFile);
 
 router.post('/upload',upload.single("file"),uploadFiles);
 

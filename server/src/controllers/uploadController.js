@@ -42,4 +42,63 @@ const uploadFiles = async (req, res) => {
   }
 };
 
-module.exports = { uploadFiles, upload };
+const extractFileKey = (s3Url) => {
+  try {
+    const url = new URL(s3Url);  // Parse the URL
+    return url.pathname.substring(1); // Remove the leading slash
+  } catch (error) {
+    console.error("Invalid URL:", error.message);
+    return null;
+  }
+};
+
+const extractBucketName = (s3Url) => {
+  try {
+    const url = new URL(s3Url); // Parse the URL
+    const hostParts = url.hostname.split('.'); // Split the hostname by dots
+
+    // For virtual-hosted style URLs (bucket-name.s3.amazonaws.com)
+    if (hostParts.length > 3 && hostParts[1] === 's3') {
+      return hostParts[0]; // The first part is the bucket name
+    }
+
+    // For path-style URLs (s3.amazonaws.com/bucket-name)
+    const pathParts = url.pathname.split('/');
+    if (pathParts.length > 1) {
+      return pathParts[1]; // The first part after '/' is the bucket name
+    }
+
+    return null; // Return null if no bucket name is found
+  } catch (error) {
+    console.error("Invalid URL:", error.message);
+    return null;
+  }
+};
+
+const deleteFile = async (req, res) => {
+  try {
+    const { s3Url } = req.params;
+    const fileKey = extractFileKey(s3Url);
+    const bucketName = extractBucketName(s3Url);
+
+    if (!fileKey) {
+      return res.status(400).json({ success: false, error: "Invalid S3 URL" });
+    }
+    const params = {
+      Bucket: bucketName,
+      Key: fileKey
+    };
+
+    await s3.deleteObject(params).promise();
+    console.log(`File deleted successfully: ${fileKey}`);
+    res.status(200).json({
+      success: true,
+      message: 'Delete successful'
+    });
+  } catch (error) {
+    console.error(`Error deleting file: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Delete failed', details: error.message });
+  }
+};
+
+module.exports = { deleteFile, uploadFiles, upload };

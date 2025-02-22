@@ -5,15 +5,25 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 function ResetPassword() {
   const [newPassword, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams()
   const navigate = useNavigate();
   const token =  searchParams.get('token');
 
+  const validate = () => {
+    if (!newPassword) setErrors({ newPassword: 'Password is required' });
+    else if (newPassword.length < 6) setErrors({ newPassword: 'Password must be at least 6 characters long' }); 
+    if (!confirmPassword) setErrors({ confirmPassword: 'Confirm Password is required' });
+    else if (newPassword !== confirmPassword) setErrors({ confirmPassword: 'Passwords do not match' }); 
+    if(errors.newPassword || errors.confirmPassword) return false;
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(validate()){
       setIsSubmitting(true);
       try {
         const response = await fetch(
@@ -34,7 +44,7 @@ function ResetPassword() {
       } finally {
         setIsSubmitting(false);
       }
-    
+    }
   };
     
   return (
@@ -62,6 +72,19 @@ function ResetPassword() {
               onChange={(e) => setPassword(e.target.value)}
               className={`w-full p-2 border rounded-md ${
                 errors.newPassword ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Confirm new Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`w-full p-2 border rounded-md ${
+                errors.confirmPassword ? "border-red-500" : "border-gray-300"
               }`}
             />
           </div>

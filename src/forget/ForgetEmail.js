@@ -42,11 +42,13 @@ function ForgetEmail() {
                 if (!response.ok) throw new Error('User not found');
                 
                 const data = await response.json();
-                alert(data.message)
-                if (data.email) {
-                    setUserEmail(data.email); // Set the retrieved email
+
+                if (data.message == 'Server Error') throw new Error('User not found');
+
+                if (data.message) {
+                    setUserEmail(data.message); // Set the retrieved email
                 }
-                // alert('Email found! Check below.');
+                alert('Email found! Check below.');
 
             } catch (error) {
                 setErrors({ api: 'No user found with this phone number.' });

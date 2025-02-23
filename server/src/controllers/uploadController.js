@@ -78,8 +78,8 @@ const extractBucketName = (s3Url) => {
 const deleteFile = async (req, res) => {
   try {
     const { s3Url } = req.params;
-    const fileKey = extractFileKey(s3Url);
-    const bucketName = extractBucketName(s3Url);
+    let fileKey = decodeURIComponent(extractFileKey(s3Url));
+    const bucketName = decodeURIComponent(extractBucketName(s3Url));
 
     if (!fileKey) {
       return res.status(400).json({ success: false, error: "Invalid S3 URL" });

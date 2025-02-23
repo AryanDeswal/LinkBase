@@ -374,7 +374,7 @@ const ShowInteriorProject = () => {
                     </button>
                   )}
                 </div>
-                <p className="text-center mt-2">{fileName}</p>
+                <p className="text-center mt-2">{decodeURIComponent(fileName)}</p>
               </div>
             );
           })

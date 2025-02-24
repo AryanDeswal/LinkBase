@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { FaPencilAlt, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const ViewArchitecturalProject = () => {
@@ -157,7 +156,7 @@ const ProjectCard = ({ project, handleShowMore, handleDelete }) => {
             onClick={() => confirmDelete(project._id)}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center"
           >
-            <FaTrash className="mr-2" />
+            Delete
           </button>
         </div>
       </div>

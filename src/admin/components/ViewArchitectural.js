@@ -70,7 +70,7 @@ const ViewArchitecturalProject = () => {
 
   const handleShowMore = (projectId) => {
     if (projectId) {
-      navigate(`/shows/${projectId}`);
+      navigate(`/admin/shows/${projectId}`);
     } else {
       console.error('Project ID is undefined.');
     }

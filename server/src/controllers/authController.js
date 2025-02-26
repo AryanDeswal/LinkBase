@@ -26,9 +26,13 @@ const signup = async (req, res) => {
         const { name, email, dob, phone, familyPhoneNumber, password, address } = req.body;
 
         // Check if email already exists (active users)
-        const existingUser = await User.findOne({ email, deleted: false });
-        if (existingUser) {
+        const existingUserEmail = await User.findOne({ email, deleted: false });
+        const existingUserPhone = await User.findOne({ phone, deleted: false });
+        if (existingUserEmail) {
             return res.status(400).json({ message: 'Email already registered' });
+        }
+        if (existingUserPhone) {
+            return res.status(400).json({ message: 'Phone already registered' });
         }
 
         // Hash password

@@ -75,22 +75,31 @@ const extractBucketName = (s3Url) => {
   }
 };
 
-const deleteFile = async (req, res) => {
+const deleteFileUsings3URL = async (s3Url) => {
   try {
-    const { s3Url } = req.params;
     let fileKey = decodeURIComponent(extractFileKey(s3Url));
     const bucketName = decodeURIComponent(extractBucketName(s3Url));
 
     if (!fileKey) {
-      return res.status(400).json({ success: false, error: "Invalid S3 URL" });
+      throw new Error("Invalid S3 URL");
     }
+
     const params = {
       Bucket: bucketName,
       Key: fileKey
     };
-
     await s3.deleteObject(params).promise();
     console.log(`File deleted successfully: ${fileKey}`);
+  } catch (error) {
+    console.error(`Error deleting file: ${error.message}`);
+    throw new Error(error.message);
+  }
+};
+
+const deleteFile = async (req, res) => {
+  try {
+    const { s3Url } = req.params;
+    await deleteFileUsings3URL(s3Url);
     res.status(200).json({
       success: true,
       message: 'Delete successful'
@@ -101,4 +110,4 @@ const deleteFile = async (req, res) => {
   }
 };
 
-module.exports = { deleteFile, uploadFiles, upload };
+module.exports = { deleteFile, uploadFiles,deleteFileUsings3URL, upload };
